@@ -1,0 +1,254 @@
+---
+title: 字符串方法
+description: 字符串处理相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import StringHelpersDemo from '@components/DemoPanel/StringHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/string.ts)
+
+<DemoPanel title="字符串方法交互式演示">
+  <div slot="content">
+
+# 字符串方法
+
+提供丰富的字符串处理工具函数，包括脱敏、格式化、操作等功能。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用字符串方法
+jqTool.helper.string.phoneDesensitize('13812345678')
+```
+
+## 脱敏处理
+
+### phoneDesensitize
+
+手机号脱敏：
+
+```typescript
+jqTool.helper.string.phoneDesensitize('13812345678')
+// '138****5678'
+```
+
+### idCardDesensitize
+
+身份证号脱敏：
+
+```typescript
+jqTool.helper.string.idCardDesensitize('320123199001011234')
+// '320***********1234'
+```
+
+### nameDesensitize
+
+姓名脱敏：
+
+```typescript
+jqTool.helper.string.nameDesensitize('张三') // '张*'
+jqTool.helper.string.nameDesensitize('欧阳锋') // '欧阳*'
+```
+
+### bankCardDesensitize
+
+银行卡号脱敏：
+
+```typescript
+jqTool.helper.string.bankCardDesensitize('6222021234567890123')
+// '6222 **** **** 0123'
+```
+
+### emailDesensitize
+
+邮箱脱敏：
+
+```typescript
+jqTool.helper.string.emailDesensitize('test@example.com')
+// 't***@example.com'
+```
+
+### addressDesensitize
+
+地址脱敏：
+
+```typescript
+jqTool.helper.string.addressDesensitize('北京市朝阳区xxx街道xxx号')
+// '北京市朝阳区***'
+```
+
+## 格式化处理
+
+### capitalize
+
+首字母大写：
+
+```typescript
+jqTool.helper.string.capitalize('hello')
+// 'Hello'
+```
+
+### capitalizeWords
+
+每个单词首字母大写：
+
+```typescript
+jqTool.helper.string.capitalizeWords('hello world')
+// 'Hello World'
+```
+
+### toCamelCase / toUnderlineCase / toKebabCase
+
+命名格式转换：
+
+```typescript
+jqTool.helper.string.toCamelCase('user_name') // 'userName'
+jqTool.helper.string.toUnderlineCase('userName') // 'user_name'
+jqTool.helper.string.toKebabCase('userName') // 'user-name'
+```
+
+### formatNumber
+
+千分位格式化：
+
+```typescript
+jqTool.helper.string.formatNumber(1234567)
+// '1,234,567'
+
+jqTool.helper.string.formatNumber(1234567.89)
+// '1,234,567.89'
+```
+
+### formatMoney
+
+金额格式化：
+
+```typescript
+jqTool.helper.string.formatMoney(1234.56)
+// '¥1,234.56'
+
+jqTool.helper.string.formatMoney(1234.56, { currency: '$', decimals: 2 })
+// '$1,234.56'
+```
+
+### formatFileSize
+
+文件大小格式化：
+
+```typescript
+jqTool.helper.string.formatFileSize(1024) // '1.00 KB'
+jqTool.helper.string.formatFileSize(1234567) // '1.18 MB'
+```
+
+### formatBankCard
+
+格式化银行卡号（添加空格）：
+
+```typescript
+jqTool.helper.string.formatBankCard('6222021234567890')
+// '6222 0212 3456 7890'
+```
+
+### formatPhone
+
+格式化手机号（添加空格）：
+
+```typescript
+jqTool.helper.string.formatPhone('13812345678')
+// '138 1234 5678'
+```
+
+## 字符串操作
+
+### randomString
+
+生成随机字符串：
+
+```typescript
+jqTool.helper.string.randomString(8) // 'aB3dE9fG'
+jqTool.helper.string.randomString(6, 'alpha') // 'aBcDeF'
+jqTool.helper.string.randomString(6, 'number') // '123456'
+```
+
+### generateUUID
+
+生成唯一 ID：
+
+```typescript
+jqTool.helper.string.generateUUID() // '1704067200000_a3b2c1'
+jqTool.helper.string.generateUUID('user') // 'user_1704067200000_a3b2c1'
+```
+
+### truncate
+
+截断字符串：
+
+```typescript
+jqTool.helper.string.truncate('这是一个很长的字符串', 5)
+// '这是一个很...'
+```
+
+### removeHtmlTags
+
+移除 HTML 标签：
+
+```typescript
+jqTool.helper.string.removeHtmlTags('<p>Hello <strong>World</strong></p>')
+// 'Hello World'
+```
+
+### escapeHtml / unescapeHtml
+
+HTML 转义和反转义：
+
+```typescript
+jqTool.helper.string.escapeHtml('<div>Hello & "World"</div>')
+// '&lt;div&gt;Hello &amp; &quot;World&quot;&lt;/div&gt;'
+
+jqTool.helper.string.unescapeHtml('&lt;div&gt;Hello&lt;/div&gt;')
+// '<div>Hello</div>'
+```
+
+### isEmpty
+
+判断字符串是否为空：
+
+```typescript
+jqTool.helper.string.isEmpty('') // true
+jqTool.helper.string.isEmpty('  ') // true
+jqTool.helper.string.isEmpty('hello') // false
+```
+
+### reverse
+
+反转字符串：
+
+```typescript
+jqTool.helper.string.reverse('hello')
+// 'olleh'
+```
+
+### repeat
+
+重复字符串：
+
+```typescript
+jqTool.helper.string.repeat('ab', 3)
+// 'ababab'
+```
+
+### padStart / padEnd
+
+补齐字符串：
+
+```typescript
+jqTool.helper.string.padStart('5', 3, '0') // '005'
+jqTool.helper.string.padEnd('5', 3, '0') // '500'
+```
+
+  </div>
+  <StringHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

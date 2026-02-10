@@ -1,0 +1,279 @@
+---
+title: JCTreeSelect 树形选择器
+description: 下拉树形选择器组件，支持搜索和多选
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTreeSelectDemo from '@components/DemoPanel/JCTreeSelectDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-tree-select)
+
+<DemoPanel title="JCTreeSelect 组件演示">
+<div slot="content">
+
+# JCTreeSelect 树形选择器
+
+下拉树形选择器组件，结合了选择器和树形组件的功能，支持搜索和多选。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValue"
+    :options="treeData"
+    option-label="label"
+    option-value="value"
+    label="选择节点"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValue = ref<(string | number)[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## 多选模式
+
+使用 `multiple` 属性启用多选：
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValues"
+    :options="treeData"
+    option-label="label"
+    option-value="value"
+    label="多选节点"
+    multiple
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValues = ref<(string | number)[]>([2, 3])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## 搜索功能
+
+默认启用搜索功能，可以通过 `filterable` 控制：
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValue"
+    :options="treeData"
+    label="选择节点"
+    :filterable="true"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValue = ref<(string | number)[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## 仅叶子节点可选
+
+使用 `leafOnly` 属性限制只能选择叶子节点：
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValue"
+    :options="treeData"
+    label="选择节点"
+    leaf-only
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValue = ref<(string | number)[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },  // 只有这个可以被选中
+      { label: '子节点2', value: 3 }   // 只有这个可以被选中
+    ]
+  }
+])
+</script>
+```
+
+## 自定义显示格式
+
+使用 `valueDisplayFn` 属性自定义选中值的显示格式：
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValue"
+    :options="treeData"
+    label="选择节点"
+    :value-display-fn="formatDisplay"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValue = ref<(string | number)[]>([2])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 }
+    ]
+  }
+])
+
+const formatDisplay = (value: (string | number)[], options: any[]) => {
+  // 自定义显示逻辑
+  return value.map(v => {
+    const findNode = (nodes: any[]): any => {
+      for (const node of nodes) {
+        if (node.value === v) return node
+        if (node.children) {
+          const found = findNode(node.children)
+          if (found) return found
+        }
+      }
+      return null
+    }
+    const node = findNode(options)
+    return node ? node.label : String(v)
+  }).join(', ')
+}
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-c-tree-select
+    v-model="selectedValue"
+    :options="treeData"
+    label="选择节点"
+    :rules="[
+      val => val.length > 0 || '请至少选择一个节点'
+    ]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTreeSelect } from 'qcpt'
+
+const selectedValue = ref<(string | number)[]>([])
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1
+  }
+])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `Array<string \| number>` | - | 选中的值（v-model） |
+| `options` | `Array` | - | 树形数据（必填） |
+| `optionLabel` | `string` | `'label'` | 选项标签字段名 |
+| `optionValue` | `string` | `'value'` | 选项值字段名 |
+| `label` | `string` | - | 标签文本 |
+| `multiple` | `boolean` | `false` | 是否多选 |
+| `filterable` | `boolean` | `true` | 是否可搜索 |
+| `leafOnly` | `boolean` | `false` | 是否只能选择叶子节点 |
+| `tickStrategy` | `'strict' \| 'leaf' \| 'leaf-filtered'` | `'strict'` | 选择策略 |
+| `clearable` | `boolean` | `true` | 是否可清空 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `rules` | `Array` | - | 验证规则（Quasar QField rules） |
+| `valueDisplayFn` | `Function` | - | 自定义显示格式函数 `(value: Array, options: Array) => string` |
+| `clearIcon` | `string` | `'app:clear'` | 清空图标 |
+| `dropdownIcon` | `string` | `'expand_more'` | 下拉图标 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: Array<string \| number>` | 值更新事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `value-display` | 自定义选中值的显示内容 |
+
+## 注意事项
+
+1. **label 属性**：组件支持 label 属性，会自动应用表格样式；也可以使用 j-q-form-label 包裹组件，移除组件自身的 label 属性
+2. **单选模式**：单选模式下配合 tick-strategy="strict" 确保只能选择一个节点，选择后自动关闭弹窗
+3. **搜索功能**：默认启用搜索，可以通过 filterable 控制，搜索时会过滤树节点
+4. **叶子节点**：leafOnly 模式下，父节点会被设置为 noTick，只能选择叶子节点
+5. **显示格式**：默认显示选中节点的标签，可以通过 valueDisplayFn 自定义显示格式
+6. **表单验证**：支持 Quasar 的 rules 验证，可以设置必填等验证规则
+
+</div>
+<JCTreeSelectDemo slot="demo" client:only="vue" />
+</DemoPanel>

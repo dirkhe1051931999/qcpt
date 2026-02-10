@@ -1,0 +1,287 @@
+---
+title: 对象方法
+description: 对象处理相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import ObjectHelpersDemo from '@components/DemoPanel/ObjectHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/object.ts)
+
+<DemoPanel title="对象方法交互式演示">
+  <div slot="content">
+
+# 对象方法
+
+提供丰富的对象处理工具函数，包括拷贝、合并、属性操作、判断、转换等功能。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用对象方法
+jqTool.helper.object.deepClone(obj)
+```
+
+## 对象拷贝
+
+### deepClone
+
+深拷贝对象，支持日期、正则、数组、对象等类型：
+
+```typescript
+const obj = { a: 1, b: { c: 2 }, d: new Date() }
+const copied = jqTool.helper.object.deepClone(obj)
+copied.b.c = 3 // 不影响原对象
+```
+
+### shallowClone
+
+浅拷贝对象：
+
+```typescript
+const obj = { a: 1, b: { c: 2 } }
+const copied = jqTool.helper.object.shallowClone(obj)
+```
+
+## 对象合并
+
+### deepMerge
+
+深度合并多个对象：
+
+```typescript
+const result = jqTool.helper.object.deepMerge(
+  { a: 1, b: { c: 2 } },
+  { b: { d: 3 }, e: 4 }
+)
+// { a: 1, b: { c: 2, d: 3 }, e: 4 }
+```
+
+### shallowMerge
+
+浅合并多个对象：
+
+```typescript
+const result = jqTool.helper.object.shallowMerge(
+  { a: 1 },
+  { b: 2 },
+  { c: 3 }
+)
+// { a: 1, b: 2, c: 3 }
+```
+
+## 对象属性操作
+
+### pick
+
+选取对象的指定属性：
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+const picked = jqTool.helper.object.pick(obj, ['a', 'c'])
+// { a: 1, c: 3 }
+```
+
+### omit
+
+排除对象的指定属性：
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+const omitted = jqTool.helper.object.omit(obj, ['b'])
+// { a: 1, c: 3 }
+```
+
+### get
+
+获取对象深层属性，支持路径访问：
+
+```typescript
+const obj = { user: { info: { name: 'Tom' } } }
+const name = jqTool.helper.object.get(obj, 'user.info.name')
+// 'Tom'
+
+const age = jqTool.helper.object.get(obj, 'user.info.age', 18)
+// 18 (使用默认值)
+```
+
+### set
+
+设置对象深层属性：
+
+```typescript
+const obj = {}
+jqTool.helper.object.set(obj, 'user.info.name', 'Tom')
+// obj 变为 { user: { info: { name: 'Tom' } } }
+```
+
+### has
+
+判断对象是否有指定属性（支持深层路径）：
+
+```typescript
+const obj = { user: { info: { name: 'Tom' } } }
+jqTool.helper.object.has(obj, 'user.info.name') // true
+jqTool.helper.object.has(obj, 'user.info.age') // false
+```
+
+## 对象判断
+
+### isEmpty
+
+判断对象是否为空：
+
+```typescript
+jqTool.helper.object.isEmpty({}) // true
+jqTool.helper.object.isEmpty({ a: 1 }) // false
+jqTool.helper.object.isEmpty(null) // true
+jqTool.helper.object.isEmpty([]) // true
+```
+
+### isPlainObject
+
+判断是否为普通对象：
+
+```typescript
+jqTool.helper.object.isPlainObject({}) // true
+jqTool.helper.object.isPlainObject(new Date()) // false
+jqTool.helper.object.isPlainObject([]) // false
+```
+
+### isEqual
+
+判断两个对象是否相等（深度比较）：
+
+```typescript
+const obj1 = { a: 1, b: { c: 2 } }
+const obj2 = { a: 1, b: { c: 2 } }
+jqTool.helper.object.isEqual(obj1, obj2) // true
+```
+
+## 对象转换
+
+### keysToCamelCase
+
+对象键名转驼峰：
+
+```typescript
+const obj = { user_name: 'Tom', user_age: 20 }
+const result = jqTool.helper.object.keysToCamelCase(obj)
+// { userName: 'Tom', userAge: 20 }
+```
+
+### keysToUnderlineCase
+
+对象键名转下划线：
+
+```typescript
+const obj = { userName: 'Tom', userAge: 20 }
+const result = jqTool.helper.object.keysToUnderlineCase(obj)
+// { user_name: 'Tom', user_age: 20 }
+```
+
+### toQueryString
+
+对象转 URL 查询字符串：
+
+```typescript
+const obj = { name: 'Tom', age: 20 }
+const queryString = jqTool.helper.object.toQueryString(obj)
+// 'name=Tom&age=20'
+```
+
+### fromQueryString
+
+URL 查询字符串转对象：
+
+```typescript
+const obj = jqTool.helper.object.fromQueryString('name=Tom&age=20')
+// { name: 'Tom', age: '20' }
+```
+
+## 对象过滤
+
+### filterValues
+
+根据值过滤对象的属性：
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+const filtered = jqTool.helper.object.filterValues(obj, value => value > 1)
+// { b: 2, c: 3 }
+```
+
+### removeEmpty
+
+移除对象中的空值：
+
+```typescript
+const obj = { a: 1, b: null, c: undefined, d: '', e: 0 }
+const cleaned = jqTool.helper.object.removeEmpty(obj)
+// { a: 1, e: 0 }
+```
+
+### flattenObject
+
+扁平化嵌套对象：
+
+```typescript
+const obj = { a: 1, b: { c: 2, d: { e: 3 } } }
+const flattened = jqTool.helper.object.flattenObject(obj)
+// { a: 1, 'b.c': 2, 'b.d.e': 3 }
+```
+
+### unflattenObject
+
+反扁平化对象：
+
+```typescript
+const obj = { a: 1, 'b.c': 2, 'b.d.e': 3 }
+const unflattened = jqTool.helper.object.unflattenObject(obj)
+// { a: 1, b: { c: 2, d: { e: 3 } } }
+```
+
+### invert
+
+反转对象的键值：
+
+```typescript
+const obj = { a: 1, b: 2, c: 3 }
+const inverted = jqTool.helper.object.invert(obj)
+// { '1': 'a', '2': 'b', '3': 'c' }
+```
+
+## 获取对象数据
+
+### values
+
+获取对象所有值的数组：
+
+```typescript
+const values = jqTool.helper.object.values({ a: 1, b: 2, c: 3 })
+// [1, 2, 3]
+```
+
+### keys
+
+获取对象所有键的数组：
+
+```typescript
+const keys = jqTool.helper.object.keys({ a: 1, b: 2, c: 3 })
+// ['a', 'b', 'c']
+```
+
+### entries
+
+获取对象所有键值对的数组：
+
+```typescript
+const entries = jqTool.helper.object.entries({ a: 1, b: 2, c: 3 })
+// [['a', 1], ['b', 2], ['c', 3]]
+```
+
+  </div>
+  <ObjectHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

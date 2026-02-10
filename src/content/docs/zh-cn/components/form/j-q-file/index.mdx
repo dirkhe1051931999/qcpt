@@ -1,0 +1,159 @@
+---
+title: JQFile 文件上传
+description: 文件上传组件，支持拖拽上传、多文件、文件大小限制等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQFileDemo from '@components/DemoPanel/JQFileDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-file)
+
+<DemoPanel title="JQFile 组件演示">
+<div slot="content">
+
+# JQFile 文件上传
+
+文件上传组件，支持拖拽上传、多文件上传、文件大小限制等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-file 
+    v-model="files"
+    accept="image/*"
+    max-file-size="5 MB"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFile } from 'qcpt'
+
+const files = ref<File[]>([])
+</script>
+```
+
+## 多文件上传
+
+通过 `maxlength` 属性限制最大文件数量：
+
+```vue
+<template>
+  <j-q-file 
+    v-model="files"
+    accept="image/*"
+    :maxlength="5"
+    max-file-size="2 MB"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFile } from 'qcpt'
+
+const files = ref<File[]>([])
+</script>
+```
+
+## 文件类型限制
+
+通过 `accept` 属性限制文件类型：
+
+```vue
+<template>
+  <j-q-file 
+    v-model="files"
+    accept=".pdf,.doc,.docx"
+    max-file-size="10 MB"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFile } from 'qcpt'
+
+const files = ref<File[]>([])
+</script>
+```
+
+## 文件处理前验证
+
+通过 `beforeHandle` 属性在文件添加前进行验证或处理：
+
+```vue
+<template>
+  <j-q-file 
+    v-model="files"
+    accept="image/*"
+    :before-handle="handleBeforeUpload"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFile } from 'qcpt'
+
+const files = ref<File[]>([])
+
+const handleBeforeUpload = async (newFiles: File[]) => {
+  // 可以在这里进行文件验证或处理
+  console.log('准备上传的文件:', newFiles)
+  // 返回处理后的文件数组，或返回 void 使用原文件
+  return newFiles
+}
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-q-file 
+    v-model="files"
+    accept="image/*"
+    :rules="[
+      val => val.length > 0 || '请至少上传一个文件'
+    ]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFile } from 'qcpt'
+
+const files = ref<File[]>([])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `File[]` | - | 文件数组（v-model） |
+| `accept` | `string` | - | 接受的文件类型（如 `image/*`、`.pdf,.doc`） |
+| `maxlength` | `string \| number` | - | 最大文件数量 |
+| `maxFileSize` | `string` | `'2 MB'` | 单个文件最大大小 |
+| `beforeHandle` | `Function` | - | 文件处理前的回调函数 `(files: File[]) => File[] \| void \| Promise<File[] \| void>` |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `rules` | `Array` | - | 验证规则（Quasar QField rules） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: File[]` | 值更新事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `hint` | 提示信息插槽 |
+
+</div>
+<JQFileDemo slot="demo" client:only="vue" />
+</DemoPanel>

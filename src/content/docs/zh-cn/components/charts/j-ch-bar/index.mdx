@@ -1,0 +1,363 @@
+---
+title: JChBar 柱状图
+description: 柱状图组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChBarDemo from '@components/DemoPanel/JChBarDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-bar)
+
+<DemoPanel title="JChBar 组件演示">
+  <div slot="content">
+
+# JChBar 柱状图
+
+基于 Chart.js 的柱状图组件，支持单组或多组数据展示，适用于数据对比和分析场景。
+
+## 基础用法
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['周一', '周二', '周三', '周四', '周五']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '访问量',
+    data: [120, 200, 150, 180, 220],
+    backgroundColor: '#3b82f6'
+  }
+])
+</script>
+```
+
+## 多组数据对比
+
+适用于多组数据的对比分析。
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['1月', '2月', '3月', '4月', '5月', '6月']"
+    :datasets="multiDatasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+
+const multiDatasets = ref([
+  {
+    label: '销售量',
+    data: [320, 280, 350, 400, 450, 520],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    label: '退货量',
+    data: [30, 25, 40, 35, 28, 32],
+    backgroundColor: '#ef4444'
+  },
+  {
+    label: '库存量',
+    data: [200, 220, 180, 190, 210, 240],
+    backgroundColor: '#10b981'
+  }
+])
+</script>
+```
+
+## 自定义柱子样式
+
+通过 `datasets` 中的属性自定义柱子的样式。
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['产品A', '产品B', '产品C', '产品D']"
+    :datasets="customDatasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+
+const customDatasets = ref([
+  {
+    label: '销量',
+    data: [450, 380, 520, 390],
+    backgroundColor: '#8b5cf6',
+    borderRadius: 8,           // 圆角半径
+    maxBarThickness: 50,       // 最大柱子宽度
+    borderWidth: 2,            // 边框宽度
+    borderColor: '#6d28d9'     // 边框颜色
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['Q1', 'Q2', 'Q3', 'Q4']"
+    :datasets="datasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '季度收入',
+    data: [2500, 3200, 2800, 4100],
+    backgroundColor: '#f59e0b'
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项，而不需要覆盖整个配置对象。组件内部使用 `mergeChartOptions` 函数进行深度合并。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['服务器1', '服务器2', '服务器3', '服务器4']"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: 'CPU 使用率',
+    data: [45, 62, 38, 75],
+    backgroundColor: '#06b6d4'
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'bar'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 基础示例
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['A', 'B', 'C', 'D']"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: '数据',
+    data: [12, 19, 3, 5],
+    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+  }
+])
+
+// 只覆盖部分配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'bar'>> = {
+  plugins: {
+    legend: {
+      position: 'top'  // 只修改图例位置，其他 legend 配置保持默认
+    }
+  },
+  scales: {
+    y: {
+      max: 100  // 只修改 Y 轴最大值，其他 Y 轴配置保持默认
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="labels"
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['1月', '2月', '3月', '4月'])
+const datasets = ref([
+  {
+    label: '销售额',
+    data: [120, 190, 300, 500],
+    backgroundColor: '#0B5CFF'
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'bar'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        }
+      }
+    },
+    tooltip: {
+      enabled: true,  // 启用内置 tooltip（覆盖默认的外部 tooltip）
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 50  // 只覆盖步长，其他 ticks 配置保持默认
+      }
+    },
+    x: {
+      grid: {
+        display: true  // 显示 X 轴网格线
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 动态更新数据
+
+组件内部监听了 `labels`、`datasets` 和 `height` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-bar 
+      :labels="labels"
+      :datasets="datasets"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar, JQButton } from 'qcpt'
+
+const labels = ref(['产品A', '产品B', '产品C', '产品D', '产品E'])
+const datasets = ref([
+  {
+    label: '销量',
+    data: [150, 220, 180, 240, 200],
+    backgroundColor: '#ec4899'
+  }
+])
+
+const refreshData = () => {
+  datasets.value = [
+    {
+      label: '销量',
+      data: labels.value.map(() => Math.floor(Math.random() * 300) + 100),
+      backgroundColor: '#ec4899'
+    }
+  ]
+}
+</script>
+```
+
+## 默认样式特性
+
+组件内置了以下默认样式特性：
+
+- **圆角柱子**：`borderRadius: 4`，柱子顶部有圆角
+- **无边框**：`borderWidth: 0`，默认无边框
+- **最大宽度**：`maxBarThickness: 34`，限制柱子最大宽度
+- **外部 Tooltip**：使用自定义的外部 tooltip，样式更美观
+- **图例位置**：`position: 'bottom'`，图例显示在底部
+- **响应式**：`responsive: true`，自动适应容器宽度
+
+这些默认样式可以通过 `datasets` 或 `options` 属性覆盖。
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `labels` | `string[]` | - | X 轴标签数组（必填） |
+| `datasets` | `ChartDataset<'bar'>[]` | - | 数据集数组（Chart.js 格式，必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `options` | `Partial<ChartOptions<'bar'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### ChartDataset 常用配置
+
+`datasets` 数组中每个对象的常用配置项：
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 数据集名称（显示在图例中） |
+| `data` | `number[]` | - | 数据点数组 |
+| `backgroundColor` | `string \| string[]` | `'#3A416F'` | 柱子填充颜色 |
+| `borderColor` | `string \| string[]` | - | 柱子边框颜色 |
+| `borderWidth` | `number` | `0` | 柱子边框宽度 |
+| `borderRadius` | `number` | `4` | 柱子圆角半径 |
+| `maxBarThickness` | `number` | `34` | 柱子最大宽度 |
+
+更多配置项请参考 [Chart.js 官方文档](https://www.chartjs.org/docs/latest/charts/bar.html)。
+
+</div>
+<JChBarDemo slot="demo" client:only="vue" />
+</DemoPanel>
+

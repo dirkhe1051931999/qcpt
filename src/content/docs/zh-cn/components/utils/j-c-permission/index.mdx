@@ -1,0 +1,140 @@
+---
+title: JCPermission 权限控制
+description: 基于权限的内容显示组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-permission)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCPermissionDemo from '@components/DemoPanel/JCPermissionDemo.vue';
+
+# JCPermission 权限控制
+
+基于权限的内容显示组件，根据用户权限控制内容的显示/隐藏。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-permission code="user-edit">
+    <q-btn label="编辑" @click="handleEdit" />
+  </j-c-permission>
+
+  <j-c-permission code="user-delete">
+    <q-btn label="删除" color="negative" @click="handleDelete" />
+  </j-c-permission>
+</template>
+```
+
+## 配置权限
+
+在 `qcptInit` 中配置权限 IDs（通过全局注入）：
+
+```typescript
+import { qcptInit } from 'qcpt'
+import { ref } from 'vue'
+
+qcptInit({
+  app,
+  router,
+  // 权限 IDs 可以是响应式 ref 或普通数组
+  pagePermissionIds: ref(['user-view', 'user-edit', 'user-delete']),
+  // 或使用普通数组
+  // pagePermissionIds: ['user-view', 'user-edit', 'user-delete'],
+  pageActionPermissionIds: ref(['action-edit', 'action-delete'])
+})
+```
+
+## 无权限时的显示
+
+默认情况下，无权限时会显示 `-`，可以通过 `defaultContent` 自定义：
+
+```vue
+<template>
+  <j-c-permission code="user-edit" default-content="无权限">
+    <q-btn label="编辑" />
+  </j-c-permission>
+</template>
+```
+
+## 完全隐藏
+
+使用 `rmDom` 属性可以在无权限时完全隐藏元素（不渲染 DOM）：
+
+```vue
+<template>
+  <j-c-permission code="user-edit" :rm-dom="true">
+    <q-btn label="编辑" />
+  </j-c-permission>
+</template>
+```
+
+## 本地权限列表
+
+可以通过 `pagePermissionId` 或 `pageActionPermissionId` 传入本地权限列表（优先级高于全局注入）：
+
+```vue
+<template>
+  <j-c-permission 
+    code="user-edit"
+    :page-permission-id="['user-view', 'user-edit']"
+  >
+    <q-btn label="编辑" />
+  </j-c-permission>
+</template>
+```
+
+## 无权限码时默认显示
+
+如果 `code` 为 `null`、`undefined` 或空字符串，组件会默认显示内容（用于测试或特殊逻辑）：
+
+```vue
+<template>
+  <j-c-permission :code="null">
+    <q-btn label="总是显示" />
+  </j-c-permission>
+</template>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `code` | `string \| null` | `null` | 权限码（如果为 null/undefined/空字符串，则默认有权限） |
+| `defaultContent` | `string` | `'-'` | 无权限时显示的默认内容 |
+| `rmDom` | `boolean` | `false` | 是否在无权限时彻底隐藏组件（不渲染 DOM） |
+| `pagePermissionId` | `string[]` | - | 页面权限码列表（优先级高于全局注入） |
+| `pageActionPermissionId` | `string[]` | - | 操作权限码列表（优先级高于全局注入） |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 需要权限控制的内容 |
+
+## 工作原理
+
+组件会检查传入的 `code` 是否存在于：
+1. 优先检查 `pagePermissionId` 或 `pageActionPermissionId`（如果传入）
+2. 否则检查全局注入的 `pagePermissionIds` 或 `pageActionPermissionIds`
+3. 如果 `code` 为空，默认认为有权限
+
+如果权限码存在，则显示插槽内容；否则显示 `defaultContent` 或完全隐藏（取决于 `rmDom`）。
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JCPermissionDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 如果 `code` 为空，默认认为有权限（用于测试或特殊逻辑）
+- 优先使用 `pagePermissionId` 或 `pageActionPermissionId`（如果传入），否则使用全局注入的权限列表
+- 使用 `rmDom` 属性可以在无权限时完全隐藏元素（不渲染 DOM）
+

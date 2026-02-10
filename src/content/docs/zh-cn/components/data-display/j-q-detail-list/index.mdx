@@ -1,0 +1,431 @@
+---
+title: JQDetailList 详情列表
+description: 灵活且功能丰富的详情展示组件，支持多种布局、选项映射、日期格式化等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDetailListDemo from '@components/DemoPanel/JQDetailListDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-detail-list)
+
+<DemoPanel title="JQDetailList 组件演示">
+<div slot="content">
+
+# JQDetailList 详情列表
+
+用于展示对象详情的灵活组件，支持多种布局、选项映射、日期格式化、条件显示、自定义渲染、点击处理和多行文本省略等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-detail-list :items="items" :data="detail" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDetailList } from 'qcpt'
+import type { DetailItem } from 'qcpt'
+
+const detail = ref({
+  id: 1,
+  name: 'Alice',
+  status: 'active',
+  createdAt: '2025-12-01 10:20:30',
+  description: '这是一段很长的描述文本，可能会溢出...'
+})
+
+const items: DetailItem[] = [
+  { name: 'id', label: 'ID', span: 6, format: (v) => v },
+  { name: 'name', label: '姓名', span: 6, tip: '用户在系统中的显示名称', format: (v) => v },
+  {
+    name: 'status',
+    label: '状态',
+    span: 6,
+    options: [
+      { value: 'active', label: '启用', class: 'text-positive' },
+      { value: 'disabled', label: '禁用', class: 'text-grey' }
+    ],
+    findByKey: 'value',
+    displayKey: 'label',
+    format: (v) => v
+  },
+  { name: 'createdAt', label: '创建时间', span: 6, date: 'YYYY-MM-DD HH:mm:ss', format: (v) => v },
+  { name: 'description', label: '描述', span: 12, whiteSpace: 3, format: (v) => v }
+]
+</script>
+```
+
+## 布局类型
+
+组件支持三种布局类型：
+
+### 1. 垂直布局（默认）
+
+标签显示在值上方，使用网格布局：
+
+```vue
+<j-q-detail-list :items="items" :data="data" layout="vertical" />
+```
+
+### 2. 水平两端对齐布局
+
+标签和值并排显示，使用 space-between 对齐：
+
+```vue
+<j-q-detail-list :items="items" :data="data" layout="horizontal-between" />
+```
+
+### 3. 水平左对齐布局
+
+标签和值并排显示，左对齐。标签宽度可配置：
+
+```vue
+<j-q-detail-list 
+  :items="items" 
+  :data="data" 
+  layout="horizontal-left" 
+  label-width="120px" 
+/>
+```
+
+## 多行文本省略（whiteSpace）
+
+使用 `whiteSpace` 属性控制文本的最大行数，超出后自动显示省略号和提示框：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  {
+    name: 'description',
+    label: '描述',
+    span: 12,
+    whiteSpace: 3,  // 最多显示 3 行
+    format: (v) => v
+  },
+  {
+    name: 'summary',
+    label: '摘要',
+    span: 12,
+    whiteSpace: 2,  // 最多显示 2 行
+    format: (v) => v
+  }
+]
+</script>
+```
+
+**用法：**
+- `whiteSpace: 1` - 单行省略（默认）
+- `whiteSpace: 2` - 两行省略
+- `whiteSpace: 3` - 三行省略
+
+**特性：**
+- 内容溢出时自动显示省略号
+- 鼠标悬停时显示完整内容的提示框
+- 适用于所有布局类型
+
+## 点击处理（onClick & clickable）
+
+使项目可点击，并自定义点击处理：
+
+```vue
+<script setup lang="ts">
+const toDevicePage = (deviceId: string) => {
+  console.log('导航到设备:', deviceId)
+  // router.push(`/devices/${deviceId}`)
+}
+
+const items: DetailItem[] = [
+  {
+    name: 'deviceId',
+    label: '设备 ID',
+    span: 6,
+    onClick: (value) => toDevicePage(value),
+    clickable: true,  // 始终可点击
+    format: (v) => v
+  },
+  {
+    name: 'status',
+    label: '状态',
+    span: 6,
+    onClick: (value) => console.log('状态点击:', value),
+    clickable: (row) => row.status === 'online',  // 动态：仅在在线时可点击
+    format: (v) => v
+  }
+]
+</script>
+```
+
+**行为：**
+- `clickable: true` - 始终可点击
+- `clickable: false` - 不可点击
+- `clickable: (row) => boolean` - 基于数据的动态检查
+- `clickable: undefined` - 如果提供了 `onClick`，默认可点击
+- 可点击的项目显示为主色调，鼠标指针为 pointer
+- 可点击的项目使用 `display: inline-block` 以确保正确的点击区域
+
+## 选项映射
+
+使用选项数组将原始值映射为显示标签：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  {
+    name: 'status',
+    label: '状态',
+    span: 6,
+    options: [
+      { value: 'active', label: '激活', class: 'text-positive' },
+      { value: 'inactive', label: '未激活', class: 'text-grey' },
+      { value: 'pending', label: '待处理', class: 'text-warning' }
+    ],
+    findByKey: 'value',      // 匹配 data.status 与 option.value
+    displayKey: 'label',      // 显示 option.label（默认）
+    format: (v) => v
+  }
+]
+</script>
+```
+
+匹配的选项也可以有 `class` 属性用于自定义样式。
+
+## 条件显示
+
+基于数据条件显示/隐藏字段：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  { name: 'id', label: 'ID', span: 6, format: (v) => v },
+  {
+    name: 'paidAt',
+    label: '支付时间',
+    span: 6,
+    date: 'YYYY-MM-DD HH:mm:ss',
+    visible: (row) => row.status === 'paid',  // 仅在已支付时显示
+    format: (v) => v
+  },
+  {
+    name: 'cancelledAt',
+    label: '取消时间',
+    span: 6,
+    date: 'YYYY-MM-DD HH:mm:ss',
+    visible: (row) => row.status === 'cancelled',  // 仅在已取消时显示
+    format: (v) => v
+  }
+]
+</script>
+```
+
+## HTML 渲染（html）
+
+使用 `html` 属性支持 HTML 内容渲染：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  {
+    name: 'description',
+    label: '描述',
+    span: 12,
+    html: true,  // 启用 HTML 渲染
+    whiteSpace: 3,  // 支持多行省略
+    format: (v) => v
+  },
+  {
+    name: 'content',
+    label: '内容',
+    span: 12,
+    html: true,
+    format: (v) => `<strong>${v}</strong>`  // 返回 HTML 字符串
+  }
+]
+</script>
+```
+
+**特性：**
+- `html: true` 时，`format` 函数可以返回 HTML 字符串
+- 支持 `whiteSpace` 属性控制多行省略
+- HTML 内容会直接渲染到 DOM 中
+
+## 复制功能（copy）
+
+使用 `copy` 属性在字段值旁显示复制按钮：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  {
+    name: 'orderId',
+    label: '订单号',
+    span: 6,
+    copy: true,  // 显示复制按钮
+    format: (v) => v
+  },
+  {
+    name: 'deviceId',
+    label: '设备 ID',
+    span: 6,
+    copy: true,
+    format: (v) => v
+  }
+]
+</script>
+```
+
+**特性：**
+- `copy: true` 时，字段值右侧会显示复制图标按钮
+- 点击复制按钮会将格式化后的值复制到剪贴板
+- 复制的值会经过选项映射、格式化和日期格式化处理
+- 如果值是 HTML，会自动提取纯文本进行复制
+
+## 列宽度控制（span）
+
+使用 `span` 属性控制字段在网格布局中的列宽度：
+
+```vue
+<script setup lang="ts">
+const items: DetailItem[] = [
+  { name: 'id', label: 'ID', span: 3, format: (v) => v },        // 占 3 列（25%）
+  { name: 'name', label: '姓名', span: 6, format: (v) => v },   // 占 6 列（50%，默认）
+  { name: 'email', label: '邮箱', span: 6, format: (v) => v },  // 占 6 列（50%）
+  { name: 'status', label: '状态', span: 3, format: (v) => v }, // 占 3 列（25%）
+  { name: 'description', label: '描述', span: 12, format: (v) => v } // 占 12 列（100%，整行）
+]
+</script>
+```
+
+**说明：**
+- `span` 的取值范围是 1-12，对应 Quasar 的 12 列网格系统
+- 默认值为 `6`（占 50% 宽度）
+- 一行总共 12 列，可以灵活组合（如 3+6+3、4+4+4、12 等）
+- 适用于所有布局类型（`vertical`、`horizontal-between`、`horizontal-left`）
+
+## 自定义渲染（插槽）
+
+使用 `item-value-{name}` 和 `item-suffix-{name}` 插槽自定义特定字段的渲染：
+
+```vue
+<template>
+  <j-q-detail-list :items="items" :data="detail">
+    <!-- 自定义值渲染 -->
+    <template #item-value-status="{ value, item, data, fieldName }">
+      <q-badge :color="value === 'active' ? 'positive' : 'grey'" :label="value" />
+    </template>
+    
+    <template #item-value-image="{ value }">
+      <q-img :src="value" style="width: 100px; height: 100px" />
+    </template>
+    
+    <template #item-value-price="{ value }">
+      <span class="text-h6 text-primary">¥{{ value.toFixed(2) }}</span>
+    </template>
+    
+    <!-- 自定义后缀渲染（替代默认的复制按钮） -->
+    <template #item-suffix-orderId="{ value, item, data, fieldName }">
+      <j-q-button 
+        label="查看详情" 
+        type="text" 
+        size="small"
+        @click="viewOrder(data.id)"
+      />
+    </template>
+  </j-q-detail-list>
+</template>
+```
+
+**插槽参数：**
+- `value`: 数据对象中的原始值
+- `item`: DetailItem 配置对象
+- `data`: 整个数据对象
+- `fieldName`: 字段名（与 `item.name` 相同）
+
+**插槽说明：**
+- `item-value-{name}`: 自定义字段值的渲染，完全覆盖默认渲染
+- `item-suffix-{name}`: 自定义字段值后缀的渲染，可以替代或补充复制按钮
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `items` | `DetailItem[]` | - | 显示配置（必填） |
+| `data` | `Record<string, any>` | - | 详情数据对象（必填） |
+| `layout` | `'vertical' \| 'horizontal-between' \| 'horizontal-left'` | `'vertical'` | 布局类型 |
+| `gutter` | `string` | `'q-col-gutter-md'` | 列间距的 CSS 类 |
+| `labelWidth` | `string` | `'100px'` | `horizontal-left` 布局的标签宽度 |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `item-value-{name}` | `{ value, item, data, fieldName }` | 自定义特定字段的值渲染 |
+| `item-suffix-{name}` | `{ value, item, data, fieldName }` | 自定义特定字段的后缀渲染（如复制按钮区域） |
+
+### DetailItem 接口
+
+```typescript
+export interface DetailItem {
+  name: string                    // 数据对象中的字段名（必填）
+  label: string                  // 显示标签（必填）
+  span?: number                  // 列跨度（1-12，默认：6）
+  align?: 'left' | 'right' | 'center'  // 文本对齐（默认：'left'，仅适用于垂直布局）
+  date?: boolean | string        // 日期格式化：true 使用默认格式，string 使用自定义格式
+  options?: Record<string, any>[] // 用于值映射的选项数组
+  findByKey?: string             // 在选项数组中查找的键
+  displayKey?: string            // 从匹配选项显示的键（默认：'label'）
+  tip?: string                   // 标签旁显示的提示文本
+  whiteSpace?: number            // 省略号前的最大行数（默认：1）
+  onClick?: (value: string) => void  // 点击处理函数
+  clickable?: boolean | ((row: TDetailData) => boolean)  // 项目是否可点击
+  format?: (value: any, row: TDetailData) => any    // 值格式化函数（可选）
+  visible?: boolean | ((row: TDetailData) => boolean)  // 显示/隐藏条件
+  html?: boolean                 // 是否支持 HTML 渲染
+  copy?: boolean                 // 是否显示复制按钮
+}
+```
+
+### DetailItem 字段说明
+
+| 字段 | 类型 | 描述 |
+| --- | --- | --- |
+| `name` | `string` | 字段名（对应 `data[name]`）- **必填** |
+| `label` | `string` | 显示标签 - **必填** |
+| `span` | `number` | 网格列宽度（`col-{span}`），默认 6 |
+| `align` | `'left' \| 'center' \| 'right'` | 值对齐，默认左对齐（仅适用于 `vertical` 布局） |
+| `tip` | `string` | 标签旁显示的提示文本，带问号图标 |
+| `visible` | `boolean \| (data) => boolean` | 控制是否显示此项目 |
+| `format` | `(value) => any` | 自定义格式化函数 - **必填** |
+| `date` | `true \| string` | 日期格式化：`true` 使用默认格式；string 使用指定格式 |
+| `options` | `Record<string, any>[]` | 值映射列表（类似字典） |
+| `findByKey` | `string` | 在 `options` 中匹配值的键 |
+| `displayKey` | `string` | 从 `options` 显示的键，默认 `'label'` |
+| `whiteSpace` | `number` | 省略号前的最大行数（1、2 或 3），默认 1 |
+| `onClick` | `(value: string) => void` | 点击处理函数，接收格式化后的值字符串 |
+| `clickable` | `boolean \| (row) => boolean` | 项目是否可点击。如果是函数，基于数据动态检查 |
+| `html` | `boolean` | 是否支持 HTML 渲染。为 `true` 时，`format` 可以返回 HTML 字符串 |
+| `copy` | `boolean` | 是否显示复制按钮。为 `true` 时，字段值右侧显示复制图标 |
+| `format` | `(value: any, row: TDetailData) => any` | 值格式化函数。接收原始值和整行数据，返回格式化后的值（可选） |
+
+## 注意事项
+
+- 空值（`null`、`undefined`、`''`）显示为 `'--'`
+- `format` 函数是可选的，如果未提供则直接使用原始值
+- `format` 函数始终会被调用，即使对于空值也是如此
+- `format` 函数接收两个参数：`(value: any, row: TDetailData) => any`
+- 选项映射发生在格式化之前
+- 日期格式化发生在选项映射和自定义格式化之后
+- 点击处理函数接收最终格式化的字符串值
+- 自定义插槽完全覆盖默认渲染
+- 当 `clickable` 为 `undefined` 且提供了 `onClick` 时，项目默认可点击
+- 可点击的项目自动使用 `display: inline-block` 以确保正确的点击区域
+- `html: true` 时，`format` 函数可以返回 HTML 字符串，组件会直接渲染 HTML
+- `copy: true` 时，复制的内容会经过所有格式化处理，HTML 内容会自动提取纯文本
+- `span` 属性控制列宽度，适用于所有布局类型，默认值为 6（占 50% 宽度）
+- 使用 `item-suffix-{name}` 插槽可以自定义后缀区域，替代或补充默认的复制按钮
+
+</div>
+<JQDetailListDemo slot="demo" client:only="vue" />
+</DemoPanel>

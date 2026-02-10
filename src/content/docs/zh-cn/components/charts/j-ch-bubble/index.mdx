@@ -1,0 +1,513 @@
+---
+title: JChBubble 气泡图
+description: 气泡图组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChBubbleDemo from '@components/DemoPanel/JChBubbleDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-bubble)
+
+<DemoPanel title="JChBubble 组件演示">
+  <div slot="content">
+
+# JChBubble 气泡图
+
+基于 Chart.js 的气泡图组件，通过气泡的位置和大小展示三维数据，适用于多维度数据可视化和相关性分析。
+
+## 基础用法
+
+气泡图的数据格式为 `{ x, y, r }`，其中 `x` 和 `y` 表示气泡的位置，`r` 表示气泡的半径。
+
+```vue
+<template>
+  <j-ch-bubble :datasets="datasets" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '数据集A',
+    data: [
+      { x: 10, y: 20, r: 10 },
+      { x: 15, y: 30, r: 15 },
+      { x: 25, y: 25, r: 20 },
+      { x: 35, y: 40, r: 12 },
+      { x: 45, y: 35, r: 18 }
+    ],
+    backgroundColor: 'rgba(59, 130, 246, 0.6)'
+  }
+])
+</script>
+```
+
+## 多组气泡数据
+
+可以展示多组数据集进行对比分析。
+
+```vue
+<template>
+  <j-ch-bubble :datasets="multiDatasets" :height="350" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const multiDatasets = ref([
+  {
+    label: '产品A',
+    data: [
+      { x: 10, y: 20, r: 15 },
+      { x: 20, y: 30, r: 18 },
+      { x: 30, y: 25, r: 20 },
+      { x: 40, y: 35, r: 12 }
+    ],
+    backgroundColor: 'rgba(59, 130, 246, 0.6)'
+  },
+  {
+    label: '产品B',
+    data: [
+      { x: 15, y: 40, r: 10 },
+      { x: 25, y: 50, r: 22 },
+      { x: 35, y: 45, r: 16 },
+      { x: 45, y: 55, r: 14 }
+    ],
+    backgroundColor: 'rgba(16, 185, 129, 0.6)'
+  }
+])
+</script>
+```
+
+## 实际应用场景
+
+### 产品市场分析
+
+通过气泡图展示产品的市场份额（X轴）、利润率（Y轴）和销售额（气泡大小）。
+
+```vue
+<template>
+  <j-ch-bubble :datasets="marketDatasets" :height="350" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const marketDatasets = ref([
+  {
+    label: '旗舰产品',
+    data: [
+      { x: 25, y: 45, r: 25 },  // x: 市场份额25%, y: 利润率45%, r: 销售额
+      { x: 28, y: 48, r: 30 }
+    ],
+    backgroundColor: 'rgba(59, 130, 246, 0.7)'
+  },
+  {
+    label: '中端产品',
+    data: [
+      { x: 35, y: 35, r: 20 },
+      { x: 40, y: 38, r: 22 },
+      { x: 45, y: 32, r: 18 }
+    ],
+    backgroundColor: 'rgba(16, 185, 129, 0.7)'
+  },
+  {
+    label: '入门产品',
+    data: [
+      { x: 50, y: 25, r: 15 },
+      { x: 55, y: 22, r: 12 },
+      { x: 60, y: 20, r: 14 }
+    ],
+    backgroundColor: 'rgba(245, 158, 11, 0.7)'
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-bubble 
+    :datasets="datasets" 
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '销售数据',
+    data: [
+      { x: 20, y: 30, r: 15 },
+      { x: 40, y: 50, r: 20 },
+      { x: 60, y: 40, r: 18 },
+      { x: 80, y: 60, r: 22 }
+    ],
+    backgroundColor: 'rgba(139, 92, 246, 0.6)'
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-bubble 
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: '数据点',
+    data: [
+      { x: 10, y: 15, r: 12 },
+      { x: 25, y: 35, r: 18 },
+      { x: 40, y: 25, r: 15 }
+    ],
+    backgroundColor: 'rgba(6, 182, 212, 0.6)'
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'bubble'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 自定义坐标轴范围
+
+```vue
+<template>
+  <j-ch-bubble 
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: '性能指标',
+    data: [
+      { x: 50, y: 60, r: 15 },
+      { x: 70, y: 80, r: 20 },
+      { x: 90, y: 75, r: 18 }
+    ],
+    backgroundColor: 'rgba(139, 92, 246, 0.6)'
+  }
+])
+
+const customOptions: Partial<ChartOptions<'bubble'>> = {
+  scales: {
+    x: {
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 20
+      }
+    },
+    y: {
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 20
+      }
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-bubble 
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: '客户分析',
+    data: [
+      { x: 30, y: 40, r: 15 },
+      { x: 50, y: 60, r: 20 },
+      { x: 70, y: 50, r: 18 }
+    ],
+    backgroundColor: 'rgba(59, 130, 246, 0.6)'
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'bubble'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff',
+      callbacks: {
+        label: (context: any) => {
+          const data = context.raw as { x: number; y: number; r: number };
+          return `X: ${data.x}, Y: ${data.y}, 大小: ${data.r}`;
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      grid: {
+        color: '#e5e7eb'
+      }
+    },
+    y: {
+      grid: {
+        color: '#e5e7eb'
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 自定义颜色和边框
+
+通过 `backgroundColor`、`borderColor` 和 `borderWidth` 自定义气泡样式。
+
+```vue
+<template>
+  <j-ch-bubble :datasets="colorDatasets" :height="350" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const colorDatasets = ref([
+  {
+    label: '高价值客户',
+    data: [
+      { x: 60, y: 70, r: 25 },
+      { x: 65, y: 75, r: 28 }
+    ],
+    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+    borderColor: 'rgba(239, 68, 68, 1)',
+    borderWidth: 2
+  },
+  {
+    label: '中价值客户',
+    data: [
+      { x: 40, y: 50, r: 18 },
+      { x: 45, y: 55, r: 20 }
+    ],
+    backgroundColor: 'rgba(245, 158, 11, 0.7)',
+    borderColor: 'rgba(245, 158, 11, 1)',
+    borderWidth: 1
+  },
+  {
+    label: '潜在客户',
+    data: [
+      { x: 20, y: 30, r: 12 },
+      { x: 25, y: 35, r: 14 }
+    ],
+    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 1
+  }
+])
+</script>
+```
+
+## 动态更新数据
+
+组件内部监听了 `labels`、`datasets` 和 `height` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-bubble :datasets="datasets" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble, JQButton } from 'qcpt'
+
+interface BubbleDataPoint {
+  x: number;
+  y: number;
+  r: number;
+}
+
+const datasets = ref([
+  {
+    label: '动态数据',
+    data: [
+      { x: 20, y: 30, r: 15 },
+      { x: 40, y: 50, r: 20 },
+      { x: 60, y: 40, r: 18 }
+    ],
+    backgroundColor: 'rgba(236, 72, 153, 0.6)'
+  }
+])
+
+const refreshData = () => {
+  const count = 5;
+  const newData: BubbleDataPoint[] = [];
+  
+  for (let i = 0; i < count; i++) {
+    newData.push({
+      x: Math.floor(Math.random() * 80) + 10,
+      y: Math.floor(Math.random() * 80) + 10,
+      r: Math.floor(Math.random() * 20) + 10
+    });
+  }
+  
+  datasets.value = [
+    {
+      label: '动态数据',
+      data: newData,
+      backgroundColor: 'rgba(236, 72, 153, 0.6)'
+    }
+  ];
+}
+</script>
+```
+
+## 默认样式特性
+
+组件内置了以下默认样式特性：
+
+- **半透明气泡**：默认背景色 `rgba(54, 162, 235, 0.6)`
+- **白色 Tooltip**：背景为白色，文字为黑色
+- **显示网格**：X 轴和 Y 轴都显示网格线
+- **图例位置**：`position: 'bottom'`，图例显示在底部
+- **交互模式**：`intersect: false, mode: 'index'`
+- **从零开始**：Y 轴 `beginAtZero: true`
+- **长标签截断**：超过 13 个字符的标签会自动截断并加上 `...`
+
+这些默认样式可以通过 `datasets` 或 `options` 属性覆盖。
+
+## 数据格式说明
+
+### 数据点对象
+
+每个气泡数据点是一个包含三个属性的对象：
+
+```typescript
+interface BubbleDataPoint {
+  x: number;  // X 轴坐标值
+  y: number;  // Y 轴坐标值
+  r: number;  // 气泡半径（决定气泡大小）
+}
+```
+
+### 数据集配置
+
+```typescript
+interface BubbleDataset {
+  label: string;                    // 数据集名称
+  data: BubbleDataPoint[];          // 数据点数组
+  backgroundColor?: string;         // 气泡填充颜色（建议使用 rgba 设置透明度）
+  borderColor?: string;             // 气泡边框颜色
+  borderWidth?: number;             // 气泡边框宽度
+}
+```
+
+## 使用建议
+
+1. **透明度设置**：建议为 `backgroundColor` 设置透明度（如 `rgba(59, 130, 246, 0.6)`），避免气泡重叠时遮挡
+2. **半径范围**：`r` 值建议在 5-30 之间，过小不易观察，过大可能重叠严重
+3. **数据归一化**：如果 X、Y 轴数据范围差异很大，建议先进行归一化处理
+4. **气泡数量**：单个数据集建议不超过 20 个气泡，过多会导致图表拥挤
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `labels` | `string[]` | `[]` | X 轴标签数组（可选） |
+| `datasets` | `ChartDataset<'bubble', BubbleDataPoint[]>[]` | - | 数据集数组（必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `options` | `Partial<ChartOptions<'bubble'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### BubbleDataPoint 接口
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `x` | `number` | X 轴坐标值 |
+| `y` | `number` | Y 轴坐标值 |
+| `r` | `number` | 气泡半径 |
+
+### ChartDataset 常用配置
+
+`datasets` 数组中每个对象的常用配置项：
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 数据集名称（显示在图例中） |
+| `data` | `BubbleDataPoint[]` | - | 数据点数组 |
+| `backgroundColor` | `string \| string[]` | `'rgba(54, 162, 235, 0.6)'` | 气泡填充颜色 |
+| `borderColor` | `string \| string[]` | - | 气泡边框颜色 |
+| `borderWidth` | `number` | - | 气泡边框宽度 |
+
+更多配置项请参考 [Chart.js 官方文档](https://www.chartjs.org/docs/latest/charts/bubble.html)。
+
+</div>
+<JChBubbleDemo slot="demo" client:only="vue" />
+</DemoPanel>

@@ -1,0 +1,248 @@
+---
+title: JQPagination
+description: Pagination component for managing and displaying navigation for large datasets
+---
+
+# JQPagination
+
+A pagination component based on Quasar, providing complete pagination functionality including page switching, page size adjustment, and quick navigation.
+
+## Basic Usage
+
+```vue
+<template>
+  <j-q-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :total="total"
+    @change="handlePageChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination } from 'qcpt'
+import type { PaginationConfig } from 'qcpt'
+
+const currentPage = ref(1)
+const pageSize = ref(15)
+const total = ref(100)
+
+const handlePageChange = (pagination: PaginationConfig) => {
+  console.log('Pagination changed:', pagination)
+  // Reload data
+}
+</script>
+```
+
+## Custom Page Size Options
+
+Customize page size options with the `page-size-options` prop:
+
+```vue
+<template>
+  <j-q-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :total="total"
+    :page-size-options="[5, 10, 20, 50, 100]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination } from 'qcpt'
+
+const currentPage = ref(1)
+const pageSize = ref(20)
+const total = ref(500)
+</script>
+```
+
+## Complete Example
+
+A complete data list pagination example:
+
+```vue
+<template>
+  <div>
+    <!-- Data List -->
+    <div v-for="item in displayData" :key="item.id" class="q-pa-md">
+      {{ item.name }}
+    </div>
+    
+    <!-- Pagination Component -->
+    <j-q-pagination
+      v-model:current-page="paginationInfo.currentPage"
+      v-model:page-size="paginationInfo.pageSize"
+      :total="paginationInfo.total"
+      @change="loadData"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { JQPagination } from 'qcpt'
+import type { PaginationConfig } from 'qcpt'
+
+interface DataItem {
+  id: number
+  name: string
+}
+
+const allData = ref<DataItem[]>([])
+const paginationInfo = ref({
+  currentPage: 1,
+  pageSize: 15,
+  total: 0
+})
+
+// Calculate data for current page
+const displayData = computed(() => {
+  const start = (paginationInfo.value.currentPage - 1) * paginationInfo.value.pageSize
+  const end = start + paginationInfo.value.pageSize
+  return allData.value.slice(start, end)
+})
+
+// Load data
+const loadData = async (pagination?: PaginationConfig) => {
+  if (pagination) {
+    console.log('Pagination params:', pagination)
+  }
+  
+  // Simulate API request
+  try {
+    // const response = await api.getData({
+    //   page: paginationInfo.value.currentPage,
+    //   pageSize: paginationInfo.value.pageSize
+    // })
+    // allData.value = response.data
+    // paginationInfo.value.total = response.total
+  } catch (error) {
+    console.error('Failed to load data:', error)
+  }
+}
+
+// Initialize data loading
+loadData()
+</script>
+```
+
+## Usage with usePagination
+
+The component library provides a `usePagination` composable for easier pagination state management:
+
+```vue
+<template>
+  <div>
+    <!-- Data List -->
+    <div v-for="item in dataList" :key="item.id" class="q-pa-md">
+      {{ item.name }}
+    </div>
+    
+    <!-- Pagination Component -->
+    <j-q-pagination
+      v-model:current-page="paginationInfo.currentPage"
+      v-model:page-size="paginationInfo.pageSize"
+      :total="paginationInfo.total"
+      @change="loadData"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination, usePagination } from 'qcpt'
+
+const dataList = ref([])
+
+// Use usePagination to manage pagination state
+const { paginationInfo, getPaginationParams, setTotal } = usePagination({
+  pageSize: 20
+})
+
+// Load data
+const loadData = async () => {
+  const params = getPaginationParams()
+  console.log('Request params:', params) // { currentPage: 1, pageSize: 20 }
+  
+  try {
+    // const response = await api.getData(params)
+    // dataList.value = response.data
+    // setTotal(response.total)
+  } catch (error) {
+    console.error('Failed to load data:', error)
+  }
+}
+
+// Initialize
+loadData()
+</script>
+```
+
+## API
+
+### Props
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `currentPage` | `number` | `1` | Current page number (supports v-model) |
+| `pageSize` | `number` | `15` | Number of items per page (supports v-model) |
+| `total` | `number` | `0` | Total number of items |
+| `pageSizeOptions` | `number[]` | `[10, 15, 20, 30, 50]` | Page size options |
+
+### Events
+
+| Event | Parameters | Description |
+| --- | --- | --- |
+| `update:currentPage` | `page: number` | Triggered when current page changes |
+| `update:pageSize` | `size: number` | Triggered when page size changes |
+| `change` | `pagination: PaginationConfig` | Triggered on pagination change with complete pagination info |
+
+### Types
+
+```typescript
+interface PaginationConfig {
+  currentPage: number
+  pageSize: number
+  total: number
+}
+```
+
+## Features
+
+### Page Navigation
+- Click page numbers to switch pages directly
+- Support previous/next buttons
+- Display up to 6 page number buttons
+- Automatically calculate total pages
+
+### Page Size Selection
+- Adjust items per page via dropdown
+- Automatically reset to first page when page size changes
+- Customizable page size options
+
+### Quick Jump
+- Enter page number for quick navigation
+- Input displays current page and total pages
+- Press Enter to execute jump
+- Automatically validates page number range
+
+### Internationalization
+- Automatically displays text in current language
+- Supports Chinese and English switching
+- Texts include: total items, items/page, go to, etc.
+
+## Notes
+
+1. **Two-way Binding**: Recommended to use `v-model:current-page` and `v-model:page-size` for two-way binding
+2. **change Event**: Triggered when either `currentPage` or `pageSize` changes, contains complete pagination info
+3. **Page Range**: Component automatically validates page range, ensuring between 1 and total pages
+4. **Total Pages Calculation**: Total pages = Math.ceil(total / pageSize), minimum is 1
+5. **Page Size Change**: When `pageSize` changes, automatically resets to first page
+
+## Related Resources
+
+- [usePagination](/en/utilities/use-pagination/) - Pagination state management Composable
+- [JQTable](/en/components/data-display/j-q-table/) - Table component (with built-in pagination)

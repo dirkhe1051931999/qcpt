@@ -1,0 +1,530 @@
+---
+title: JChPieDoughnut 饼图/环形图
+description: 饼图和环形图组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChPieDoughnutDemo from '@components/DemoPanel/JChPieDoughnutDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-pie-doughnut)
+
+<DemoPanel title="JChPieDoughnut 组件演示">
+  <div slot="content">
+
+# JChPieDoughnut 饼图/环形图
+
+基于 Chart.js 的饼图和环形图组件，通过 `type` 属性切换图表类型，适用于展示数据占比和分布情况。
+
+## 饼图 (Pie Chart)
+
+饼图用于展示各部分在整体中的占比关系。
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="pie"
+    :labels="['产品A', '产品B', '产品C', '产品D', '产品E']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '销量',
+    data: [300, 250, 200, 150, 100],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)',
+      'rgba(139, 92, 246, 0.8)'
+    ]
+  }
+])
+</script>
+```
+
+## 环形图 (Doughnut Chart)
+
+环形图是中间镂空的饼图，视觉效果更现代。
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="doughnut"
+    :labels="['直接访问', '搜索引擎', '社交媒体', '邮件营销', '其他']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '访问来源',
+    data: [335, 310, 234, 135, 86],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(236, 72, 153, 0.8)',
+      'rgba(107, 114, 128, 0.8)'
+    ]
+  }
+])
+</script>
+```
+
+## 实际应用场景
+
+### 销售占比分析
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="pie"
+    :labels="['华东地区', '华南地区', '华北地区', '西南地区', '东北地区', '西北地区']"
+    :datasets="salesDatasets"
+    :height="350"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const salesDatasets = ref([
+  {
+    label: '销售额',
+    data: [3500, 2800, 2200, 1800, 1200, 800],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)',
+      'rgba(139, 92, 246, 0.8)',
+      'rgba(6, 182, 212, 0.8)'
+    ]
+  }
+])
+</script>
+```
+
+### 用户分布
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="doughnut"
+    :labels="['18-24岁', '25-34岁', '35-44岁', '45-54岁', '55岁以上']"
+    :datasets="userDatasets"
+    :height="350"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const userDatasets = ref([
+  {
+    label: '用户数',
+    data: [2500, 4200, 3800, 2100, 1400],
+    backgroundColor: [
+      'rgba(139, 92, 246, 0.8)',
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)'
+    ]
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="doughnut"
+    :labels="['已完成', '进行中', '未开始']"
+    :datasets="datasets"
+    :height="250"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '项目状态',
+    data: [65, 25, 10],
+    backgroundColor: [
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(107, 114, 128, 0.8)'
+    ]
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="pie"
+    :labels="['类型A', '类型B', '类型C', '类型D']"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const datasets = ref([
+  {
+    label: '数据分布',
+    data: [40, 30, 20, 10],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)'
+    ]
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'pie'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 调整图例位置
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="doughnut"
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['产品A', '产品B', '产品C'])
+const datasets = ref([
+  {
+    label: '销量',
+    data: [300, 200, 150],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)'
+    ]
+  }
+])
+
+const customOptions: Partial<ChartOptions<'doughnut'>> = {
+  plugins: {
+    legend: {
+      position: 'right'  // 图例放在右侧
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="pie"
+    :labels="labels"
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['产品A', '产品B', '产品C', '产品D'])
+const datasets = ref([
+  {
+    label: '市场份额',
+    data: [35, 30, 20, 15],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)'
+    ]
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'pie'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        },
+        padding: 15
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: (context: any) => {
+          const label = context.label || '';
+          const value = context.parsed || 0;
+          const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+          const percentage = ((value / total) * 100).toFixed(1);
+          return `${label}: ${value} (${percentage}%)`;
+        }
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 自定义颜色和边框
+
+通过 `backgroundColor`、`borderColor` 和 `borderWidth` 自定义样式。
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    type="doughnut"
+    :labels="['优秀', '良好', '及格', '不及格']"
+    :datasets="colorDatasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const colorDatasets = ref([
+  {
+    label: '成绩分布',
+    data: [35, 40, 20, 5],
+    backgroundColor: [
+      '#10b981',  // 绿色
+      '#3b82f6',  // 蓝色
+      '#f59e0b',  // 橙色
+      '#ef4444'   // 红色
+    ],
+    borderColor: [
+      '#059669',
+      '#2563eb',
+      '#d97706',
+      '#dc2626'
+    ],
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+## 动态切换图表类型
+
+通过修改 `type` 属性动态切换饼图和环形图。
+
+```vue
+<template>
+  <div>
+    <j-q-button 
+      :label="currentType === 'pie' ? '切换为环形图' : '切换为饼图'"
+      @click="toggleType"
+    />
+    <j-ch-pie-doughnut 
+      :type="currentType"
+      :labels="labels"
+      :datasets="datasets"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut, JQButton } from 'qcpt'
+
+const currentType = ref<'pie' | 'doughnut'>('pie')
+const labels = ref(['一月', '二月', '三月', '四月', '五月'])
+const datasets = ref([
+  {
+    label: '月度数据',
+    data: [120, 190, 150, 220, 180],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)',
+      'rgba(139, 92, 246, 0.8)'
+    ]
+  }
+])
+
+const toggleType = () => {
+  currentType.value = currentType.value === 'pie' ? 'doughnut' : 'pie'
+}
+</script>
+```
+
+## 动态更新数据
+
+组件内部监听了 `labels`、`datasets` 和 `type` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-pie-doughnut 
+      type="doughnut"
+      :labels="labels"
+      :datasets="datasets"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut, JQButton } from 'qcpt'
+
+const labels = ref(['产品A', '产品B', '产品C', '产品D'])
+const datasets = ref([
+  {
+    label: '销量',
+    data: [150, 200, 180, 120],
+    backgroundColor: [
+      'rgba(59, 130, 246, 0.8)',
+      'rgba(16, 185, 129, 0.8)',
+      'rgba(245, 158, 11, 0.8)',
+      'rgba(239, 68, 68, 0.8)'
+    ]
+  }
+])
+
+const refreshData = () => {
+  datasets.value = [
+    {
+      label: '销量',
+      data: labels.value.map(() => Math.floor(Math.random() * 200) + 100),
+      backgroundColor: [
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(16, 185, 129, 0.8)',
+        'rgba(245, 158, 11, 0.8)',
+        'rgba(239, 68, 68, 0.8)'
+      ]
+    }
+  ]
+}
+</script>
+```
+
+## 默认样式特性
+
+组件内置了以下默认样式特性：
+
+- **外部 Tooltip**：使用自定义的外部 tooltip，背景为白色，文字为黑色
+- **图例位置**：`position: 'bottom'`，图例显示在底部
+- **边框宽度**：`borderWidth: 2`，默认边框宽度为 2
+- **交互模式**：`intersect: true, mode: 'index'`
+- **响应式**：`responsive: true`，自动适应容器宽度
+
+这些默认样式可以通过 `datasets` 或 `options` 属性覆盖。
+
+## 饼图 vs 环形图
+
+### 饼图 (Pie Chart)
+- **适用场景**：数据分类较少（3-7 个）时使用
+- **视觉特点**：整体感更强，适合强调各部分占比
+- **典型应用**：市场份额、产品销量占比、资源分配等
+
+### 环形图 (Doughnut Chart)
+- **适用场景**：数据分类较多（5-10 个）时使用
+- **视觉特点**：中间镂空，视觉更轻盈，可在中心显示总数
+- **典型应用**：用户分布、流量来源、任务状态等
+
+## 使用建议
+
+1. **数据分类**：建议数据分类不超过 7 个，过多会导致图表难以阅读
+2. **颜色选择**：使用区分度高的颜色，建议使用色相差异明显的配色方案
+3. **透明度设置**：建议为 `backgroundColor` 设置透明度（如 `rgba(59, 130, 246, 0.8)`）
+4. **数据排序**：建议将数据从大到小排序，便于观察主要占比
+5. **百分比显示**：可以通过自定义 tooltip 显示百分比
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `type` | `'pie' \| 'doughnut'` | - | 图表类型（必填） |
+| `labels` | `string[]` | - | 数据标签数组（必填） |
+| `datasets` | `ChartDataset<'pie' \| 'doughnut'>[]` | - | 数据集数组（必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `options` | `Partial<ChartOptions<'pie' \| 'doughnut'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### ChartDataset 常用配置
+
+`datasets` 数组中每个对象的常用配置项：
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 数据集名称（显示在图例中） |
+| `data` | `number[]` | - | 数据数组 |
+| `backgroundColor` | `string \| string[]` | - | 扇形填充颜色（数组时每个扇形对应一个颜色） |
+| `borderColor` | `string \| string[]` | `'#fff'` | 扇形边框颜色 |
+| `borderWidth` | `number` | `2` | 扇形边框宽度 |
+
+更多配置项请参考 [Chart.js Pie Chart 文档](https://www.chartjs.org/docs/latest/charts/doughnut.html)。
+
+</div>
+<JChPieDoughnutDemo slot="demo" client:only="vue" />
+</DemoPanel>

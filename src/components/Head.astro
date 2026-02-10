@@ -1,0 +1,12 @@
+---
+// Starlight 自定义 Head 组件，用于全局注入脚本
+import LogoRedirect from './LogoRedirect.astro';
+---
+
+<!-- 确保字符编码 -->
+<meta charset="UTF-8" />
+<!-- 保留默认的 head 内容 -->
+<slot />
+<!-- 添加我们的脚本 -->
+<LogoRedirect />
+

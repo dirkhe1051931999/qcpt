@@ -1,0 +1,152 @@
+---
+title: JQAutocomplete 自动完成
+description: 自动完成输入组件，支持搜索历史记录
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQAutocompleteDemo from '@components/DemoPanel/JQAutocompleteDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-autocomplete)
+
+<DemoPanel title="JQAutocomplete 组件演示">
+<div slot="content">
+
+# JQAutocomplete 自动完成
+
+自动完成输入组件，支持搜索历史记录功能，自动保存到 localStorage。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-form-label label="搜索用户">
+    <j-q-autocomplete
+      v-model="searchValue"
+      search-key="user-search"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQAutocomplete, JQFormLabel } from 'qcpt'
+
+const searchValue = ref('')
+</script>
+```
+
+## 可删除历史记录
+
+使用 `deletable` 属性启用历史记录删除功能：
+
+```vue
+<template>
+  <j-q-form-label label="搜索用户">
+    <j-q-autocomplete
+      v-model="searchValue"
+      search-key="user-search"
+      deletable
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQAutocomplete, JQFormLabel } from 'qcpt'
+
+const searchValue = ref('')
+</script>
+```
+
+## 自定义历史记录数量
+
+使用 `maxLength` 属性设置最大历史记录数量：
+
+```vue
+<template>
+  <j-q-form-label label="搜索用户">
+    <j-q-autocomplete
+      v-model="searchValue"
+      search-key="user-search"
+      :max-length="10"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQAutocomplete, JQFormLabel } from 'qcpt'
+
+const searchValue = ref('')
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| null` | - | 输入值（v-model，必填） |
+| `searchKey` | `string` | - | 搜索键，用于区分不同的搜索历史（必填） |
+| `label` | `string` | `''` | 标签文本 |
+| `deletable` | `boolean` | `false` | 是否可删除历史记录 |
+| `maxLength` | `number` | `5` | 最大历史记录数量 |
+| `tooltipDisabled` | `boolean` | `false` | 是否禁用历史记录列表项的 tooltip（文本过长时的悬停提示） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| null` | 值更新事件 |
+
+### Methods
+
+通过 ref 可以访问以下方法：
+
+| 方法名 | 类型 | 描述 |
+| --- | --- | --- |
+| `saveHistory` | `(value: string) => void` | 手动保存历史记录 |
+
+#### 使用示例
+
+```vue
+<template>
+  <j-q-form-label label="搜索用户">
+    <j-q-autocomplete
+      ref="autocompleteRef"
+      v-model="searchValue"
+      search-key="user-search"
+    />
+  </j-q-form-label>
+  <q-btn @click="handleSave" label="保存当前搜索" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQAutocomplete, JQFormLabel } from 'qcpt'
+
+const autocompleteRef = ref()
+const searchValue = ref('')
+
+const handleSave = () => {
+  if (searchValue.value) {
+    autocompleteRef.value?.saveHistory(searchValue.value)
+  }
+}
+</script>
+```
+
+## 特性
+
+- 自动保存搜索历史到 localStorage（键名：`APP_SEARCH_HISTORY`）
+- 每个 `searchKey` 有独立的历史记录
+- 显示最近的历史记录（默认 5 条）
+- 支持历史记录过滤（根据输入值）
+- 支持历史记录选择
+- 支持历史记录删除（可选）
+- 历史记录文本过长时显示 tooltip
+
+</div>
+<JQAutocompleteDemo slot="demo" client:only="vue" />
+</DemoPanel>

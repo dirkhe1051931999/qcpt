@@ -1,0 +1,89 @@
+---
+title: JQDateYear 年份选择器
+description: 年份选择器组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDateYearDemo from '@components/DemoPanel/JQDateYearDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-date-year)
+
+<DemoPanel title="JQDateYear 组件演示">
+<div slot="content">
+
+# JQDateYear 年份选择器
+
+基于 Quasar `QField` 的年份选择器组件，用于选择年份。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-date-year v-model="year" label="选择年份" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateYear } from 'qcpt'
+
+const year = ref('')
+</script>
+```
+
+## 自定义显示格式
+
+使用 `valueDisplayFn` 自定义显示格式：
+
+```vue
+<template>
+  <j-q-date-year 
+    v-model="year" 
+    label="选择年份"
+    :value-display-fn="formatYear"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateYear } from 'qcpt'
+
+const year = ref('')
+
+const formatYear = (value: any) => {
+  if (!value) return ''
+  const date = new Date(value)
+  return `${date.getFullYear()}年`
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| Number \| Object \| Date` | - | 年份值（v-model），可以是日期字符串、时间戳、日期对象或年份数字 |
+| `label` | `string` | - | 标签文本 |
+| `clearable` | `boolean` | `true` | 是否显示清除按钮 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | - | 是否禁用 |
+| `valueDisplayFn` | `Function` | - | 自定义值显示函数 |
+| `rules` | `Array` | - | 验证规则 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| Number \| Object \| Date` | 值更新事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `value-display` | 自定义值显示内容 |
+
+</div>
+<JQDateYearDemo slot="demo" client:only="vue" />
+</DemoPanel>

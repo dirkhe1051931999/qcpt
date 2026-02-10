@@ -1,0 +1,260 @@
+---
+title: JQPagination 分页
+description: 分页组件，用于管理和显示大量数据的分页导航
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQPaginationDemo from '@components/DemoPanel/JQPaginationDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-pagination)
+
+<DemoPanel title="JQPagination 组件演示">
+<div slot="content">
+
+# JQPagination 分页
+
+基于 Quasar 的分页组件，提供完整的分页功能，包括页码切换、每页显示数量调整、快速跳转等。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :total="total"
+    @change="handlePageChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination } from 'qcpt'
+import type { PaginationConfig } from 'qcpt'
+
+const currentPage = ref(1)
+const pageSize = ref(15)
+const total = ref(100)
+
+const handlePageChange = (pagination: PaginationConfig) => {
+  console.log('分页变化:', pagination)
+  // 重新加载数据
+}
+</script>
+```
+
+## 自定义每页显示数量选项
+
+通过 `page-size-options` 属性自定义每页显示数量的选项：
+
+```vue
+<template>
+  <j-q-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :total="total"
+    :page-size-options="[5, 10, 20, 50, 100]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination } from 'qcpt'
+
+const currentPage = ref(1)
+const pageSize = ref(20)
+const total = ref(500)
+</script>
+```
+
+## 完整示例
+
+一个完整的数据列表分页示例：
+
+```vue
+<template>
+  <div>
+    <!-- 数据列表 -->
+    <div v-for="item in displayData" :key="item.id" class="q-pa-md">
+      {{ item.name }}
+    </div>
+    
+    <!-- 分页组件 -->
+    <j-q-pagination
+      v-model:current-page="paginationInfo.currentPage"
+      v-model:page-size="paginationInfo.pageSize"
+      :total="paginationInfo.total"
+      @change="loadData"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { JQPagination } from 'qcpt'
+import type { PaginationConfig } from 'qcpt'
+
+interface DataItem {
+  id: number
+  name: string
+}
+
+const allData = ref<DataItem[]>([])
+const paginationInfo = ref({
+  currentPage: 1,
+  pageSize: 15,
+  total: 0
+})
+
+// 计算当前页显示的数据
+const displayData = computed(() => {
+  const start = (paginationInfo.value.currentPage - 1) * paginationInfo.value.pageSize
+  const end = start + paginationInfo.value.pageSize
+  return allData.value.slice(start, end)
+})
+
+// 加载数据
+const loadData = async (pagination?: PaginationConfig) => {
+  if (pagination) {
+    console.log('分页参数:', pagination)
+  }
+  
+  // 模拟 API 请求
+  try {
+    // const response = await api.getData({
+    //   page: paginationInfo.value.currentPage,
+    //   pageSize: paginationInfo.value.pageSize
+    // })
+    // allData.value = response.data
+    // paginationInfo.value.total = response.total
+  } catch (error) {
+    console.error('加载数据失败:', error)
+  }
+}
+
+// 初始化加载数据
+loadData()
+</script>
+```
+
+## 与 usePagination 组合使用
+
+组件库提供了 `usePagination` composable，可以更方便地管理分页状态：
+
+```vue
+<template>
+  <div>
+    <!-- 数据列表 -->
+    <div v-for="item in dataList" :key="item.id" class="q-pa-md">
+      {{ item.name }}
+    </div>
+    
+    <!-- 分页组件 -->
+    <j-q-pagination
+      v-model:current-page="paginationInfo.currentPage"
+      v-model:page-size="paginationInfo.pageSize"
+      :total="paginationInfo.total"
+      @change="loadData"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQPagination, usePagination } from 'qcpt'
+
+const dataList = ref([])
+
+// 使用 usePagination 管理分页状态
+const { paginationInfo, getPaginationParams, setTotal } = usePagination({
+  pageSize: 20
+})
+
+// 加载数据
+const loadData = async () => {
+  const params = getPaginationParams()
+  console.log('请求参数:', params) // { currentPage: 1, pageSize: 20 }
+  
+  try {
+    // const response = await api.getData(params)
+    // dataList.value = response.data
+    // setTotal(response.total)
+  } catch (error) {
+    console.error('加载数据失败:', error)
+  }
+}
+
+// 初始化
+loadData()
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `currentPage` | `number` | `1` | 当前页码（支持 v-model） |
+| `pageSize` | `number` | `15` | 每页显示数量（支持 v-model） |
+| `total` | `number` | `0` | 总条数 |
+| `pageSizeOptions` | `number[]` | `[10, 15, 20, 30, 50]` | 每页显示数量选项 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:currentPage` | `page: number` | 当前页码变化时触发 |
+| `update:pageSize` | `size: number` | 每页显示数量变化时触发 |
+| `change` | `pagination: PaginationConfig` | 分页变化时触发，包含完整的分页信息 |
+
+### Types
+
+```typescript
+interface PaginationConfig {
+  currentPage: number
+  pageSize: number
+  total: number
+}
+```
+
+## 功能特性
+
+### 页码切换
+- 支持点击页码直接切换
+- 支持前进/后退按钮
+- 最多显示 6 个页码按钮
+- 自动计算总页数
+
+### 每页显示数量
+- 支持通过下拉选择调整每页显示数量
+- 切换每页显示数量时自动重置到第一页
+- 可自定义显示数量选项
+
+### 快速跳转
+- 支持输入页码快速跳转
+- 输入框显示当前页码和总页数
+- 按回车键执行跳转
+- 自动校验输入的页码范围
+
+### 国际化
+- 自动显示当前语言的文本
+- 支持中英文切换
+- 文本包括：总条数、条/页、跳转等
+
+## 注意事项
+
+1. **双向绑定**：推荐使用 `v-model:current-page` 和 `v-model:page-size` 进行双向绑定
+2. **change 事件**：在 `currentPage` 或 `pageSize` 变化时都会触发，包含完整的分页信息
+3. **页码范围**：组件会自动校验页码范围，确保在 1 到总页数之间
+4. **总页数计算**：总页数 = Math.ceil(total / pageSize)，最小为 1
+5. **每页数量变化**：当 `pageSize` 变化时，会自动重置到第一页
+
+## 相关资源
+
+- [usePagination](/zh-cn/utilities/use-pagination/) - 分页状态管理 Composable
+- [JQTable](/zh-cn/components/data-display/j-q-table/) - 表格组件（内置分页功能）
+
+</div>
+<JQPaginationDemo slot="demo" client:only="vue" />
+</DemoPanel>

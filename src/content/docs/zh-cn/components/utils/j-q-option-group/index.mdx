@@ -1,0 +1,234 @@
+---
+title: JQOptionGroup 选项组
+description: 单选/复选框按钮组组件，支持表单验证和提示
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-option-group)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQOptionGroupDemo from '@components/DemoPanel/JQOptionGroupDemo.vue';
+
+# JQOptionGroup 选项组
+
+单选/复选框按钮组组件，支持表单验证、提示和多种布局。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="radio"
+    label="选择类型"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref(null)
+
+const options = [
+  { label: '选项1', value: 1 },
+  { label: '选项2', value: 2 }
+]
+</script>
+```
+
+## 复选框模式
+
+使用 `type="checkbox"` 启用多选：
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="checkbox"
+    label="多选"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref<number[]>([])
+
+const options = [
+  { label: '选项1', value: 1 },
+  { label: '选项2', value: 2 },
+  { label: '选项3', value: 3 }
+]
+</script>
+```
+
+## 内联布局
+
+使用 `inline` 属性启用内联布局：
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="radio"
+    inline
+    label="内联布局"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref(null)
+const options = [
+  { label: '选项1', value: 1 },
+  { label: '选项2', value: 2 },
+  { label: '选项3', value: 3 }
+]
+</script>
+```
+
+## 网格布局
+
+使用 `inlineSpanCount` 属性设置非内联模式下的网格列数：
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="checkbox"
+    :inline-span-count="4"
+    label="网格布局"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref<number[]>([])
+const options = [
+  { label: '选项1', value: 1 },
+  { label: '选项2', value: 2 },
+  { label: '选项3', value: 3 },
+  { label: '选项4', value: 4 }
+]
+</script>
+```
+
+## 带提示的选项
+
+选项可以设置 `tip` 属性显示提示：
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="radio"
+    label="选择类型"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref(null)
+const options = [
+  { label: '选项1', value: 1, tip: '这是选项1的说明' },
+  { label: '选项2', value: 2, tip: '这是选项2的说明' }
+]
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-q-option-group
+    v-model="selected"
+    :options="options"
+    type="radio"
+    label="选择类型"
+    :rules="[
+      val => val !== null || '请选择一个选项'
+    ]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQOptionGroup } from 'qcpt'
+
+const selected = ref(null)
+const options = [
+  { label: '选项1', value: 1 },
+  { label: '选项2', value: 2 }
+]
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| boolean \| Array` | `null` | 选中值（v-model，单选为单个值，多选为数组） |
+| `options` | `Array` | - | 选项数组（必填） |
+| `type` | `'radio' \| 'checkbox'` | `'radio'` | 类型 |
+| `label` | `string` | - | 标签文本 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `inline` | `boolean` | `false` | 是否内联布局 |
+| `inlineSpanCount` | `number` | `3` | 非内联模式下的网格列数 |
+| `size` | `string` | - | 尺寸（Quasar QOptionGroup size） |
+| `color` | `string` | - | 颜色（Quasar QOptionGroup color） |
+| `rules` | `Array` | - | 验证规则（Quasar QField rules） |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `filedClass` | `string` | `''` | 字段自定义 class |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: any` | 值更新事件 |
+| `change` | `value: any` | 值变化事件 |
+
+### 选项对象
+
+选项对象可以包含以下属性：
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `label` | `string` | 显示文本（必填） |
+| `value` | `any` | 选项值（必填） |
+| `tip` | `string` | 提示文本（鼠标悬停显示） |
+| `disable` | `boolean` | 是否禁用该选项 |
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQOptionGroupDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 单选模式使用 `type="radio"`，多选模式使用 `type="checkbox"`
+- 使用 `inline` 属性启用内联布局
+- 使用 `inlineSpanCount` 设置非内联模式下的网格列数
+- 选项可以设置 `tip` 属性显示提示
+- 支持表单验证，使用 `rules` 属性
+

@@ -1,0 +1,309 @@
+---
+title: DOM 方法
+description: DOM 操作相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import DomHelpersDemo from '@components/DemoPanel/DomHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/dom.ts)
+
+<DemoPanel title="DOM 方法交互式演示">
+  <div slot="content">
+
+# DOM 方法
+
+提供丰富的 DOM 操作工具函数，包括剪贴板、文件下载、滚动、元素操作等功能。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用 DOM 方法
+jqTool.helper.dom.copyToClipboard('Hello World')
+```
+
+## 剪贴板操作
+
+### copyToClipboard
+
+复制文本到剪贴板：
+
+```typescript
+await jqTool.helper.dom.copyToClipboard('Hello World')
+// 返回 true 表示成功
+```
+
+### readFromClipboard
+
+读取剪贴板内容：
+
+```typescript
+const text = await jqTool.helper.dom.readFromClipboard()
+console.log(text)
+```
+
+## 文件下载
+
+### downloadFile
+
+下载文件：
+
+```typescript
+// 下载 Blob
+const blob = new Blob(['content'], { type: 'text/plain' })
+jqTool.helper.dom.downloadFile(blob, 'file.txt')
+
+// 下载 URL
+jqTool.helper.dom.downloadFile('http://example.com/file.pdf', 'document.pdf')
+```
+
+### downloadJSON
+
+下载 JSON 数据为文件：
+
+```typescript
+jqTool.helper.dom.downloadJSON({ name: 'Tom', age: 20 }, 'user.json')
+```
+
+### downloadText
+
+下载文本文件：
+
+```typescript
+jqTool.helper.dom.downloadText('Hello World', 'hello.txt')
+```
+
+## 滚动操作
+
+### scrollTo
+
+平滑滚动到指定位置：
+
+```typescript
+jqTool.helper.dom.scrollTo({ top: 0, behavior: 'smooth' })
+jqTool.helper.dom.scrollTo({ top: 1000, left: 0 })
+```
+
+### scrollToElement
+
+滚动到指定元素：
+
+```typescript
+jqTool.helper.dom.scrollToElement('#target')
+jqTool.helper.dom.scrollToElement(
+  document.getElementById('target'),
+  { behavior: 'smooth', block: 'center' }
+)
+```
+
+### scrollToTop / scrollToBottom
+
+回到顶部/底部：
+
+```typescript
+jqTool.helper.dom.scrollToTop() // 平滑滚动
+jqTool.helper.dom.scrollToTop(false) // 立即跳转
+jqTool.helper.dom.scrollToBottom()
+```
+
+### getScrollPosition
+
+获取滚动位置：
+
+```typescript
+const { x, y } = jqTool.helper.dom.getScrollPosition()
+```
+
+### getOffsetTop
+
+获取元素距离文档顶部的距离：
+
+```typescript
+const offsetTop = jqTool.helper.dom.getOffsetTop(element)
+```
+
+## 元素可见性检测
+
+### isInViewport
+
+判断元素是否在可视区域：
+
+```typescript
+if (jqTool.helper.dom.isInViewport(element)) {
+  console.log('元素在可视区域内')
+}
+```
+
+### isPartiallyVisible
+
+判断元素是否部分可见：
+
+```typescript
+if (jqTool.helper.dom.isPartiallyVisible(element)) {
+  console.log('元素部分可见')
+}
+```
+
+## 全屏操作
+
+### toggleFullscreen
+
+切换全屏：
+
+```typescript
+jqTool.helper.dom.toggleFullscreen() // 切换页面全屏
+jqTool.helper.dom.toggleFullscreen(videoElement) // 切换视频全屏
+```
+
+### enterFullscreen / exitFullscreen
+
+进入/退出全屏：
+
+```typescript
+jqTool.helper.dom.enterFullscreen(element)
+jqTool.helper.dom.exitFullscreen()
+```
+
+### isFullscreen
+
+判断是否全屏：
+
+```typescript
+const fullscreen = jqTool.helper.dom.isFullscreen()
+```
+
+## 元素操作
+
+### addClass / removeClass / toggleClass
+
+类名操作：
+
+```typescript
+jqTool.helper.dom.addClass(element, 'active')
+jqTool.helper.dom.removeClass(element, 'active')
+jqTool.helper.dom.toggleClass(element, 'active')
+```
+
+### hasClass
+
+判断是否有指定类名：
+
+```typescript
+const hasActive = jqTool.helper.dom.hasClass(element, 'active')
+```
+
+### getClasses
+
+获取元素的所有类名：
+
+```typescript
+const classes = jqTool.helper.dom.getClasses(element)
+// ['class1', 'class2']
+```
+
+## 元素尺寸
+
+### getElementRect
+
+获取元素的尺寸和位置：
+
+```typescript
+const rect = jqTool.helper.dom.getElementRect(element)
+// { width, height, top, left, ... }
+```
+
+### getElementWidth / getElementHeight
+
+获取元素宽高：
+
+```typescript
+const width = jqTool.helper.dom.getElementWidth(element)
+const height = jqTool.helper.dom.getElementHeight(element)
+```
+
+## 元素选择
+
+### querySelector / querySelectorAll
+
+查询元素：
+
+```typescript
+const element = jqTool.helper.dom.querySelector('#id')
+const elements = jqTool.helper.dom.querySelectorAll('.class')
+```
+
+## 元素属性
+
+### getAttribute / setAttribute / removeAttribute
+
+属性操作：
+
+```typescript
+const value = jqTool.helper.dom.getAttribute(element, 'data-id')
+jqTool.helper.dom.setAttribute(element, 'data-id', '123')
+jqTool.helper.dom.removeAttribute(element, 'data-id')
+```
+
+### hasAttribute
+
+判断是否有指定属性：
+
+```typescript
+const hasAttr = jqTool.helper.dom.hasAttribute(element, 'data-id')
+```
+
+## 元素样式
+
+### getStyle
+
+获取元素的计算样式：
+
+```typescript
+const color = jqTool.helper.dom.getStyle(element, 'color')
+```
+
+### setStyle
+
+设置元素样式：
+
+```typescript
+jqTool.helper.dom.setStyle(element, {
+  color: 'red',
+  fontSize: '16px'
+})
+```
+
+## 窗口相关
+
+### getWindowSize
+
+获取窗口尺寸：
+
+```typescript
+const { width, height } = jqTool.helper.dom.getWindowSize()
+```
+
+### getPageHeight / getPageWidth
+
+获取页面总高度/宽度：
+
+```typescript
+const pageHeight = jqTool.helper.dom.getPageHeight()
+const pageWidth = jqTool.helper.dom.getPageWidth()
+```
+
+### isScrolledToBottom
+
+判断是否滚动到底部：
+
+```typescript
+if (jqTool.helper.dom.isScrolledToBottom(100)) {
+  console.log('距离底部100px时触发')
+}
+```
+
+  </div>
+  <DomHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

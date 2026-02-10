@@ -1,0 +1,295 @@
+---
+title: JCTable 表格
+description: 轻量级表格组件，支持固定列、省略号提示、复制等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTableDemo from '@components/DemoPanel/JCTableDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-table)
+
+<DemoPanel title="JCTable 组件演示">
+<div slot="content">
+
+# JCTable 表格
+
+轻量级表格组件，支持固定列、省略号提示、复制、单元格点击等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { name: 'name', label: '姓名', width: 120 },
+  { name: 'age', label: '年龄', width: 100 },
+  { name: 'email', label: '邮箱', width: 200 }
+]
+
+const rows = ref([
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com' },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com' }
+])
+</script>
+```
+
+## 固定列
+
+支持固定第一列或最后一列：
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+    first-column-pinned
+    last-column-pinned
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { name: 'name', label: '姓名', width: 120 },
+  { name: 'age', label: '年龄', width: 100 },
+  { name: 'email', label: '邮箱', width: 200 },
+  { name: 'action', label: '操作', width: 150 }
+]
+
+const rows = ref([
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com' },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com' }
+])
+</script>
+```
+
+## 文本省略和提示
+
+当文本超出最大宽度时自动显示省略号，并支持 tooltip 提示：
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { name: 'name', label: '姓名', width: 120 },
+  { name: 'description', label: '描述', maxWidth: 200, wrapCount: 2 }
+]
+
+const rows = ref([
+  { 
+    id: 1, 
+    name: '张三', 
+    description: '这是一段很长的描述文本，超出最大宽度时会显示省略号，鼠标悬停可查看完整内容'
+  }
+])
+</script>
+```
+
+## 复制功能
+
+在列配置中设置 `copy: true` 可显示复制按钮：
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { name: 'name', label: '姓名', width: 120 },
+  { name: 'email', label: '邮箱', width: 200, copy: true }
+]
+
+const rows = ref([
+  { id: 1, name: '张三', email: 'zhangsan@example.com' }
+])
+</script>
+```
+
+## 单元格点击
+
+支持单元格点击事件：
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { 
+    name: 'name', 
+    label: '姓名', 
+    width: 120,
+    clickable: true,
+    onClick: (value, row) => {
+      console.log('点击了姓名:', value, row)
+    }
+  }
+]
+
+const rows = ref([
+  { id: 1, name: '张三', age: 25 }
+])
+</script>
+```
+
+## 自定义格式化
+
+使用 `format` 函数自定义单元格显示格式：
+
+```vue
+<template>
+  <j-c-table 
+    :columns="columns" 
+    :rows="rows"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { 
+    name: 'price', 
+    label: '价格', 
+    width: 120,
+    format: (value) => `¥${value.toFixed(2)}`
+  }
+]
+
+const rows = ref([
+  { id: 1, price: 99.99 }
+])
+</script>
+```
+
+## 自定义插槽
+
+支持自定义表头和单元格内容：
+
+```vue
+<template>
+  <j-c-table :columns="columns" :rows="rows">
+    <template #header-name="{ column }">
+      <span style="color: red;">{{ column.label }}</span>
+    </template>
+    
+    <template #body-name="{ row, value }">
+      <span style="font-weight: bold;">{{ value }}</span>
+    </template>
+  </j-c-table>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTable } from 'qcpt'
+import type { JCTableColumn } from 'qcpt'
+
+const columns: JCTableColumn[] = [
+  { name: 'name', label: '姓名', width: 120 }
+]
+
+const rows = ref([
+  { id: 1, name: '张三' }
+])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `columns` | `JCTableColumn[]` | - | 列配置数组（必填） |
+| `rows` | `any[]` | `[]` | 行数据数组 |
+| `rowKey` | `string` | `'id'` | 行的唯一标识字段 |
+| `emptyText` | `string` | `'暂无数据'` | 空数据提示文本 |
+| `firstColumnPinned` | `boolean` | `false` | 是否固定第一列 |
+| `lastColumnPinned` | `boolean` | `false` | 是否固定最后一列 |
+| `fixedHeader` | `boolean` | `true` | 是否固定表头 |
+| `maxBodyHeight` | `string \| number` | - | 表体最大高度 |
+
+### JCTableColumn 列配置
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `name` | `string` | - | 列的唯一标识（必填） |
+| `label` | `string` | - | 列的显示标题 |
+| `field` | `string \| Function` | `name` | 数据字段名或获取函数 |
+| `format` | `Function` | - | 格式化函数 `(value: any, row: any) => string` |
+| `width` | `string \| number` | - | 列宽度 |
+| `minWidth` | `string \| number` | - | 最小宽度 |
+| `maxWidth` | `string \| number` | - | 最大宽度（超出时省略） |
+| `wrapCount` | `number` | - | 最多显示几行（1-3，超出后省略） |
+| `ellipsisTooltip` | `boolean` | `true` | 是否显示省略号 tooltip |
+| `copy` | `boolean` | `false` | 是否显示复制按钮 |
+| `clickable` | `boolean \| Function` | - | 是否可点击 |
+| `onClick` | `Function` | - | 点击事件回调 `(value: any, row: any) => void` |
+| `pinLeft` | `boolean` | `false` | 固定在左侧 |
+| `pinRight` | `boolean` | `false` | 固定在右侧 |
+| `align` | `'left' \| 'center' \| 'right'` | - | 文本对齐方式 |
+| `class` | `string` | - | 自定义 class |
+| `style` | `string \| Record<string, any>` | - | 自定义 style |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `header-{name}` | `{ column, index }` | 自定义表头内容 |
+| `body-{name}` | `{ row, column, value, rowIndex, colIndex }` | 自定义单元格内容 |
+| `empty` | - | 空数据提示内容 |
+
+## 注意事项
+
+1. **列配置必填**：`columns` 是必填属性，每列必须提供 `name` 作为唯一标识
+2. **行唯一标识**：默认使用 `id` 字段作为行的唯一标识，可通过 `rowKey` 自定义
+3. **文本省略**：当设置 `maxWidth` 或 `wrapCount` 时，文本超出会自动显示省略号，并支持 tooltip 提示
+4. **固定列**：固定列功能适用于横向滚动场景，固定列会保持可见
+5. **单元格点击**：`clickable` 可以是布尔值或函数，函数返回 true 时单元格可点击
+6. **格式化函数**：`format` 函数接收 `(value, row)` 两个参数，返回格式化后的字符串
+7. **自定义字段**：`field` 可以是字符串或函数，函数接收 `row` 参数，返回字段值
+
+</div>
+<JCTableDemo slot="demo" client:only="vue" />
+</DemoPanel>

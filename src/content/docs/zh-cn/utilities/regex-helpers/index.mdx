@@ -1,0 +1,273 @@
+---
+title: 正则验证方法
+description: 正则表达式验证相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import RegexHelpersDemo from '@components/DemoPanel/RegexHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/regex.ts)
+
+<DemoPanel title="正则验证方法交互式演示">
+  <div slot="content">
+
+# 正则验证方法
+
+提供丰富的正则验证工具函数，包括手机号、邮箱、身份证等常用验证。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用正则验证方法
+jqTool.helper.regex.isPhone('13812345678')
+```
+
+## 常用验证
+
+### isPhone
+
+验证手机号（中国大陆）：
+
+```typescript
+jqTool.helper.regex.isPhone('13812345678') // true
+jqTool.helper.regex.isPhone('12345678901') // false
+```
+
+### isEmail
+
+验证邮箱地址：
+
+```typescript
+jqTool.helper.regex.isEmail('test@example.com') // true
+jqTool.helper.regex.isEmail('test@example') // false
+```
+
+### isIdCard
+
+验证身份证号（15位或18位）：
+
+```typescript
+jqTool.helper.regex.isIdCard('320123199001011234') // true
+jqTool.helper.regex.isIdCard('320123900101123') // true (15位)
+```
+
+### isBankCard
+
+验证银行卡号（16-19位）：
+
+```typescript
+jqTool.helper.regex.isBankCard('6222021234567890123') // true
+jqTool.helper.regex.isBankCard('123456') // false
+```
+
+### isCarNumber
+
+验证车牌号（新能源+普通）：
+
+```typescript
+jqTool.helper.regex.isCarNumber('京A12345') // true
+jqTool.helper.regex.isCarNumber('京AD12345') // true (新能源)
+```
+
+## 网络验证
+
+### isUrl
+
+验证 URL 地址：
+
+```typescript
+jqTool.helper.regex.isUrl('https://www.example.com') // true
+jqTool.helper.regex.isUrl('http://example.com/path') // true
+jqTool.helper.regex.isUrl('www.example.com') // false
+```
+
+### isIP
+
+验证 IP 地址（IPv4）：
+
+```typescript
+jqTool.helper.regex.isIP('192.168.1.1') // true
+jqTool.helper.regex.isIP('256.1.1.1') // false
+```
+
+### isIPv6
+
+验证 IPv6 地址：
+
+```typescript
+jqTool.helper.regex.isIPv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334') // true
+```
+
+### isMac
+
+验证 MAC 地址：
+
+```typescript
+jqTool.helper.regex.isMac('00:11:22:33:44:55') // true
+jqTool.helper.regex.isMac('00-11-22-33-44-55') // true
+```
+
+### isPort
+
+验证端口号（1-65535）：
+
+```typescript
+jqTool.helper.regex.isPort('8080') // true
+jqTool.helper.regex.isPort('65536') // false
+```
+
+## 字符串验证
+
+### isChinese
+
+验证是否为纯中文：
+
+```typescript
+jqTool.helper.regex.isChinese('中文测试') // true
+jqTool.helper.regex.isChinese('中文test') // false
+```
+
+### hasChinese
+
+验证是否包含中文：
+
+```typescript
+jqTool.helper.regex.hasChinese('中文test') // true
+jqTool.helper.regex.hasChinese('test123') // false
+```
+
+### isNumber
+
+验证是否为纯数字：
+
+```typescript
+jqTool.helper.regex.isNumber('123456') // true
+jqTool.helper.regex.isNumber('123.456') // false
+```
+
+### isNumeric
+
+验证是否为数字（包含小数）：
+
+```typescript
+jqTool.helper.regex.isNumeric('123.456') // true
+jqTool.helper.regex.isNumeric('123') // true
+jqTool.helper.regex.isNumeric('abc') // false
+```
+
+### isPositiveInteger
+
+验证是否为正整数：
+
+```typescript
+jqTool.helper.regex.isPositiveInteger('123') // true
+jqTool.helper.regex.isPositiveInteger('0') // false
+jqTool.helper.regex.isPositiveInteger('-123') // false
+```
+
+### isNonNegativeInteger
+
+验证是否为非负整数（正整数 + 0）：
+
+```typescript
+jqTool.helper.regex.isNonNegativeInteger('123') // true
+jqTool.helper.regex.isNonNegativeInteger('0') // true
+jqTool.helper.regex.isNonNegativeInteger('-123') // false
+```
+
+## 社交账号验证
+
+### isQQ
+
+验证 QQ 号（5-11位数字）：
+
+```typescript
+jqTool.helper.regex.isQQ('123456789') // true
+jqTool.helper.regex.isQQ('123') // false
+```
+
+### isWechat
+
+验证微信号（6-20位，字母开头）：
+
+```typescript
+jqTool.helper.regex.isWechat('test_123') // true
+jqTool.helper.regex.isWechat('123test') // false (不能数字开头)
+```
+
+### isPostcode
+
+验证邮政编码（中国）：
+
+```typescript
+jqTool.helper.regex.isPostcode('100000') // true
+jqTool.helper.regex.isPostcode('12345') // false
+```
+
+## 密码验证
+
+### isStrongPassword
+
+验证强密码（至少8位，包含大小写字母、数字、特殊字符）：
+
+```typescript
+jqTool.helper.regex.isStrongPassword('Abc123!@#') // true
+jqTool.helper.regex.isStrongPassword('abc123') // false
+```
+
+### isMediumPassword
+
+验证中等强度密码（至少6位，包含字母和数字）：
+
+```typescript
+jqTool.helper.regex.isMediumPassword('abc123') // true
+jqTool.helper.regex.isMediumPassword('123456') // false
+```
+
+## 其他验证
+
+### isHexColor
+
+验证十六进制颜色值：
+
+```typescript
+jqTool.helper.regex.isHexColor('#fff') // true
+jqTool.helper.regex.isHexColor('#ffffff') // true
+jqTool.helper.regex.isHexColor('fff') // false
+```
+
+## 表单规则创建
+
+### createFormRule
+
+将验证函数转换为 Quasar 表单验证规则：
+
+```typescript
+const phoneRule = jqTool.helper.regex.createFormRule(
+  jqTool.helper.regex.isPhone,
+  '请输入有效的手机号'
+)
+
+// 在表单中使用
+// :rules="[phoneRule]"
+```
+
+### 快捷表单规则
+
+提供常用验证的快捷规则创建方法：
+
+```typescript
+jqTool.helper.regex.phoneRule('请输入有效的手机号')
+jqTool.helper.regex.emailRule('请输入有效的邮箱地址')
+jqTool.helper.regex.idCardRule('请输入有效的身份证号')
+jqTool.helper.regex.bankCardRule('请输入有效的银行卡号')
+jqTool.helper.regex.carNumberRule('请输入有效的车牌号')
+jqTool.helper.regex.urlRule('请输入有效的 URL 地址')
+jqTool.helper.regex.ipRule('请输入有效的 IP 地址')
+```
+
+  </div>
+  <RegexHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

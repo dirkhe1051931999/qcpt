@@ -1,0 +1,389 @@
+---
+title: JCMoreMenu 更多操作菜单
+description: 更多操作菜单组件，支持权限控制和自定义图标
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-more-menu)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCMoreMenuDemo from '@components/DemoPanel/JCMoreMenuDemo.vue';
+
+# JCMoreMenu 更多操作菜单
+
+更多操作菜单组件，用于显示操作菜单，支持权限控制、动态显示/隐藏、自定义图标等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑', 
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除', 
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 使用 i18n 键
+
+使用 `i18nKey` 属性支持国际化：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    i18nKey: 'action.edit',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    i18nKey: 'action.delete',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 权限控制
+
+使用 `permissionCode` 属性控制菜单项的显示：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑',
+    permissionCode: 'edit_permission',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    permissionCode: 'delete_permission',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 动态显示/隐藏
+
+使用 `visible` 属性动态控制菜单项的显示：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项', status: 'active' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑',
+    visible: (item) => item.status === 'active',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    visible: true,
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 禁用菜单项
+
+使用 `disabled` 属性禁用菜单项：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项', disabled: true })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑',
+    disabled: (item) => item.disabled,
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    disabled: false,
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 自定义图标
+
+使用插槽自定义菜单项图标：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem">
+    <template #menu-icon-edit="{ action, item }">
+      <q-icon name="edit" />
+    </template>
+    <template #menu-icon-delete="{ action, item }">
+      <q-icon name="delete" color="red" />
+    </template>
+  </j-c-more-menu>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    id: 'edit',
+    label: '编辑',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    id: 'delete',
+    label: '删除',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 自定义触发按钮
+
+使用 `trigger` 插槽自定义触发按钮：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem">
+    <template #trigger>
+      <q-btn icon="more_vert" flat dense />
+    </template>
+  </j-c-more-menu>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 动态标签
+
+使用函数形式的 `label` 属性实现动态标签：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项', type: 'user' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: ({ item }) => item.type === 'user' ? '编辑用户' : '编辑',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+</script>
+```
+
+## 监听 action 事件
+
+使用 `@action` 事件监听菜单项点击：
+
+```vue
+<template>
+  <j-c-more-menu 
+    :actions="menuActions" 
+    :item="currentItem"
+    @action="handleAction"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { 
+    label: '编辑',
+    onClick: (item) => console.log('编辑', item) 
+  },
+  { 
+    label: '删除',
+    onClick: (item) => console.log('删除', item) 
+  }
+])
+
+const handleAction = ({ action, item }: { action: JCMoreMenuAction, item: any }) => {
+  console.log('Action clicked:', action.label, item)
+}
+</script>
+```
+
+## 不同尺寸
+
+使用 `size` 属性控制菜单尺寸：
+
+```vue
+<template>
+  <j-c-more-menu :actions="menuActions" :item="currentItem" size="lg" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCMoreMenu } from 'qcpt'
+import type { JCMoreMenuAction } from 'qcpt'
+
+const currentItem = ref({ id: 1, name: '测试项' })
+
+const menuActions = ref<JCMoreMenuAction[]>([
+  { label: '编辑', onClick: () => {} },
+  { label: '删除', onClick: () => {} }
+])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `item` | `any` | `null` | 当前数据项，用于传递给 action 的回调函数 |
+| `actions` | `Array<JCMoreMenuAction>` | `[]` | 菜单项数组 |
+| `size` | `'md' \| 'lg'` | `'md'` | 菜单尺寸 |
+| `fit` | `boolean` | `undefined` | 是否自适应宽度（size=md 时默认为 true） |
+| `dense` | `boolean` | `true` | 是否紧凑模式 |
+| `triggerSize` | `string` | `'16px'` | 触发按钮图标大小 |
+| `offset` | `[number, number]` | `undefined` | 菜单偏移量（size=lg 时默认 [5, 10]） |
+| `anchor` | `string` | `undefined` | 菜单锚点位置（size=lg 时默认 'bottom left'） |
+| `self` | `string` | `undefined` | 菜单自身位置（size=lg 时默认 'top start'） |
+| `listMinWidth` | `string` | `undefined` | 菜单最小宽度（size=lg 时默认 '80px'） |
+| `menuClass` | `string \| Array \| Object` | `undefined` | 菜单自定义类名 |
+| `translate` | `Function` | `undefined` | 自定义翻译函数 |
+| `showEmptyPlaceholder` | `boolean` | `false` | 无可见菜单项时是否显示占位符 |
+
+### JCMoreMenuAction 类型
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `key` | `string \| number` | - | 唯一标识（可选） |
+| `id` | `string` | - | 用于图标插槽的唯一标识（可选） |
+| `permissionCode` | `string \| null` | - | 权限码，不传则默认当作有权限 |
+| `rmDom` | `boolean` | `true` | 无权限时是否移除 DOM |
+| `defaultContent` | `string` | - | 无权限且 rmDom=false 时显示的默认文案 |
+| `label` | `string \| Function` | - | 菜单项标签，可以是字符串或函数 |
+| `i18nKey` | `string` | - | 国际化键，优先于 label |
+| `clickable` | `boolean` | `true` | 是否可点击 |
+| `closePopup` | `boolean` | `true` | 点击后是否自动关闭弹层 |
+| `visible` | `boolean \| Function` | `true` | 是否显示该 action |
+| `disabled` | `boolean \| Function` | `false` | 是否禁用该 action |
+| `onClick` | `Function` | - | 点击回调函数 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `action` | `{ action: JCMoreMenuAction, item: any }` | 菜单项点击事件 |
+
+### Slots
+
+| 插槽名 | 参数 | 描述 |
+| --- | --- | --- |
+| `trigger` | - | 自定义触发按钮 |
+| `menu-icon-{id}` | `{ action: JCMoreMenuAction, item: any }` | 自定义菜单项图标（需要设置 action.id） |
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JCMoreMenuDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 支持权限控制，通过 `permissionCode` 控制菜单项的显示
+- 支持动态显示/隐藏，通过 `visible` 属性控制
+- 支持自定义图标，需要设置 `action.id` 并使用 `menu-icon-{id}` 插槽
+- 支持动态标签，`label` 可以是函数形式
+

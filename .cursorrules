@@ -1,0 +1,119 @@
+# Cursor Rules for ngiot-frontend-cpt-docs
+
+## 项目概述
+这是一个基于 Astro + Starlight 的组件文档项目，用于为 ngiot-frontend-cpt 组件库编写文档。
+
+## 组件库源码位置
+- 源码路径: `C:\FE\ngiot-frontend-cpt`
+- 组件目录: `C:\FE\ngiot-frontend-cpt\src\components`
+- 类型定义: `C:\FE\ngiot-frontend-cpt\dist` 和 `C:\FE\ngiot-frontend-cpt\src\types.ts`
+
+## 文档编写规则
+
+### 1. MDX 文件操作规则（新增、修改、删除）
+**在新增或修改或删除任何 `.mdx` 文档文件时，必须先从源码目录读取对应组件：**
+
+1. **定位组件源码**
+   - 根据文档路径确定组件名称（如 `j-q-button`, `j-ch-bar` 等）
+   - 从 `C:\FE\ngiot-frontend-cpt\src\components\[组件名称]\` 读取源码
+   - 组件通常包含：`index.vue`, `types.ts`, `index.scss` 等文件
+
+2. **读取组件信息**
+   - 读取组件的 `index.vue` 文件了解组件实现
+   - 读取 `types.ts` (如有) 了解类型定义和 Props 接口
+   - 检查组件的事件、插槽、方法等 API
+
+3. **文档内容要求**
+   - Props 属性必须与源码中的类型定义一致
+   - 事件名称和参数必须与源码中的 emit 一致
+   - 示例代码必须能够正常运行
+   - API 文档必须准确反映源码实现
+
+4. **文档结构规范**
+   - 每个组件文档应包含：
+     - 组件描述
+     - 基础用法示例
+     - Props API 表格
+     - Events API 表格（如有）
+     - Slots API 表格（如有）
+     - Methods API 表格（如有）
+     - 高级用法示例
+
+### 2. 新增或删除组件文档时必须同步更新
+**当新增或删除组件文档时，必须同步更新以下文件：**
+
+1. **更新首页组件列表**
+   - 中文首页：`src/content/docs/zh-cn/index.mdx`（必须更新）
+   - 英文首页：`src/content/docs/index.mdx`（目前暂不维护，参见规则3）
+   - 在对应的组件分类章节中添加或删除组件链接
+   - 确保链接路径、组件名称、描述与文档内容一致
+
+2. **检查侧边栏配置**
+   - 配置文件：`astro.config.mjs` 的 `sidebar` 配置
+   - 当前使用 `autogenerate` 自动生成目录（无需手动修改）
+   - 如果未来改为手动配置，则需要同步更新 sidebar 项
+
+3. **更新检查清单**
+   ```
+   新增组件文档时：
+   ☑ 创建中文组件 MDX 文档文件（src/content/docs/zh-cn/）
+   ☑ 在中文首页添加组件链接和描述
+   ☑ 验证侧边栏是否正确显示（autogenerate 自动生成）
+   
+   删除组件文档时：
+   ☑ 删除中文组件 MDX 文档文件
+   ☑ 从中文首页移除组件链接
+   ☑ 验证侧边栏是否正确更新
+   ```
+
+### 3. 文档语言维护规则
+**目前只维护中文文档，暂不编写英文文档：**
+
+1. **只创建和修改中文文档**
+   - 所有组件文档只创建在 `src/content/docs/zh-cn/` 目录下
+   - 只更新中文首页 `src/content/docs/zh-cn/index.mdx`
+   - **不要**创建或修改英文文档（`src/content/docs/en/` 和 `src/content/docs/index.mdx`）
+
+2. **文档内容使用中文**
+   - 所有文档内容、注释、说明均使用中文编写
+   - 代码示例中的注释使用中文
+   - 组件描述、参数说明、事件说明等全部使用中文
+
+3. **未来扩展**
+   - 等中文文档完善后，再考虑添加英文文档
+   - 到时需要同步维护中英文两个版本
+
+### 4. 文档路径映射规则
+文档路径与组件的对应关系：
+- `src/content/docs/zh-cn/components/form/j-q-button/` → `C:\FE\ngiot-frontend-cpt\src\components\j-q-button\`
+- `src/content/docs/zh-cn/components/charts/j-ch-bar/` → `C:\FE\ngiot-frontend-cpt\src\components\j-ch-bar\`
+- `src/content/docs/zh-cn/components/data-display/j-c-tabs/` → `C:\FE\ngiot-frontend-cpt\src\components\j-c-tabs\`
+
+### 5. 代码示例规范
+- 使用 TypeScript 编写示例
+- 示例必须包含必要的 import 语句
+- 示例代码必须遵循组件的实际 API
+- 复杂示例提供完整的可运行代码
+
+### 6. 工作流程
+当需要修改文档时：
+```
+1. 确定要操作的组件名称
+2. 读取 C:\FE\ngiot-frontend-cpt\src\components\[组件名称]\index.vue
+3. 读取 C:\FE\ngiot-frontend-cpt\src\components\[组件名称]\types.ts (如存在)
+4. 分析源码获取准确的 API 信息
+5. 基于源码信息编写/更新/删除文档
+6. 确保文档内容与源码保持一致
+```
+
+## 技术栈
+- **文档框架**: Astro v4 + Starlight
+- **组件库**: Vue 3
+- **语言**: TypeScript
+- **样式**: SCSS
+
+## 注意事项
+1. 所有文档修改必须基于最新的源码
+2. 不要假设或臆测组件的 API，必须从源码确认
+3. 保持文档的准确性和时效性
+4. 遵循 Starlight 的 MDX 语法和组件使用规范

@@ -1,0 +1,136 @@
+---
+title: JQDateMonth 月份选择器
+description: 月份选择器组件，支持单选或范围选择
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDateMonthDemo from '@components/DemoPanel/JQDateMonthDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-date-month)
+
+<DemoPanel title="JQDateMonth 组件演示">
+<div slot="content">
+
+# JQDateMonth 月份选择器
+
+基于 Quasar `QField` 的月份选择器组件，支持单选月份或月份范围选择。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-date-month v-model="month" label="选择月份" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateMonth } from 'qcpt'
+
+const month = ref('')
+</script>
+```
+
+## 月份范围选择
+
+使用 `range` 属性启用月份范围选择：
+
+```vue
+<template>
+  <j-q-date-month v-model="monthRange" label="月份范围" range />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateMonth } from 'qcpt'
+
+const monthRange = ref({ from: '', to: '' })
+</script>
+```
+
+## 自定义显示格式
+
+使用 `valueDisplayFn` 自定义显示格式：
+
+```vue
+<template>
+  <j-q-date-month 
+    v-model="month" 
+    label="选择月份"
+    :value-display-fn="formatMonth"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateMonth } from 'qcpt'
+
+const month = ref('')
+
+const formatMonth = (value: any) => {
+  if (!value) return ''
+  const date = new Date(value)
+  return `${date.getFullYear()}年${date.getMonth() + 1}月`
+}
+</script>
+```
+
+## 禁用特定月份
+
+使用 `optionDisabledFn` 禁用特定月份：
+
+```vue
+<template>
+  <j-q-date-month 
+    v-model="month" 
+    label="选择月份"
+    :option-disabled-fn="disableFutureMonths"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDateMonth } from 'qcpt'
+
+const month = ref('')
+
+const disableFutureMonths = (monthValue: number, options: { rangeStartValue?: number }) => {
+  const currentDate = new Date()
+  const currentMonth = currentDate.getFullYear() * 12 + currentDate.getMonth()
+  return monthValue > currentMonth
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| Number \| Object` | - | 月份值（v-model），可以是日期字符串、时间戳或日期对象 |
+| `label` | `string` | - | 标签文本 |
+| `range` | `boolean` | `undefined` | 是否启用范围选择 |
+| `clearable` | `boolean` | `true` | 是否显示清除按钮 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | - | 是否禁用 |
+| `locale` | `string \| string[]` | - | 国际化区域设置 |
+| `valueDisplayFn` | `Function` | - | 自定义值显示函数 |
+| `optionDisabledFn` | `Function` | - | 禁用选项的函数 |
+| `rules` | `Array` | - | 验证规则 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| Number \| Object` | 值更新事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `value-display` | 自定义值显示内容 |
+
+</div>
+<JQDateMonthDemo slot="demo" client:only="vue" />
+</DemoPanel>

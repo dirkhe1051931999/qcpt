@@ -1,0 +1,374 @@
+---
+title: 快速开始
+description: QCPT 组件库的安装和初始化指南
+---
+
+import { Card, CardDescription, CardLink, CardTitle } from '@astrojs/starlight/components';
+
+# 快速开始
+
+QCPT 是一个基于 Vue 3、TypeScript 和 Quasar 构建的现代化企业级组件库。
+
+## 前置要求
+
+- Vue 3.x
+- Quasar Framework 2.x
+- TypeScript（推荐）
+- Node.js 16+ 和 npm/yarn/pnpm
+
+## 安装
+
+### 1. 安装 QCPT
+
+```bash
+npm install qcpt
+# 或
+yarn add qcpt
+# 或
+pnpm add qcpt
+```
+
+### 2. 安装依赖
+
+QCPT 需要以下 peer dependencies：
+
+```json
+{
+  "vue": "^3.0.0",
+  "quasar": "^2.0.0",
+  "chart.js": "^4.0.0"
+}
+```
+
+安装命令：
+
+```bash
+npm install quasar vue@^3.0.0 chart.js@^4.0.0
+```
+
+## 配置
+
+### 1. 导入样式
+
+在你的主入口文件（如 `main.ts` 或 `main.js`）中，**在初始化应用之前**导入 QCPT 样式：
+
+```typescript
+// main.ts
+import 'qcpt/qcpt.css'
+import 'qcpt/qcpt-styles.css'
+```
+
+**注意：** 确保在导入任何组件之前导入样式，以确保正确的样式顺序。
+
+### 2. 配置 Quasar
+
+QCPT 需要注册特定的 Quasar 插件。在你的主入口文件中配置 Quasar：
+
+```typescript
+import { createApp } from 'vue'
+import { Quasar, Notify, Dialog } from 'quasar'
+import quasarIconSet from 'quasar/icon-set/material-icons'
+import 'quasar/src/css/index.sass'
+
+const app = createApp(App)
+
+app.use(Quasar, {
+  plugins: {
+    Notify,  // JQMessage 需要
+    Dialog   // JQDialog, JQConfirmDialog 需要
+  },
+  iconSet: quasarIconSet
+})
+```
+
+### 3. 初始化 QCPT
+
+使用 `qcptInit` 初始化 QCPT，传入你的应用实例和路由：
+
+```typescript
+import { createApp } from 'vue'
+import { Quasar, Notify, Dialog } from 'quasar'
+import { qcptInit } from 'qcpt'
+import App from './App.vue'
+import router from './router'
+import { ref } from 'vue'
+
+const app = createApp(App)
+
+// 配置 Quasar
+app.use(Quasar, {
+  plugins: {
+    Notify,
+    Dialog
+  }
+})
+
+// 初始化 QCPT
+qcptInit({
+  app,
+  router,
+  // 可选：Vuex/Pinia store 实例
+  // store,
+  // 可选：Vue I18n 实例
+  // i18n,
+  // 可选：权限配置
+  // 提供一个响应式 ref 或普通数组用于权限 IDs
+  pagePermissionIds: ref(['operation-all', 'user-edit', 'user-view']),
+  pageActionPermissionIds: ref(['action-edit', 'action-delete']),
+  // 可选：默认语言
+  defaultLanguage: 'zh-CN', // 或 'en-US'
+  // 可选：自定义颜色主题
+  colors: {
+    primary: '#1976D2',
+    secondary: '#26A69A',
+    accent: '#9C27B0',
+    positive: '#21BA45',
+    negative: '#C10015',
+    info: '#31CCEC',
+    warning: '#F2C037',
+    dark: '#1D1D1D',
+    grey: '#666666'
+  },
+  // 可选：禁用 BFCache，利用 pageshow 事件在从缓存恢复时刷新页面
+  disableBFCache: false
+})
+
+app.mount('#app')
+```
+
+### 配置选项
+
+| 选项 | 类型 | 必填 | 描述 |
+| --- | --- | --- | --- |
+| `app` | `App` | ✅ 是 | Vue 应用实例 |
+| `router` | `Router` | 否 | Vue Router 实例 |
+| `store` | `any` | 否 | Vuex/Pinia store 实例（用于 DialogProvider） |
+| `i18n` | `any` | 否 | Vue I18n 实例（用于 DialogProvider） |
+| `pagePermissionIds` | `Ref<string[]> \| string[]` | 否 | 权限 IDs（响应式 ref 或普通数组） |
+| `pageActionPermissionIds` | `Ref<string[]> \| string[]` | 否 | 操作权限 IDs（响应式 ref 或普通数组） |
+| `defaultLanguage` | `Locale` | 否 | 默认语言（'zh-CN' 或 'en-US'），默认为 'zh-CN' |
+| `colors` | `ColorConfig` | 否 | 自定义颜色主题配置 |
+| `disableBFCache` | `boolean` | 否 | 禁用 BFCache，利用 pageshow 事件在从缓存恢复时刷新页面，默认为 `false` |
+
+### 4. 图标映射配置（重要）
+
+`qcptInit` 通过 Quasar 的 `iconMapFn` 注册 QCPT 内置的自定义图标（如 `app:clear`、`app:copyText`）。
+
+**重要：** 如果你的应用之后分配了自定义的 `iconMapFn`（通常用于主题/品牌图标），它可能会**覆盖** QCPT 的映射，导致 `app:*` 图标显示为纯文本。
+
+**解决方案：** 将你的主题 iconMap 与 QCPT 的 fallback 组合：
+
+```typescript
+import { composeIconMapFn, qcptIconMapFn } from 'qcpt'
+
+// 在你的组件或 composable 中
+const setupCustomIcons = () => {
+  const prev = this.$q.iconMapFn
+  
+  const themeIconMapFn = (iconName: string) => {
+    // 你的自定义图标映射逻辑
+    if (iconName.startsWith('custom:')) {
+      return { icon: `img:/icons/${iconName.replace('custom:', '')}.svg` }
+    }
+    return void 0
+  }
+  
+  // 组合：主题 -> 之前的 -> qcpt fallback
+  this.$q.iconMapFn = composeIconMapFn(
+    themeIconMapFn as any,
+    prev as any,
+    qcptIconMapFn as any
+  )
+}
+```
+
+**图标组合顺序：**
+1. 你的自定义主题图标（最高优先级）
+2. 之前的 iconMapFn（如果有）
+3. QCPT 内置图标（fallback）
+
+## 使用组件
+
+现在你可以在 Vue 组件中使用 QCPT 组件了。有两种使用方式：
+
+### 方式一：手动导入（推荐）
+
+手动导入需要的组件：
+
+```vue
+<template>
+  <div class="q-pa-md">
+    <j-q-input 
+      v-model="username" 
+      label="用户名"
+      placeholder="请输入用户名"
+      :rules="[val => !!val || '用户名是必填项']"
+    />
+    
+    <j-q-select
+      v-model="selectedValue"
+      :options="options"
+      option-label="label"
+      option-value="value"
+      label="选择一个选项"
+    />
+    
+    <j-q-date 
+      v-model="date" 
+      label="选择日期" 
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInput, JQSelect, JQDate } from 'qcpt'
+
+const username = ref('')
+const selectedValue = ref(null)
+const date = ref('')
+
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+</script>
+```
+
+### 方式二：自动导入（使用 ComponentResolver）
+
+使用 `unplugin-vue-components` 和 QCPT 的 ComponentResolver 可以实现组件的自动导入，无需手动导入即可在模板中使用组件。
+
+#### 1. 安装依赖
+
+```bash
+npm install unplugin-vue-components -D
+# 或
+yarn add unplugin-vue-components -D
+# 或
+pnpm add unplugin-vue-components -D
+```
+
+#### 2. 配置 Vite
+
+在 `vite.config.ts` 中配置：
+
+```typescript
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite'
+import { qcptResolver, QcptResolverWithOptions } from 'qcpt/resolver'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    Components({
+      resolvers: [
+        qcptResolver()
+      ]
+    })
+  ]
+})
+```
+
+#### 3. 使用组件
+
+配置完成后，可以直接在模板中使用 QCPT 组件，无需手动导入：
+
+```vue
+<template>
+  <div class="q-pa-md">
+    <!-- 直接使用，无需导入 -->
+    <j-q-input 
+      v-model="username" 
+      label="用户名"
+      placeholder="请输入用户名"
+    />
+    
+    <j-q-select
+      v-model="selectedValue"
+      :options="options"
+      option-label="label"
+      option-value="value"
+      label="选择一个选项"
+    />
+    
+    <j-q-button 
+      label="提交" 
+      type="primary"
+      @click="handleSubmit"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+// 无需导入组件！
+
+const username = ref('')
+const selectedValue = ref(null)
+
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+
+const handleSubmit = () => {
+  console.log('提交表单')
+}
+</script>
+```
+
+#### 4. 高级配置
+
+ComponentResolver 支持配置选项，可以排除特定组件或添加前缀：
+
+```typescript
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite'
+import { QcptResolverWithOptions } from 'qcpt/resolver'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    Components({
+      resolvers: [
+        QcptResolverWithOptions({
+          // 排除特定组件，这些组件需要手动导入
+          exclude: ['JQInput', 'JQButton'],
+          // 可选：添加组件名前缀（不常用）
+          // prefix: 'QCpt'
+        })
+      ]
+    })
+  ]
+})
+```
+
+#### ComponentResolver 说明
+
+- **支持的组件前缀：**
+  - `JQ*` - 表单和数据展示组件（如 `JQInput`、`JQTable`、`JQButton`）
+  - `JC*` - 工具类组件（如 `JCCopy`、`JCPermission`）
+  - `JCh*` - 图表组件（如 `JChLine`、`JChBar`）
+
+- **自动处理：**
+  - 图表组件（`JCh*`）会自动导入对应的样式文件
+  - 组件类型定义会自动生成，提供完整的 TypeScript 支持
+
+- **注意事项：**
+  - 使用自动导入时，确保已正确配置 TypeScript 类型生成
+  - 某些特殊场景下，手动导入可能更可控
+  - 图表组件使用时会自动加载 `qcpt/charts` 的样式
+
+## 相关链接
+
+- [Git 仓库](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev?ref_type=heads) - 查看源代码
+- [组件文档](/zh-cn/components/) - 了解所有可用组件
+- [API 参考](/zh-cn/api/) - 了解详细的 API 文档
+- [主题定制](/zh-cn/theming/) - 了解如何自定义主题
+- [工具函数](/zh-cn/utilities/) - 了解可用的工具函数
+

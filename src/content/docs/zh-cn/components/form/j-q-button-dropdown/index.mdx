@@ -1,0 +1,420 @@
+---
+title: JQButtonDropdown 下拉按钮
+description: 带下拉菜单的按钮组件，支持权限控制和自定义菜单项
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQButtonDropdownDemo from '@components/DemoPanel/JQButtonDropdownDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-button-dropdown)
+
+<DemoPanel title="JQButtonDropdown 组件演示">
+<div slot="content">
+
+# JQButtonDropdown 下拉按钮
+
+带下拉菜单的按钮组件，支持权限控制、自定义菜单项和多种样式。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+    @select="handleSelect"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '编辑', value: 'edit', icon: 'edit' },
+  { label: '删除', value: 'delete', icon: 'delete' },
+  { label: '查看', value: 'view', icon: 'visibility' }
+]
+
+const handleSelect = (item: JQButtonDropdownItem) => {
+  console.log('选择了:', item)
+}
+</script>
+```
+
+## 按钮类型
+
+支持两种类型：`primary`（主要）和 `secondary`（次要）：
+
+```vue
+<template>
+  <div class="q-gutter-sm">
+    <j-q-button-dropdown 
+      label="主要按钮"
+      type="primary"
+      :items="items"
+    />
+    
+    <j-q-button-dropdown 
+      label="次要按钮"
+      type="secondary"
+      :items="items"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' },
+  { label: '选项2', value: '2' }
+]
+</script>
+```
+
+## 按钮尺寸
+
+支持三种尺寸：`large`（大）、`normal`（正常）、`small`（小）：
+
+```vue
+<template>
+  <div class="q-gutter-sm">
+    <j-q-button-dropdown 
+      label="大按钮"
+      size="large"
+      :items="items"
+    />
+    
+    <j-q-button-dropdown 
+      label="正常按钮"
+      size="normal"
+      :items="items"
+    />
+    
+    <j-q-button-dropdown 
+      label="小按钮"
+      size="small"
+      :items="items"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+</script>
+```
+
+## 菜单项点击回调
+
+菜单项可以设置 `onClick` 回调函数：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+    @select="handleSelect"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { 
+    label: '编辑', 
+    value: 'edit',
+    onClick: () => {
+      console.log('编辑被点击')
+    }
+  },
+  { 
+    label: '删除', 
+    value: 'delete',
+    onClick: () => {
+      console.log('删除被点击')
+    }
+  }
+]
+
+const handleSelect = (item: JQButtonDropdownItem) => {
+  console.log('选择了:', item)
+}
+</script>
+```
+
+## 禁用菜单项
+
+通过 `disabled` 属性禁用菜单项：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '可用选项', value: '1' },
+  { label: '禁用选项', value: '2', disabled: true }
+]
+</script>
+```
+
+## 权限控制
+
+通过 `code` 属性控制菜单项的显示（需要配合权限系统）：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '编辑', value: 'edit', code: 'edit_permission' },
+  { label: '删除', value: 'delete', code: 'delete_permission' }
+]
+</script>
+```
+
+## 自定义下拉图标
+
+通过 `dropdownIcon` 属性自定义下拉箭头图标：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+    dropdown-icon="arrow_drop_down"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+</script>
+```
+
+## 自定义菜单位置
+
+通过 `menuAnchor`、`menuSelf` 和 `menuOffset` 控制菜单位置：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+    menu-anchor="bottom right"
+    menu-self="top right"
+    :menu-offset="[10, 10]"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+</script>
+```
+
+## 自定义菜单内容
+
+使用插槽自定义菜单内容：
+
+```vue
+<template>
+  <j-q-button-dropdown label="操作" :items="items">
+    <template #default>
+      <q-list>
+        <q-item clickable v-close-popup>
+          <q-item-section>自定义选项1</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section>自定义选项2</q-item-section>
+        </q-item>
+      </q-list>
+    </template>
+  </j-q-button-dropdown>
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = []
+</script>
+```
+
+## 自定义按钮标签
+
+使用 `label` 插槽自定义按钮标签：
+
+```vue
+<template>
+  <j-q-button-dropdown :items="items">
+    <template #label>
+      <q-icon name="more_vert" />
+      <span>更多操作</span>
+    </template>
+  </j-q-button-dropdown>
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+</script>
+```
+
+## 禁用按钮
+
+通过 `disabled` 属性禁用整个按钮：
+
+```vue
+<template>
+  <j-q-button-dropdown 
+    label="操作"
+    :items="items"
+    disabled
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+</script>
+```
+
+## 方法调用
+
+通过 ref 调用组件方法：
+
+```vue
+<template>
+  <div>
+    <j-q-button-dropdown 
+      ref="dropdownRef"
+      label="操作"
+      :items="items"
+    />
+    
+    <button @click="showMenu">显示菜单</button>
+    <button @click="hideMenu">隐藏菜单</button>
+    <button @click="toggleMenu">切换菜单</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQButtonDropdown } from 'qcpt'
+import type { JQButtonDropdownItem, JQButtonDropdownInstance } from 'qcpt'
+
+const items: JQButtonDropdownItem[] = [
+  { label: '选项1', value: '1' }
+]
+
+const dropdownRef = ref<JQButtonDropdownInstance>()
+
+const showMenu = () => {
+  dropdownRef.value?.show()
+}
+
+const hideMenu = () => {
+  dropdownRef.value?.hide()
+}
+
+const toggleMenu = () => {
+  dropdownRef.value?.toggle()
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | `''` | 按钮标签文字 |
+| `items` | `JQButtonDropdownItem[]` | `[]` | 下拉菜单项列表 |
+| `size` | `'large' \| 'normal' \| 'small'` | `'large'` | 按钮大小 |
+| `type` | `'primary' \| 'secondary'` | `'primary'` | 按钮类型 |
+| `dropdownIcon` | `string` | - | 下拉箭头图标 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `menuAnchor` | `string` | `'bottom left'` | 菜单锚点位置（相对于按钮） |
+| `menuSelf` | `string` | `'top left'` | 菜单自身定位点 |
+| `menuOffset` | `[number, number]` | `[0, 4]` | 菜单偏移量 [x, y] |
+
+### JQButtonDropdownItem 菜单项
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 显示标签（必填） |
+| `value` | `string \| number` | - | 选项值 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `icon` | `string` | - | 图标名称 |
+| `onClick` | `Function` | - | 点击回调函数 |
+| `code` | `string` | - | 权限码，用于权限控制 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `select` | `item: JQButtonDropdownItem` | 选择菜单项事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 用于自定义下拉菜单内容 |
+| `label` | 用于自定义按钮标签 |
+
+### Methods
+
+通过 ref 调用以下方法：
+
+| 方法名 | 参数 | 描述 |
+| --- | --- | --- |
+| `show` | - | 显示下拉菜单 |
+| `hide` | - | 隐藏下拉菜单 |
+| `toggle` | - | 切换下拉菜单 |
+
+</div>
+<JQButtonDropdownDemo slot="demo" client:only="vue" />
+</DemoPanel>

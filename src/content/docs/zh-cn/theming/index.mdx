@@ -1,0 +1,254 @@
+---
+title: 主题定制
+description: 自定义 QCPT 组件的颜色主题和样式
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import ThemingDemo from '@components/DemoPanel/ThemingDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/config)
+
+<DemoPanel title="主题系统可视化演示">
+  <div slot="content">
+
+# 主题定制
+
+QCPT 支持自定义颜色主题，可以通过配置来改变组件的默认颜色。
+
+## 自定义颜色
+
+在 `qcptInit` 中配置自定义颜色：
+
+```typescript
+import { qcptInit } from 'qcpt'
+
+qcptInit({
+  app,
+  router,
+  colors: {
+    primary: '#0B5CFF',      // 自定义主色调
+    blue: '#0B5CFF',          // 蓝色（与 primary 相同）
+    dark: '#323232',          // 深色
+    green: '#2da641',         // 绿色
+    red: '#E93030',           // 红色
+    negative: '#E93030',      // 错误色（与 red 相同）
+    yellow: '#f2c037',        // 黄色/警告色
+    grey: '#969799',          // 灰色
+    white: '#ffffff',         // 白色
+    'blue-light': '#f0f4ff',  // 蓝色浅色
+    'green-light': '#c0e4c6', // 绿色浅色
+    'red-light': '#fff0f0',   // 红色浅色
+    'yellow-light': '#fff9e9', // 黄色浅色
+    'grey-light': '#eeeeee',   // 灰色浅色
+    'grey-lighter': '#f5f6fa', // 灰色更浅
+    'grey-strong': '#969799',   // 灰色加强
+    'grey-medium': '#aaaaaa',   // 灰色中等
+    'dark-strong': '#131523',   // 深色加强
+    'dark-lighter': '#f7f7f7'   // 深色浅色变体
+  }
+})
+```
+
+## 可用颜色
+
+所有颜色配置都基于 `src/config/colors.json`，你可以覆盖任意颜色。颜色配置类型为 `ColorConfig`，是 `Partial<typeof defaultColors>`。
+
+### 主要颜色
+
+| 颜色名 | 默认值 | 描述 |
+| --- | --- | --- |
+| `primary` | `#0B5CFF` | 主色调 |
+| `blue` | `#0B5CFF` | 蓝色（与 primary 相同） |
+| `dark` | `#323232` | 深色 |
+| `green` | `#2da641` | 绿色 |
+| `red` | `#E93030` | 红色 |
+| `negative` | `#E93030` | 错误/负面色（与 red 相同） |
+| `yellow` | `#f2c037` | 黄色/警告色 |
+| `grey` | `#969799` | 灰色 |
+| `white` | `#ffffff` | 白色 |
+
+### 浅色变体
+
+| 颜色名 | 默认值 | 描述 |
+| --- | --- | --- |
+| `blue-light` | `#f0f4ff` | 蓝色浅色 |
+| `green-light` | `#c0e4c6` | 绿色浅色 |
+| `red-light` | `#fff0f0` | 红色浅色 |
+| `yellow-light` | `#fff9e9` | 黄色浅色 |
+| `grey-light` | `#eeeeee` | 灰色浅色 |
+| `grey-lighter` | `#f5f6fa` | 灰色更浅 |
+
+### 深色变体
+
+| 颜色名 | 默认值 | 描述 |
+| --- | --- | --- |
+| `dark-strong` | `#131523` | 深色加强 |
+| `dark-lighter` | `#f7f7f7` | 深色浅色变体 |
+
+### 灰色变体
+
+| 颜色名 | 默认值 | 描述 |
+| --- | --- | --- |
+| `grey-strong` | `#969799` | 灰色加强 |
+| `grey-medium` | `#aaaaaa` | 灰色中等 |
+
+**注意：** 颜色名使用 kebab-case（如 `blue-light`），在配置对象中需要使用引号包裹。
+
+## CSS 变量
+
+颜色会作为 CSS 变量应用到 `:root`，你可以在样式中使用：
+
+```scss
+.my-component {
+  color: var(--j-color-primary);
+  background: var(--j-color-grey-light);
+  border-color: var(--j-color-blue-light);
+}
+
+// 使用所有可用的颜色变量
+.card {
+  background: var(--j-color-white);
+  border: 1px solid var(--j-color-grey-light);
+  color: var(--j-color-dark);
+}
+
+.card-header {
+  background: var(--j-color-blue-light);
+  color: var(--j-color-primary);
+}
+```
+
+## Quasar 颜色集成
+
+QCPT 会自动将部分颜色同步到 Quasar 的颜色系统：
+
+- `primary` -> Quasar `primary`
+- `negative` -> Quasar `negative`
+- `green` -> Quasar `positive`
+- `yellow` -> Quasar `warning`
+- `dark` -> Quasar `dark`
+
+这样 Quasar 组件也会使用你自定义的颜色。
+
+**工作原理：**
+1. 自定义颜色会与默认颜色合并（`{ ...defaultColors, ...customColors }`）
+2. 所有颜色都会设置为 CSS 变量（`--j-color-{colorName}`）
+3. 部分颜色会同步到 Quasar 的颜色系统（通过 `setCssVar`）
+4. CSS 变量可以在样式中直接使用
+
+## 动态修改颜色
+
+颜色配置在初始化时应用，如果需要动态修改，可以手动设置 CSS 变量：
+
+```typescript
+import { setCssVar } from 'quasar'
+
+// 修改主色调（同时更新 Quasar 和 QCPT）
+setCssVar('primary', '#FF5722')
+document.documentElement.style.setProperty('--j-color-primary', '#FF5722')
+
+// 修改其他颜色（只更新 QCPT CSS 变量）
+document.documentElement.style.setProperty('--j-color-grey-light', '#f0f0f0')
+document.documentElement.style.setProperty('--j-color-blue-light', '#e3f2fd')
+```
+
+**注意事项：**
+- 使用 `setCssVar` 会同时更新 Quasar 的颜色系统
+- 直接设置 CSS 变量只会影响 QCPT 组件
+- 如果颜色需要同步到 Quasar，记得同时调用 `setCssVar`
+
+## 样式覆盖
+
+如果需要覆盖组件的默认样式，可以使用深度选择器：
+
+```vue
+<style scoped>
+:deep(.j-q-input) {
+  /* 自定义输入框样式 */
+}
+
+:deep(.j-q-table) {
+  /* 自定义表格样式 */
+}
+</style>
+```
+
+## 主题切换
+
+实现主题切换的示例：
+
+```typescript
+import { ref } from 'vue'
+import { setCssVar } from 'quasar'
+
+const isDark = ref(false)
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  
+  if (isDark.value) {
+    // 深色主题
+    setCssVar('primary', '#64B5F6')
+    document.documentElement.style.setProperty('--j-color-primary', '#64B5F6')
+    document.documentElement.style.setProperty('--j-color-blue', '#64B5F6')
+    document.documentElement.style.setProperty('--j-color-dark', '#1a1a1a')
+    document.documentElement.style.setProperty('--j-color-grey-light', '#333333')
+  } else {
+    // 浅色主题（恢复默认值）
+    setCssVar('primary', '#0B5CFF')
+    document.documentElement.style.setProperty('--j-color-primary', '#0B5CFF')
+    document.documentElement.style.setProperty('--j-color-blue', '#0B5CFF')
+    document.documentElement.style.setProperty('--j-color-dark', '#323232')
+    document.documentElement.style.setProperty('--j-color-grey-light', '#eeeeee')
+  }
+}
+```
+
+**完整主题切换示例：**
+
+```typescript
+import { ref } from 'vue'
+import { setCssVar } from 'quasar'
+
+// 定义主题配置
+const lightTheme = {
+  primary: '#0B5CFF',
+  dark: '#323232',
+  'grey-light': '#eeeeee',
+  'grey-lighter': '#f5f6fa'
+}
+
+const darkTheme = {
+  primary: '#64B5F6',
+  dark: '#1a1a1a',
+  'grey-light': '#333333',
+  'grey-lighter': '#2a2a2a'
+}
+
+const currentTheme = ref<'light' | 'dark'>('light')
+
+const applyTheme = (theme: typeof lightTheme) => {
+  // 更新 Quasar 颜色
+  if (theme.primary) {
+    setCssVar('primary', theme.primary)
+  }
+  if (theme.dark) {
+    setCssVar('dark', theme.dark)
+  }
+  
+  // 更新所有 QCPT CSS 变量
+  Object.entries(theme).forEach(([key, value]) => {
+    document.documentElement.style.setProperty(`--j-color-${key}`, value)
+  })
+}
+
+const toggleTheme = () => {
+  currentTheme.value = currentTheme.value === 'light' ? 'dark' : 'light'
+  applyTheme(currentTheme.value === 'light' ? lightTheme : darkTheme)
+}
+```
+
+</div>
+<ThemingDemo slot="demo" client:only="vue" />
+</DemoPanel>
+

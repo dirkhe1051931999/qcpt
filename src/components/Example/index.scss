@@ -1,0 +1,29 @@
+.info-box {
+  $border-color: #e2e8f0;
+  $text-color: #4a5568;
+
+  border: 2px solid $border-color;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+
+  .info-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-content {
+    color: $text-color;
+
+    // 嵌套样式示例
+    p {
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+    }
+  }
+}

@@ -1,0 +1,532 @@
+---
+title: JQDialog 对话框
+description: 支持动态组件的对话框组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-dialog)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDialogDemo from '@components/DemoPanel/JQDialogDemo.vue';
+
+# JQDialog 对话框
+
+支持动态组件加载的对话框组件，可以轻松创建表单对话框、详情对话框等。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-dialog ref="dialogRef" title="用户信息" :max-width="600">
+    <div>对话框内容</div>
+  </j-q-dialog>
+
+  <q-btn label="打开对话框" @click="openDialog" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDialog } from 'qcpt'
+
+const dialogRef = ref()
+
+const openDialog = () => {
+  dialogRef.value?.open()
+}
+</script>
+```
+
+## 隐藏确认按钮
+
+隐藏确认按钮（页脚仍显示）：
+
+```vue
+<template>
+  <j-q-dialog ref="dialogRef" title="只读查看" :show-confirm="false">
+    <div>只读内容</div>
+  </j-q-dialog>
+</template>
+```
+
+## 动态控制确认按钮
+
+通过 `dialogRef` 动态控制确认按钮（响应式/computed）：
+
+```vue
+<template>
+  <j-q-dialog ref="dialogRef" title="用户信息">
+    <div>对话框内容</div>
+  </j-q-dialog>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { JQDialog } from 'qcpt'
+
+const dialogRef = ref<any>()
+const readonlyMode = ref(false)
+const showConfirm = computed(() => !readonlyMode.value)
+
+const open = () => {
+  dialogRef.value.open()
+  dialogRef.value.bindShowConfirm(showConfirm)
+  // 或: dialogRef.value.setShowConfirm(false)
+}
+</script>
+```
+
+## 侧边栏模式
+
+使用 `position="right"` 启用侧边栏模式：
+
+```vue
+<template>
+  <j-q-dialog ref="dialogRef" title="详情" position="right">
+    <div>侧边栏内容</div>
+  </j-q-dialog>
+</template>
+```
+
+## 动态组件
+
+使用 `component` 属性加载动态组件：
+
+```vue
+<template>
+  <j-q-dialog 
+    ref="dialogRef" 
+    title="用户表单"
+    :component="UserForm"
+    :component-bind="{ userId: selectedUserId }"
+    :component-on="{ save: handleSave }"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDialog } from 'qcpt'
+import UserForm from './UserForm.vue'
+
+const dialogRef = ref()
+const selectedUserId = ref(1)
+
+const handleSave = (data: any) => {
+  console.log('保存数据:', data)
+  dialogRef.value?.close()
+}
+</script>
+```
+
+## DialogProvider 用法
+
+`DialogProvider` 提供了命令式 API 来创建对话框，支持标准对话框和 Prompt 输入模式。
+
+### 基础用法
+
+使用 `DialogProvider.register()` 创建命令式对话框：
+
+```typescript
+import { DialogProvider } from 'qcpt'
+
+// 创建基础对话框
+const dialogInstance = await DialogProvider.register({
+  title: '提示',
+  content: () => import('./MyComponent.vue'),
+  showFooter: true,
+  showConfirm: true
+})
+
+// 手动控制对话框
+dialogInstance.close()
+dialogInstance.setLoading(true)
+```
+
+### Prompt 输入模式
+
+DialogProvider 支持三种输入模式：`text`（单行输入）、`textarea`（多行输入）、`select`（下拉选择）。
+
+#### 文本输入（Text）
+
+```typescript
+import { DialogProvider, formRules } from 'qcpt'
+
+try {
+  const result = await DialogProvider.register({
+    title: '请输入用户名',
+    dialogType: 'text',
+    text: {
+      placeholder: '请输入用户名',
+      modelValue: '',
+      rules: [formRules().required],
+      maxlength: 32,
+      inputProps: {
+        // 额外的 input 属性
+      }
+    }
+  })
+  
+  console.log('输入的值:', result.value)
+  // 可以通过 result.dialogInstance 控制对话框
+  result.dialogInstance.close()
+} catch (error) {
+  console.log('用户取消了输入')
+}
+```
+
+#### 多行文本输入（Textarea）
+
+```typescript
+import { DialogProvider, formRules } from 'qcpt'
+
+try {
+  const result = await DialogProvider.register({
+    title: '请输入备注',
+    dialogType: 'textarea',
+    textarea: {
+      placeholder: '请输入备注信息',
+      modelValue: '',
+      rules: [formRules().required],
+      maxlength: 500,
+      inputProps: {
+        rows: 5
+      }
+    }
+  })
+  
+  console.log('输入的备注:', result.value)
+} catch (error) {
+  console.log('用户取消了输入')
+}
+```
+
+#### 下拉选择（Select）
+
+```typescript
+import { DialogProvider, formRules } from 'qcpt'
+
+try {
+  const result = await DialogProvider.register({
+    title: '请选择角色',
+    dialogType: 'select',
+    select: {
+      placeholder: '请选择',
+      modelValue: null,
+      rules: [formRules().required],
+      options: [
+        { label: '管理员', value: 'admin' },
+        { label: '普通用户', value: 'user' },
+        { label: '访客', value: 'guest' }
+      ],
+      optionLabel: 'label',
+      optionValue: 'value',
+      multiple: false,
+      selectProps: {
+        // 额外的 select 属性
+      }
+    }
+  })
+  
+  console.log('选择的角色:', result.value)
+} catch (error) {
+  console.log('用户取消了选择')
+}
+```
+
+#### 多选模式
+
+```typescript
+import { DialogProvider } from 'qcpt'
+
+try {
+  const result = await DialogProvider.register({
+    title: '请选择权限',
+    dialogType: 'select',
+    select: {
+      placeholder: '请选择权限',
+      modelValue: [],
+      multiple: true,
+      options: [
+        { label: '查看', value: 'read' },
+        { label: '编辑', value: 'write' },
+        { label: '删除', value: 'delete' }
+      ]
+    }
+  })
+  
+  console.log('选择的权限:', result.value) // ['read', 'write']
+} catch (error) {
+  console.log('用户取消了选择')
+}
+```
+
+### 动态组件对话框
+
+使用 `component` 属性加载自定义组件：
+
+```typescript
+import { DialogProvider } from 'qcpt'
+import UserForm from './UserForm.vue'
+
+const dialogInstance = await DialogProvider.register({
+  title: '用户表单',
+  component: UserForm,
+  componentBind: {
+    userId: 123,
+    mode: 'edit'
+  },
+  componentOn: {
+    save: (data) => {
+      console.log('保存:', data)
+    }
+  },
+  maxWidth: 800,
+  position: 'standard'
+})
+```
+
+### 配置全局选项
+
+在应用初始化时配置 DialogProvider：
+
+```typescript
+import { DialogProvider } from 'qcpt'
+import { router } from './router'
+import { store } from './store'
+import { i18n } from './i18n'
+
+// 通常在 qcptInit 中自动配置，无需手动调用
+DialogProvider.configure({
+  router,    // Vue Router 实例
+  store,     // Pinia/Vuex 实例
+  i18n,      // i18n 实例
+  plugins: [], // 额外的 Vue 插件
+  iconMapFn: (iconName) => {
+    // 自定义图标映射
+    return myIconMap[iconName]
+  }
+})
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `title` | `string` | - | 对话框标题 |
+| `showHeader` | `boolean` | `true` | 是否显示头部 |
+| `showFooter` | `boolean` | `true` | 是否显示页脚 |
+| `showConfirm` | `boolean` | `true` | 是否显示确认按钮 |
+| `maxWidth` | `string \| number` | - | 最大宽度（仅标准位置） |
+| `minHeight` | `string \| number` | `320` | 最小高度 |
+| `position` | `'standard' \| 'right' \| 'top' \| 'bottom' \| 'left'` | `'standard'` | 对话框位置 |
+| `closeOnEsc` | `boolean` | `true` | 按 ESC 关闭 |
+| `closeOnMask` | `boolean` | `true` | 点击遮罩关闭 |
+| `allowFocusOutside` | `boolean` | `true` | 允许焦点移出对话框 |
+| `component` | `Component` | - | 动态组件 |
+| `componentBind` | `Object` | - | 传递给动态组件的 props |
+| `componentOn` | `Object` | - | 传递给动态组件的事件监听器 |
+| `content` | `Component` | - | 内容组件（替代默认插槽） |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `title` | 自定义标题 |
+| `default` | 对话框内容 |
+
+### 暴露的方法（通过 ref）
+
+| 方法名 | 类型 | 描述 |
+| --- | --- | --- |
+| `open()` | `() => void` | 打开对话框 |
+| `close()` | `() => void` | 关闭对话框 |
+| `setLoading(loading)` | `(loading: boolean) => void` | 设置加载状态 |
+| `setShowConfirm(show)` | `(show: boolean) => void` | 设置确认按钮显示状态 |
+| `bindShowConfirm(ref)` | `(ref: Ref<boolean>) => void` | 绑定响应式的确认按钮显示状态 |
+| `changeCancelText(text)` | `(text: string) => void` | 更改取消按钮文本 |
+| `changeConfirmText(text)` | `(text: string) => void` | 更改确认按钮文本 |
+
+### dialogInstance（传递给动态组件）
+
+动态组件可以通过 `dialogInstance` prop 访问对话框实例：
+
+```typescript
+interface DialogInstance {
+  open: () => void
+  close: () => void
+  setLoading: (loading: boolean) => void
+  changeCancelText: (text: string) => void
+  changeConfirmText: (text: string) => void
+  setConfirmVisible: (visible: boolean) => void
+  rules: FormRules  // 表单验证规则
+  beforeFile: BeforeFileEnter  // 文件上传前验证
+}
+```
+
+## DialogProvider API
+
+### 方法
+
+#### configure(options)
+
+配置 DialogProvider 全局选项。
+
+**参数：**
+
+| 参数名 | 类型 | 必填 | 描述 |
+| --- | --- | --- | --- |
+| `options.router` | `Router` | 否 | Vue Router 实例 |
+| `options.store` | `Store` | 否 | Pinia/Vuex 实例 |
+| `options.i18n` | `I18n` | 否 | i18n 实例 |
+| `options.plugins` | `Plugin[]` | 否 | 额外的 Vue 插件 |
+| `options.iconMapFn` | `(iconName: string) => any` | 否 | 自定义图标映射函数 |
+
+**示例：**
+
+```typescript
+import { DialogProvider } from 'qcpt'
+
+DialogProvider.configure({
+  router,
+  store,
+  i18n
+})
+```
+
+#### register(props)
+
+注册并打开一个对话框。根据 `dialogType` 返回不同的结果：
+- `dialogType` 为 `'text'`、`'textarea'` 或 `'select'` 时，返回 `Promise<{ value: any, dialogInstance: any }>`
+- 其他情况返回对话框实例
+
+**参数：**
+
+| 参数名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `props.title` | `string` | - | 对话框标题 |
+| `props.showHeader` | `boolean` | `true` | 是否显示头部 |
+| `props.showFooter` | `boolean` | `true` | 是否显示页脚 |
+| `props.showConfirm` | `boolean` | `true` | 是否显示确认按钮 |
+| `props.maxWidth` | `string \| number` | - | 最大宽度 |
+| `props.minHeight` | `string \| number` | `'auto'` | 最小高度 |
+| `props.position` | `DialogPosition` | `'standard'` | 对话框位置 |
+| `props.closeOnEsc` | `boolean` | `true` | 按 ESC 关闭 |
+| `props.closeOnMask` | `boolean` | `true` | 点击遮罩关闭 |
+| `props.allowFocusOutside` | `boolean` | `true` | 允许焦点移出 |
+| `props.component` | `Component` | - | 动态组件 |
+| `props.content` | `Component` | - | 内容组件 |
+| `props.componentBind` | `Object` | - | 传递给动态组件的 props |
+| `props.componentOn` | `Object` | - | 传递给动态组件的事件 |
+| `props.dialogType` | `DialogType` | `'dialog'` | 对话框类型 |
+| `props.text` | `TextInputConfig` | - | 文本输入配置（当 dialogType 为 'text' 时） |
+| `props.textarea` | `TextareaInputConfig` | - | 多行文本配置（当 dialogType 为 'textarea' 时） |
+| `props.select` | `SelectInputConfig` | - | 下拉选择配置（当 dialogType 为 'select' 时） |
+
+**类型定义：**
+
+```typescript
+type DialogPosition = 'standard' | 'right' | 'top' | 'bottom' | 'left'
+type DialogType = 'dialog' | 'text' | 'textarea' | 'select'
+
+// 文本输入配置
+interface TextInputConfig {
+  placeholder?: string           // 占位符
+  modelValue?: string | number   // 初始值
+  rules?: any[]                  // 验证规则
+  maxlength?: string | number | null  // 最大长度
+  inputProps?: Record<string, any>    // 额外的输入框属性
+}
+
+// 多行文本输入配置
+interface TextareaInputConfig {
+  placeholder?: string
+  modelValue?: string | number
+  rules?: any[]
+  maxlength?: string | number | null
+  inputProps?: Record<string, any>
+}
+
+// 下拉选择配置
+interface SelectInputConfig {
+  placeholder?: string
+  modelValue?: any
+  rules?: any[]
+  options: any[]                 // 下拉选项（必填）
+  optionLabel?: string           // 选项显示字段，默认 'label'
+  optionValue?: string           // 选项值字段，默认 'value'
+  multiple?: boolean             // 是否多选
+  selectProps?: Record<string, any>  // 额外的选择框属性
+}
+```
+
+**返回值：**
+
+- **Prompt 模式**（`dialogType` 为 `'text'`/`'textarea'`/`'select'`）：
+  - 返回 `Promise<{ value: any, dialogInstance: any }>`
+  - 用户确认时 resolve，用户取消时 reject
+  
+- **标准对话框模式**：
+  - 返回对话框实例，包含 `open()`、`close()`、`setLoading()` 等方法
+
+**示例：**
+
+```typescript
+// Prompt 模式
+const result = await DialogProvider.register({
+  title: '输入名称',
+  dialogType: 'text',
+  text: { placeholder: '请输入' }
+})
+console.log(result.value) // 用户输入的值
+
+// 标准对话框
+const instance = await DialogProvider.register({
+  title: '提示',
+  component: MyComponent
+})
+instance.close()
+```
+
+#### destroy(dialogId)
+
+销毁指定的对话框。
+
+**参数：**
+
+| 参数名 | 类型 | 必填 | 描述 |
+| --- | --- | --- | --- |
+| `dialogId` | `string` | 是 | 对话框 ID |
+
+**注意：** 通常不需要手动调用，对话框关闭时会自动销毁。
+
+### formRules 工具函数
+
+DialogProvider 导出了 `formRules` 工具函数，用于生成常用的表单验证规则。
+
+```typescript
+import { formRules } from 'qcpt'
+
+const rules = formRules() // 可选传入 t (国际化函数)
+
+// 使用验证规则
+rules.required        // 必填验证
+rules.email          // 邮箱验证
+rules.phone          // 手机号验证
+// ... 更多规则
+```
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQDialogDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 使用 `ref` 调用 `open()` 方法打开对话框
+- 支持动态组件加载，通过 `component` 属性传入组件
+- 支持侧边栏模式，使用 `position="right"`
+- 可以通过 `dialogInstance` 控制对话框的加载状态、按钮文本等

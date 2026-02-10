@@ -1,0 +1,82 @@
+---
+title: JCCopy 复制按钮
+description: 一键复制文本到剪贴板
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-copy)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCCopyDemo from '@components/DemoPanel/JCCopyDemo.vue';
+
+# JCCopy 复制按钮
+
+一键复制文本到剪贴板的按钮组件。
+
+## 基础用法
+
+```vue
+<template>
+  <div>
+    <span>API Key: {{ apiKey }}</span>
+    <j-c-copy :text="apiKey" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCCopy } from 'qcpt'
+
+const apiKey = ref('sk-1234567890abcdef')
+</script>
+```
+
+## 自定义恢复延迟
+
+通过 `revertDelay` 属性设置复制成功后图标恢复的延迟时间：
+
+```vue
+<template>
+  <j-c-copy 
+    :text="apiKey" 
+    :revert-delay="3000"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCCopy } from 'qcpt'
+
+const apiKey = ref('sk-1234567890abcdef')
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `text` | `string \| number \| Object` | - | 要复制的内容（必填） |
+| `revertDelay` | `number` | `2000` | 复制成功后图标恢复的延迟时间（毫秒） |
+
+### 说明
+
+- 组件会自动将复制的内容转换为字符串
+- 复制成功后图标会变为 ✓，并在 `revertDelay` 毫秒后恢复
+- 复制失败时会在控制台输出错误信息
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JCCopyDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 组件会自动将复制的内容转换为字符串
+- 复制成功后图标会变为 ✓，并在 `revertDelay` 毫秒后恢复
+- 复制失败时会在控制台输出错误信息
+

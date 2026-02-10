@@ -1,0 +1,305 @@
+---
+title: JQTable 数据表格
+description: 企业级数据表格组件，支持分页、排序、选择、列点击等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQTableDemo from '@components/DemoPanel/JQTableDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-table)
+
+<DemoPanel title="JQTable 组件演示">
+<div slot="content">
+
+# JQTable 数据表格
+
+基于 Quasar `QTable` 的企业级表格组件，内置自定义分页，并支持列点击、多行文本省略、宽度限制等增强功能。
+
+## 基础用法
+
+最常见的用法是**服务端分页**：监听 `pagination-change` 事件，获取数据后更新 `rows`，并调用 `setTotal(total)` 更新总数。
+
+```vue
+<template>
+  <j-q-table
+    ref="tableRef"
+    :columns="columns"
+    :rows="rows"
+    :loading="loading"
+    row-key="id"
+    @pagination-change="handlePaginationChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQTable } from 'qcpt'
+
+type Row = { id: number; name: string; email: string; status: 'active' | 'disabled' }
+
+const tableRef = ref<any>()
+const loading = ref(false)
+const rows = ref<Row[]>([])
+
+const columns = [
+  { name: 'id', label: 'ID', field: 'id', align: 'left', sortable: true },
+  { name: 'name', label: '姓名', field: 'name', align: 'left' },
+  { name: 'email', label: '邮箱', field: 'email', align: 'left' },
+  { name: 'status', label: '状态', field: 'status', align: 'center' }
+]
+
+const handlePaginationChange = async (pagination: { page: number; rowsPerPage: number }) => {
+  loading.value = true
+  const data = await fetchData({
+    page: pagination.page,
+    pageSize: pagination.rowsPerPage
+  })
+  rows.value = data.rows
+  tableRef.value.setTotal(data.total)
+  loading.value = false
+}
+</script>
+```
+
+## 多行文本省略（whiteSpace）
+
+使用 `whiteSpace` 属性控制单元格文本的最大行数，超出后自动显示省略号和提示框：
+
+```vue
+<script setup lang="ts">
+const columns = [
+  { 
+    name: 'description', 
+    label: '描述', 
+    field: 'description',
+    whiteSpace: 2  // 最多显示 2 行
+  },
+  { 
+    name: 'title', 
+    label: '标题', 
+    field: 'title',
+    whiteSpace: 1  // 单行省略
+  },
+  { 
+    name: 'content', 
+    label: '内容', 
+    field: 'content',
+    whiteSpace: 3  // 最多显示 3 行
+  }
+]
+</script>
+```
+
+**特性：**
+- `whiteSpace: 1` - 单行省略（默认）
+- `whiteSpace: 2` - 两行省略
+- `whiteSpace: 3` - 三行省略
+- 超出时自动显示提示框
+- 提示框最大宽度自适应（大屏 500px，小屏 300px）
+
+## 宽度限制（limitWidth）
+
+使用 `limitWidth` 属性限制单元格的最大宽度：
+
+```vue
+<script setup lang="ts">
+const columns = [
+  { 
+    name: 'email', 
+    label: '邮箱', 
+    field: 'email',
+    limitWidth: true  // 限制最大宽度
+  },
+  { 
+    name: 'url', 
+    label: 'URL', 
+    field: 'url',
+    limitWidth: true,
+    cellMaxWidth: 800,        // 大屏最大宽度（覆盖表格级别）
+    cellMaxWidthSmall: 500    // 小屏最大宽度（覆盖表格级别）
+  }
+]
+</script>
+```
+
+**特性：**
+- 响应式：大屏（>1440px）默认 500px，小屏（≤1440px）默认 300px
+- 可通过表格级别的 `cellMaxWidth` / `cellMaxWidthSmall` 属性自定义
+- 可通过列级别的 `cellMaxWidth` / `cellMaxWidthSmall` 属性覆盖
+
+## 固定列
+
+在列的 `classes` 或 `headerClasses` 中添加 `table-cell--fix-left` 或 `table-cell--fix-right` 类来固定列：
+
+```vue
+<template>
+  <div style="overflow-x: auto;">
+    <j-q-table :columns="columns" :rows="rows" row-key="id" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQTable } from 'qcpt'
+
+const columns = [
+  { 
+    name: 'id', 
+    label: 'ID', 
+    field: 'id',
+    classes: 'table-cell--fix-left',
+    headerClasses: 'table-cell--fix-left'
+  },
+  { name: 'name', label: '姓名', field: 'name' },
+  { name: 'email', label: '邮箱', field: 'email' },
+  { 
+    name: 'action', 
+    label: '操作', 
+    field: 'action',
+    classes: 'table-cell--fix-right',
+    headerClasses: 'table-cell--fix-right'
+  }
+]
+
+const rows = ref([
+  { id: 1, name: '张三', email: 'zhangsan@example.com', action: '操作' }
+])
+</script>
+```
+
+**特性：**
+- `table-cell--fix-left` - 固定在左侧
+- `table-cell--fix-right` - 固定在右侧
+- 固定列在横向滚动时会保持可见
+- 需要同时设置 `classes` 和 `headerClasses` 来固定表头和表体单元格
+
+## 列点击（onClick）
+
+使用 `onClick` 属性使列可点击：
+
+```vue
+<script setup lang="ts">
+const columns = [
+  {
+    name: 'name',
+    label: '姓名',
+    field: 'name',
+    onClick: (row) => {
+      console.log('点击了', row)
+      // router.push(`/users/${row.id}`)
+    },
+    clickable: true  // 始终可点击
+  },
+  {
+    name: 'status',
+    label: '状态',
+    field: 'status',
+    onClick: (row) => console.log('状态点击', row),
+    clickable: (value, row) => row.status === 'active'  // 动态判断是否可点击
+  }
+]
+</script>
+```
+
+**行为：**
+- `clickable: true` - 始终可点击
+- `clickable: false` - 不可点击
+- `clickable: (value, row) => boolean` - 动态判断
+- `clickable: undefined` - 如果提供了 `onClick`，默认可点击
+- 可点击的单元格显示为主色调，鼠标指针为 pointer
+
+## 自定义单元格
+
+使用 `body-cell-{name}` 插槽自定义单元格渲染：
+
+```vue
+<template>
+  <j-q-table :columns="columns" :rows="rows">
+    <template #body-cell-status="props">
+      <q-td :props="props">
+        <q-badge
+          :color="props.row.status === 'active' ? 'green' : 'grey'"
+          :label="props.row.status"
+        />
+      </q-td>
+    </template>
+  </j-q-table>
+</template>
+```
+
+**注意：** 使用自定义插槽时，如果设置了 `limitWidth`，插槽内容会自动包裹在 `.cell-limit-width` div 中。
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `columns` | `Array` | `[]` | 列定义数组（兼容 QTable，额外支持 `whiteSpace/limitWidth/onClick/clickable`） |
+| `rows` | `Array` | `[]` | 表格数据 |
+| `rowKey` | `string \| ((row) => any)` | `'id'` | 唯一行键 |
+| `loading` | `boolean` | `false` | 加载状态（显示内置加载动画） |
+| `flat` | `boolean` | `true` | 传递给 QTable |
+| `dense` | `boolean` | `false` | 传递给 QTable |
+| `hidePagination` | `boolean` | `false` | 隐藏底部分页 |
+| `selected` | `Array \| null` | `null` | 选中的行（v-model:selected），如果不提供，组件内部管理 |
+| `tableClass` | `string \| object \| Array` | - | 附加到 QTable 的类 |
+| `tableHeaderClass` | `string \| object \| Array` | - | 传递给 QTable 的 `table-header-class` |
+| `autoScrollOnChangePage` | `boolean` | `true` | 切换页码或每页条数后自动滚动到表格顶部 |
+| `autoHeight` | `boolean` | `false` | 保留字段（需手动通过 `tableClass` 添加 `table--auto-height` 样式类） |
+| `cellMaxWidth` | `number` | `500` | 大屏（>1440px）单元格最大宽度（px），可被列级别覆盖 |
+| `cellMaxWidthSmall` | `number` | `300` | 小屏（≤1440px）单元格最大宽度（px），可被列级别覆盖 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:selected` | `any[]` | v-model:selected 更新 |
+| `pagination-change` | `{ page, rowsPerPage, rowsNumber }` | 分页变化（来自内置分页组件） |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `top` | - | QTable 顶部区域 |
+| `header` | QTable header scope | 自定义整个表头行 |
+| `body` | QTable body scope | 自定义整个表体行 |
+| `append` | - | 表格底部追加内容 |
+| `header-cell-{name}` | QTable header-cell scope | 自定义特定列的表头单元格 |
+| `body-cell-{name}` | QTable body-cell scope | 自定义特定列的单元格 |
+
+### 暴露的方法（通过 ref）
+
+| 方法名 | 类型 | 描述 |
+| --- | --- | --- |
+| `setTotal(total)` | `(total?: number) => void` | 设置总数（分页显示依赖于 `rowsNumber`） |
+| `setNum(page)` | `(page?: number) => void` | 设置当前页码（默认 1） |
+| `setSize(rowsPerPage)` | `(rowsPerPage?: number) => void` | 设置每页条数 |
+| `getPaginationParam()` | `() => { page; rowsPerPage; rowsNumber }` | 获取分页参数 |
+| `scrollTop()` | `() => void` | 平滑滚动到表格顶部 |
+| `ROWS_PER_PAGE_OPTIONS` | `number[]` | 默认每页条数选项 |
+| `DEFAULT_ROWS_PER_PAGE` | `number` | 默认每页条数（15） |
+
+### 列扩展属性（相比 QTable 的增强）
+
+- **`whiteSpace?: 1 \| 2 \| 3`**: 多行文本省略，内容溢出时自动显示提示框（推荐用于文本列）。根据 `cellMaxWidth` / `cellMaxWidthSmall` 设置固定单元格宽度。
+- **`limitWidth?: boolean`**: 限制最大宽度（默认响应式 500px / 300px），包裹在 `.cell-limit-width` 中。可通过表格级别或列级别的 `cellMaxWidth` / `cellMaxWidthSmall` 自定义。
+- **`cellMaxWidth?: number`**: 列级别大屏最大宽度（>1440px）。覆盖表格级别的 `cellMaxWidth` prop。
+- **`cellMaxWidthSmall?: number`**: 列级别小屏最大宽度（≤1440px）。覆盖表格级别的 `cellMaxWidthSmall` prop。
+- **`onClick?: (row) => void`**: 使列渲染为"链接样式"，点击时触发回调
+- **`clickable?: (value, row) => boolean`**: 与 `onClick` 配合使用，条件性决定单元格是否可点击（默认：`null/undefined` 不可点击）
+
+## 注意事项
+
+- 使用 `whiteSpace` 时，单元格宽度会根据 `cellMaxWidth` / `cellMaxWidthSmall` 自动设置为固定值（width、max-width、min-width 相同）
+- `limitWidth` 和 `whiteSpace` 可以同时使用，但使用自定义插槽时，`whiteSpace` 优先，`limitWidth` 会被忽略
+- 固定列：在列的 `classes/headerClasses` 中添加 `table-cell--fix-left` / `table-cell--fix-right`
+- **服务端分页**：最常见的用法是监听 `pagination-change` 事件，获取数据后更新 `rows`，并调用 `setTotal(total)` 更新总数
+- **分页方法**：通过 ref 可以调用 `setTotal`、`setNum`、`setSize`、`getPaginationParam` 等方法控制分页
+- **自动滚动**：默认情况下，切换页码或每页条数后会自动滚动到表格顶部（可通过 `autoScrollOnChangePage` 控制）
+- **列点击**：`clickable` 可以是布尔值或函数，函数返回 true 时单元格可点击
+- **响应式宽度**：`cellMaxWidth` 和 `cellMaxWidthSmall` 支持响应式，大屏（>1440px）和小屏（≤1440px）使用不同的最大宽度
+
+</div>
+<JQTableDemo slot="demo" client:only="vue" />
+</DemoPanel>

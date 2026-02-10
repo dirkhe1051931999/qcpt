@@ -1,0 +1,155 @@
+---
+title: JQInput 输入框
+description: 增强的输入框组件，支持验证、密码切换、敏感信息遮罩等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQInputDemo from '@components/DemoPanel/JQInputDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-input)
+
+<DemoPanel title="JQInput 组件演示">
+  <div slot="content">
+
+# JQInput 输入框
+
+基于 Quasar `QInput` 的增强输入框组件，提供了验证、密码切换、敏感信息遮罩等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-input v-model="username" label="用户名" placeholder="请输入用户名" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { JQInput } from 'qcpt';
+
+const username = ref('');
+</script>
+```
+
+## 带验证的输入框
+
+```vue
+<template>
+  <j-q-input v-model="email" label="邮箱" :rules="[(val) => !!val || '邮箱是必填项', (val) => /.+@.+\..+/.test(val) || '邮箱格式不正确']" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { JQInput } from 'qcpt';
+
+const email = ref('');
+</script>
+```
+
+## 密码输入框
+
+使用 `custom-type="password"` 启用密码模式，可以通过 `append` 插槽添加显示/隐藏切换按钮：
+
+```vue
+<template>
+  <j-q-input v-model="password" label="密码" custom-type="password">
+    <template #append="{ toggleVisibility, isContentVisible }">
+      <q-icon :name="isContentVisible ? 'visibility' : 'visibility_off'" @click="toggleVisibility" class="cursor-pointer" />
+    </template>
+  </j-q-input>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { JQInput } from 'qcpt';
+
+const password = ref('');
+</script>
+```
+
+## 敏感信息遮罩
+
+使用 `custom-type="secret"` 可以自动遮罩敏感信息（如 API Key）：
+
+```vue
+<template>
+  <j-q-input v-model="apiKey" label="API Key" custom-type="secret">
+    <template #append="{ toggleVisibility, isContentVisible }">
+      <q-icon :name="isContentVisible ? 'visibility' : 'visibility_off'" @click="toggleVisibility" class="cursor-pointer" />
+    </template>
+  </j-q-input>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { JQInput } from 'qcpt';
+
+const apiKey = ref('sk-1234567890abcdef');
+</script>
+```
+
+**遮罩规则：**
+
+- 长度为 0：显示空字符串
+- 长度 ≤ 6：显示 `***`
+- 长度 > 6：显示前 3 位 + `***` + 后 3 位
+
+## API
+
+### Props
+
+| 属性名         | 类型                               | 默认值       | 描述                                                      |
+| -------------- | ---------------------------------- | ------------ | --------------------------------------------------------- |
+| `modelValue`   | `string \| number`                 | -            | 输入值（v-model）                                         |
+| `label`        | `string`                           | -            | 标签文本                                                  |
+| `placeholder`  | `string`                           | -            | 占位符文本（如果没有 label，默认显示"请输入"）            |
+| `rules`        | `Array`                            | -            | 验证规则数组                                              |
+| `customType`   | `'text' \| 'password' \| 'secret'` | `'text'`     | 自定义类型                                                |
+| `maxlength`    | `string \| number`                 | `64`         | 最大长度                                                  |
+| `dense`        | `boolean`                          | `true`       | 紧凑模式                                                  |
+| `outlined`     | `boolean`                          | `true`       | 外边框样式                                                |
+| `borderless`   | `boolean`                          | -            | 无边框样式                                                |
+| `disable`      | `boolean`                          | -            | 禁用状态                                                  |
+| `readonly`     | `boolean`                          | -            | 只读状态                                                  |
+| `bgColor`      | `string`                           | -            | 背景颜色                                                  |
+| `smInput`      | `boolean`                          | `false`      | 小尺寸输入框                                              |
+| `inputLimitFn` | `(value: string) => boolean`       | `() => true` | 输入限制函数（返回 false 时阻止输入）                     |
+| `type`         | `string`                           | -            | 输入框类型（如 `text`, `number`, `email`, `textarea` 等） |
+
+### Events
+
+| 事件名              | 参数                      | 描述       |
+| ------------------- | ------------------------- | ---------- |
+| `update:modelValue` | `value: string \| number` | 值更新事件 |
+| `change`            | `value: string \| number` | 值改变事件 |
+
+### Methods
+
+通过 ref 调用以下方法：
+
+| 方法名             | 参数 | 描述                             |
+| ------------------ | ---- | -------------------------------- |
+| `validate`         | -    | 验证输入框，返回 `boolean`       |
+| `resetValidation`  | -    | 重置验证状态                     |
+| `toggleVisibility` | -    | 切换密码/敏感信息的显示/隐藏状态 |
+
+### Slots
+
+| 插槽名    | 作用域                                                                       | 描述                                |
+| --------- | ---------------------------------------------------------------------------- | ----------------------------------- |
+| `prepend` | -                                                                            | 前置内容                            |
+| `append`  | `{ toggleVisibility, customType, rawValue, displayValue, isContentVisible }` | 后置内容，提供密码/敏感信息切换功能 |
+| `after`   | -                                                                            | 后置内容（在输入框外部）            |
+
+### 插槽作用域参数
+
+`append` 插槽提供以下参数：
+
+- `toggleVisibility`: 切换显示/隐藏的函数
+- `customType`: 当前的自定义类型
+- `rawValue`: 原始值
+- `displayValue`: 显示值（可能被遮罩）
+- `isContentVisible`: 内容是否可见
+
+</div>
+<JQInputDemo slot="demo" client:only="vue" />
+</DemoPanel>

@@ -1,0 +1,127 @@
+.demo-panel-container {
+  position: relative;
+  margin: 32px 0;
+  min-height: 500px;
+}
+
+.demo-content {
+}
+
+.demo-preview {
+  /* 固定在左侧，紧挨着侧边栏右侧 */
+  position: fixed;
+  left: calc(var(--sl-sidebar-width, 288px) + 32px);
+  top: 96px;
+  width: 500px;
+  height: calc(100vh - 128px);
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--sl-color-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999999999;
+}
+
+.demo-preview-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-gray-6);
+}
+
+.demo-preview-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--sl-color-white);
+}
+
+.demo-preview-body {
+  padding: 32px 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 224px);
+  
+  /* Firefox 滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Webkit 浏览器滚动条样式（Chrome、Safari、Edge） */
+.demo-preview-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.demo-preview-body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.demo-preview-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.demo-preview-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.demo-preview-body::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* 暗色模式下的滚动条样式 */
+@media (prefers-color-scheme: dark) {
+  .demo-preview-body {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+  
+  .demo-preview-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .demo-preview-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  
+  .demo-preview-body::-webkit-scrollbar-thumb:active {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* 重置 Starlight 的全局样式污染 */
+.demo-preview-body * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 恢复演示组件需要的间距 */
+.demo-preview-body .demo-section {
+  margin-bottom: 24px !important;
+}
+
+.demo-preview-body .demo-section h4 {
+  margin-bottom: 16px !important;
+}
+
+.demo-preview-body .demo-value {
+  margin-top: 8px !important;
+}
+
+/* 响应式：小屏幕时改为上下布局 */
+@media (max-width: 1400px) {
+  .demo-content {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .demo-preview {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 600px;
+    margin-top: 32px;
+  }
+}

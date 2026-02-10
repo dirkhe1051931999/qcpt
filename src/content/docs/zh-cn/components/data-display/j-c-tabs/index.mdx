@@ -1,0 +1,259 @@
+---
+title: JCTabs 标签页
+description: 标签页切换组件，支持多种样式和布局
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTabsDemo from '@components/DemoPanel/JCTabsDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-tabs)
+
+<DemoPanel title="JCTabs 组件演示">
+<div slot="content">
+
+# JCTabs 标签页
+
+标签页切换组件，用于内容切换，支持多种样式和布局。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-tabs v-model="activeTab" :options="options">
+    <div v-if="activeTab === 'tab1'">标签页 1 的内容</div>
+    <div v-if="activeTab === 'tab2'">标签页 2 的内容</div>
+  </j-c-tabs>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+
+const options: TabOption[] = [
+  { label: '标签1', value: 'tab1' },
+  { label: '标签2', value: 'tab2' }
+]
+</script>
+```
+
+## 样式变体
+
+支持三种样式：`default`（默认）、`flat`（扁平）、`line`（线条）：
+
+```vue
+<template>
+  <div>
+    <j-c-tabs v-model="activeTab" :options="options" variant="default" />
+    <j-c-tabs v-model="activeTab" :options="options" variant="flat" />
+    <j-c-tabs v-model="activeTab" :options="options" variant="line" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '标签1', value: 'tab1' },
+  { label: '标签2', value: 'tab2' }
+]
+</script>
+```
+
+## 禁用标签
+
+可以禁用整个组件或单个标签：
+
+```vue
+<template>
+  <j-c-tabs 
+    v-model="activeTab" 
+    :options="options"
+    :disable="false"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '可用标签', value: 'tab1' },
+  { label: '禁用标签', value: 'tab2', disable: true }
+]
+</script>
+```
+
+## 换行显示
+
+使用 `wrap` 属性允许标签换行：
+
+```vue
+<template>
+  <j-c-tabs 
+    v-model="activeTab" 
+    :options="options"
+    wrap
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '标签1', value: 'tab1' },
+  { label: '标签2', value: 'tab2' },
+  { label: '标签3', value: 'tab3' },
+  { label: '标签4', value: 'tab4' }
+]
+</script>
+```
+
+## 等分扩展
+
+使用 `expand` 属性让标签等分铺满：
+
+```vue
+<template>
+  <j-c-tabs 
+    v-model="activeTab" 
+    :options="options"
+    expand
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '标签1', value: 'tab1' },
+  { label: '标签2', value: 'tab2' },
+  { label: '标签3', value: 'tab3' }
+]
+</script>
+```
+
+## 标签宽度限制
+
+通过 `itemMaxWidth` 或单个选项的 `maxWidth` 限制标签宽度，超出显示省略号和 tooltip：
+
+```vue
+<template>
+  <j-c-tabs 
+    v-model="activeTab" 
+    :options="options"
+    item-max-width="120px"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '很长的标签名称', value: 'tab1' },
+  { label: '另一个很长的标签名称', value: 'tab2', maxWidth: '100px' }
+]
+</script>
+```
+
+## 自定义标签内容
+
+使用插槽自定义标签内容：
+
+```vue
+<template>
+  <j-c-tabs v-model="activeTab" :options="options">
+    <template #item="{ item, active }">
+      <span :class="{ 'text-primary': active }">
+        {{ item.label }}
+      </span>
+    </template>
+    
+    <template #item-tab1="{ item, active }">
+      <q-icon name="home" />
+      <span>{{ item.label }}</span>
+    </template>
+  </j-c-tabs>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTabs } from 'qcpt'
+import type { TabOption } from 'qcpt'
+
+const activeTab = ref('tab1')
+const options: TabOption[] = [
+  { label: '首页', value: 'tab1' },
+  { label: '设置', value: 'tab2' }
+]
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| null` | `null` | 当前激活的标签值（v-model） |
+| `options` | `TabOption[]` | - | 标签配置数组（必填） |
+| `disable` | `boolean` | `false` | 是否禁用整个组件 |
+| `variant` | `'default' \| 'flat' \| 'line'` | `'default'` | 样式变体 |
+| `wrap` | `boolean` | `false` | 是否允许换行 |
+| `expand` | `boolean` | `false` | 是否等分铺满 |
+| `itemMaxWidth` | `string \| number` | - | 标签项最大宽度（超出省略） |
+
+### TabOption 标签项配置
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 标签显示文本（必填） |
+| `value` | `string \| number \| null` | - | 标签值（必填） |
+| `disable` | `boolean` | `false` | 是否禁用该标签 |
+| `maxWidth` | `string \| number` | - | 该标签的最大宽度（优先级高于 itemMaxWidth） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| number \| null` | 标签切换事件 |
+| `change` | `value: string \| number \| null` | 标签切换事件（与 update:modelValue 同时触发） |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `item` | `{ item, index, active, labelStyle }` | 自定义所有标签项的内容 |
+| `item-{value}` | `{ item, index, active, labelStyle }` | 自定义特定标签项的内容（value 为标签的值） |
+| `default` | - | 标签页内容区域 |
+
+## 注意事项
+
+1. **必填属性**：`options` 是必填属性，每个选项必须提供 `label` 和 `value`
+2. **双向绑定**：使用 `v-model` 绑定当前激活的标签值
+3. **样式变体**：支持 `default`、`flat`、`line` 三种样式，默认为 `default`
+4. **禁用功能**：可以禁用整个组件或单个标签，禁用的标签无法点击
+5. **宽度限制**：`itemMaxWidth` 设置所有标签的最大宽度，单个选项的 `maxWidth` 优先级更高
+6. **自定义内容**：使用 `item` 插槽自定义所有标签，使用 `item-{value}` 插槽自定义特定标签
+7. **事件监听**：`change` 事件与 `update:modelValue` 同时触发，可用于监听标签切换
+
+</div>
+<JCTabsDemo slot="demo" client:only="vue" />
+</DemoPanel>
+

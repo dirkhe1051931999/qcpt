@@ -1,0 +1,166 @@
+---
+title: JQConfirmDialog 确认对话框
+description: 带图标的确认对话框组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-confirm-dialog)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQConfirmDialogDemo from '@components/DemoPanel/JQConfirmDialogDemo.vue';
+
+# JQConfirmDialog 确认对话框
+
+带图标的确认对话框组件，用于确认重要操作（如删除）。
+
+## 基础用法
+
+```typescript
+import { JQConfirmDialog } from 'qcpt'
+
+const confirmed = await JQConfirmDialog.show({
+  title: '确认删除',
+  content: '此操作无法撤销。是否继续？',
+  confirmButtonText: '删除',
+  cancelButtonText: '取消'
+})
+
+if (confirmed) {
+  await deleteItem(id)
+}
+```
+
+## 删除确认对话框
+
+使用 `isDelete: true` 显示删除样式的确认对话框：
+
+```typescript
+const confirmed = await JQConfirmDialog.show({
+  title: '确认删除',
+  content: '确定要删除此项吗？',
+  isDelete: true
+})
+
+if (confirmed) {
+  // 执行删除操作
+}
+```
+
+## 自定义颜色
+
+使用 `color` 属性自定义确认按钮的颜色：
+
+```typescript
+const confirmed = await JQConfirmDialog.show({
+  title: '确认操作',
+  content: '确定要执行此操作吗？',
+  color: 'primary',
+  confirmButtonText: '确定',
+  cancelButtonText: '取消'
+})
+```
+
+## 隐藏取消按钮
+
+使用 `showCancelButton: false` 隐藏取消按钮：
+
+```typescript
+const confirmed = await JQConfirmDialog.show({
+  title: '提示',
+  content: '操作已完成',
+  showCancelButton: false,
+  confirmButtonText: '知道了'
+})
+```
+
+## 自定义图标
+
+使用 `icon` 属性自定义图标（可以是字符串图标名或 Vue 组件）：
+
+```typescript
+const confirmed = await JQConfirmDialog.show({
+  title: '确认操作',
+  content: '确定要执行此操作吗？',
+  icon: 'warning',  // 字符串图标名
+  // 或
+  // icon: MyCustomIconComponent  // Vue 组件
+})
+```
+
+## 隐藏关闭按钮
+
+使用 `showClose: false` 隐藏右上角关闭按钮：
+
+```typescript
+const confirmed = await JQConfirmDialog.show({
+  title: '确认操作',
+  content: '确定要执行此操作吗？',
+  showClose: false
+})
+```
+
+## API
+
+### show(options)
+
+显示确认对话框，返回 `Promise<boolean>`。
+
+**参数：**
+
+```typescript
+interface ShowParams {
+  title: string                    // 对话框标题（必需）
+  content: string                  // 对话框内容（必需，支持 HTML）
+  confirmButtonText?: string       // 确认按钮文本（默认使用 i18n）
+  cancelButtonText?: string        // 取消按钮文本（默认使用 i18n）
+  showCancelButton?: boolean       // 是否显示取消按钮（默认 true）
+  color?: string                   // 确认按钮颜色（默认 primary，删除时为 negative）
+  isDelete?: boolean               // 是否为删除操作（显示删除图标，默认 false）
+  icon?: string | Component        // 自定义图标（字符串图标名或 Vue 组件）
+  showClose?: boolean              // 是否显示右上角关闭按钮（默认 true）
+}
+```
+
+**返回值：**
+
+``Promise<boolean>`` - 用户点击确认返回 `true`，取消返回 `false`
+
+**示例：**
+
+```typescript
+try {
+  const confirmed = await JQConfirmDialog.show({
+    title: '确认操作',
+    content: '确定要执行此操作吗？',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    isDelete: false
+  })
+  
+  if (confirmed) {
+    // 执行操作
+  }
+} catch (error) {
+  // 对话框被关闭（ESC 或点击遮罩）
+}
+```
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQConfirmDialogDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 返回 `Promise<boolean>`，用户点击确认返回 `true`，取消返回 `false`
+- 使用 `isDelete: true` 显示删除样式的确认对话框
+- 支持自定义图标（字符串图标名或 Vue 组件）
+- 支持隐藏取消按钮和关闭按钮
+
+### setQuasarInstance($q)
+
+设置 Quasar 实例（内部使用，通常在 `qcptInit` 中自动调用）。
+

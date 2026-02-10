@@ -1,0 +1,244 @@
+// ==================== 公共 Demo 样式 ====================
+// 用于 DemoPanel 目录下所有 Vue 组件的共用样式
+
+// 主容器
+.demo-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+// 特殊容器（用于 Dialog 等带 tabs 的 Demo）
+.dialog-demo-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+// 示例列表容器
+.demo-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+// 示例区块
+.demo-section {
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  padding-bottom: 24px;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sl-color-text);
+  }
+}
+
+// 提示文字
+.demo-hint,
+.desc {
+  font-size: 13px;
+  color: var(--sl-color-text-accent);
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+}
+
+// 值显示区域
+.demo-value {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(128, 128, 128, 0.05);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--sl-color-text-accent);
+  font-family: monospace;
+
+  p {
+    margin: 4px 0;
+  }
+
+  pre {
+    margin: 0;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--sl-color-text);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
+
+// 信息行样式（用于详情展示）
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .label {
+    font-weight: 500;
+    color: #666;
+    min-width: 80px;
+  }
+
+  .value {
+    flex: 1;
+    word-break: break-all;
+  }
+}
+
+// 演示卡片
+.demo-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+// ==================== Dialog Demo 特殊样式 ====================
+
+.tab-panels {
+  background: transparent;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.result-box {
+  background: #f0f9ff;
+  border-left: 4px solid #0B5CFF;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  color: #2c3e50;
+
+  strong {
+    color: #0B5CFF;
+  }
+
+  pre {
+    margin: 8px 0 0 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
+
+.code-example {
+  background: #f5f6fa;
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+
+  pre {
+    margin: 0;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    color: #2c3e50;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
+
+// ==================== DuoListEditor Demo 特殊样式 ====================
+
+// inline 模式样式
+.item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.item-inputs {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  .j-q-form-label {
+    flex: 1;
+  }
+}
+
+.item-actions {
+  display: flex;
+  gap: 4px;
+  padding-top: 24px;
+}
+
+// compact 模式样式
+.compact-content {
+  width: 100%;
+}
+
+// ==================== Quasar 栅格系统辅助类 ====================
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -12px;
+  margin-right: -12px;
+}
+
+.col-6 {
+  width: 50%;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.col-12 {
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.q-col-gutter-md > * {
+  padding: 0 12px;
+}
+
+// ==================== 间距工具类 ====================
+
+.q-gutter-sm {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.q-gutter-md {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.q-mb-md {
+  margin-bottom: 16px;
+}
+
+.q-mt-md {
+  margin-top: 16px;
+}
+
+// ==================== 文本对齐 ====================
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-center: center;
+}
+
+// ==================== 其他工具类 ====================
+
+.cursor-pointer {
+  cursor: pointer;
+}

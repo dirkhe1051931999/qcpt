@@ -1,0 +1,262 @@
+---
+title: JCTooltip 提示框
+description: 灵活的提示框组件，支持多种位置、主题和触发方式
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTooltipDemo from '@components/DemoPanel/JCTooltipDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-tooltip)
+
+<DemoPanel title="JCTooltip 组件演示">
+<div slot="content">
+
+# JCTooltip 提示框
+
+灵活的提示框组件，支持多种位置、主题和触发方式。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-tooltip content="这是提示内容">
+    <button>悬停查看提示</button>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 位置
+
+通过 `placement` 属性设置提示框位置：
+
+```vue
+<template>
+  <div class="demo-container">
+    <j-c-tooltip content="顶部提示" placement="top">
+      <button>Top</button>
+    </j-c-tooltip>
+    
+    <j-c-tooltip content="底部提示" placement="bottom">
+      <button>Bottom</button>
+    </j-c-tooltip>
+    
+    <j-c-tooltip content="左侧提示" placement="left">
+      <button>Left</button>
+    </j-c-tooltip>
+    
+    <j-c-tooltip content="右侧提示" placement="right">
+      <button>Right</button>
+    </j-c-tooltip>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+
+<style scoped>
+.demo-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+</style>
+```
+
+支持的位置：`top`, `top-start`, `top-end`, `bottom`, `bottom-start`, `bottom-end`, `left`, `left-start`, `left-end`, `right`, `right-start`, `right-end`
+
+## 主题
+
+通过 `effect` 属性设置主题：
+
+```vue
+<template>
+  <div class="demo-container">
+    <j-c-tooltip content="深色主题" effect="dark">
+      <button>Dark</button>
+    </j-c-tooltip>
+    
+    <j-c-tooltip content="浅色主题" effect="light">
+      <button>Light</button>
+    </j-c-tooltip>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 触发方式
+
+通过 `trigger` 属性设置触发方式：
+
+```vue
+<template>
+  <div class="demo-container">
+    <!-- 悬停触发（默认） -->
+    <j-c-tooltip content="悬停触发" trigger="hover">
+      <button>Hover</button>
+    </j-c-tooltip>
+    
+    <!-- 点击触发 -->
+    <j-c-tooltip content="点击触发" trigger="click">
+      <button>Click</button>
+    </j-c-tooltip>
+    
+    <!-- 手动控制 -->
+    <j-c-tooltip content="手动控制" trigger="manual" v-model="visible">
+      <button @click="visible = !visible">Manual</button>
+    </j-c-tooltip>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTooltip } from 'qcpt'
+
+const visible = ref(false)
+</script>
+```
+
+## 延迟显示/隐藏
+
+通过 `openDelay` 和 `closeDelay` 设置延迟：
+
+```vue
+<template>
+  <j-c-tooltip 
+    content="延迟显示和隐藏" 
+    :open-delay="500"
+    :close-delay="300"
+  >
+    <button>延迟提示</button>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 自定义内容
+
+使用插槽自定义提示内容：
+
+```vue
+<template>
+  <j-c-tooltip>
+    <button>自定义内容</button>
+    <template #content>
+      <div>
+        <strong>标题</strong>
+        <p>这是自定义的提示内容</p>
+      </div>
+    </template>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 禁用箭头
+
+通过 `showArrow` 属性控制是否显示箭头：
+
+```vue
+<template>
+  <j-c-tooltip content="无箭头提示" :show-arrow="false">
+    <button>无箭头</button>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 最大宽度
+
+通过 `maxWidth` 属性设置提示框最大宽度：
+
+```vue
+<template>
+  <j-c-tooltip 
+    content="这是一段很长的提示内容，会自动换行以适应最大宽度"
+    max-width="200px"
+  >
+    <button>限制宽度</button>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## 禁用状态
+
+通过 `disabled` 属性禁用提示框：
+
+```vue
+<template>
+  <j-c-tooltip content="禁用状态" :disabled="true">
+    <button>禁用</button>
+  </j-c-tooltip>
+</template>
+
+<script setup lang="ts">
+import { JCTooltip } from 'qcpt'
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `content` | `string` | `''` | 显示的内容 |
+| `placement` | `'top' \| 'top-start' \| 'top-end' \| 'bottom' \| 'bottom-start' \| 'bottom-end' \| 'left' \| 'left-start' \| 'left-end' \| 'right' \| 'right-start' \| 'right-end'` | `'top'` | 弹出位置 |
+| `effect` | `'dark' \| 'light'` | `'dark'` | 主题风格 |
+| `trigger` | `'hover' \| 'click' \| 'manual'` | `'hover'` | 触发方式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `showArrow` | `boolean` | `true` | 是否显示箭头 |
+| `openDelay` | `number` | `0` | 延迟显示时间（毫秒） |
+| `closeDelay` | `number` | `200` | 延迟隐藏时间（毫秒） |
+| `maxWidth` | `string` | `'300px'` | 最大宽度 |
+| `offset` | `number` | `12` | 偏移量（像素） |
+| `modelValue` | `boolean` | - | 手动控制显示状态（v-model） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: boolean` | 更新显示状态事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 触发 tooltip 的元素 |
+| `content` | 自定义 tooltip 内容 |
+
+## 注意事项
+
+1. **位置自动调整**：当提示框超出视口时，会自动调整位置以确保可见
+2. **受控模式**：使用 v-model 可以手动控制提示框的显示状态
+3. **延迟控制**：通过 openDelay 和 closeDelay 可以控制显示和隐藏的延迟时间
+4. **点击外部关闭**：在 click 触发方式下，点击外部区域会自动关闭提示框
+5. **滚动监听**：组件会监听窗口滚动和大小变化，自动更新位置
+
+</div>
+<JCTooltipDemo slot="demo" client:only="vue" />
+</DemoPanel>

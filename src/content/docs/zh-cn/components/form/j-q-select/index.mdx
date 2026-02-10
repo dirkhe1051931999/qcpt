@@ -1,0 +1,346 @@
+---
+title: JQSelect 下拉选择
+description: 增强的下拉选择组件，支持单选/多选、搜索、远程数据等功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQSelectDemo from '@components/DemoPanel/JQSelectDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-select)
+
+<DemoPanel title="JQSelect 组件演示">
+<div slot="content">
+
+# JQSelect 下拉选择
+
+基于 Quasar `QSelect` 的增强下拉选择组件，支持单选、多选、搜索、远程数据加载等功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValue"
+    :options="options"
+    option-label="label"
+    option-value="value"
+    label="选择一个选项"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValue = ref(null)
+
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+</script>
+```
+
+## 多选
+
+使用 `multiple` 属性启用多选模式：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValues"
+    :options="options"
+    multiple
+    label="多选"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValues = ref([])
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+</script>
+```
+
+## 多选带标签（Chips）
+
+使用 `use-chips` 属性在多选模式下显示标签：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValues"
+    :options="options"
+    multiple
+    use-chips
+    label="多选（标签）"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValues = ref([])
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+</script>
+```
+
+## 可搜索
+
+使用 `filterable` 属性启用搜索功能：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValue"
+    :options="options"
+    filterable
+    label="可搜索"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValue = ref(null)
+const options = ref([
+  { label: '选项 1', value: 1 },
+  { label: '选项 2', value: 2 },
+  { label: '选项 3', value: 3 }
+])
+</script>
+```
+
+## 远程搜索
+
+使用 `filterFn` 属性实现远程搜索：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValue"
+    :options="options"
+    filterable
+    :filter-fn="filterFn"
+    :loading="loading"
+    label="远程搜索"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValue = ref(null)
+const options = ref([])
+const loading = ref(false)
+
+const filterFn = async (val: string, update: (options?: any[]) => void) => {
+  if (val === '') {
+    update(options.value)
+    return
+  }
+  
+  loading.value = true
+  // 模拟 API 调用
+  const response = await fetch(`/api/search?q=${val}`)
+  const data = await response.json()
+  update(data)
+  loading.value = false
+}
+</script>
+```
+
+## 自定义显示值
+
+### 使用 value-display 插槽
+
+使用 `value-display` 插槽自定义选中值的显示：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedUser"
+    :options="users"
+    option-label="name"
+    option-value="id"
+    label="选择用户"
+  >
+    <template #value-display>
+      <div v-if="selectedUser" class="flex items-center">
+        <q-avatar size="24px" class="q-mr-sm">
+          <img :src="currentUser?.avatar" />
+        </q-avatar>
+        <span class="text-primary">{{ currentUser?.name }} ({{ currentUser?.email }})</span>
+      </div>
+    </template>
+  </j-q-select>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedUser = ref(null)
+
+const users = ref([
+  { id: 1, name: '张三', email: 'zhangsan@example.com', avatar: '/avatars/1.jpg' },
+  { id: 2, name: '李四', email: 'lisi@example.com', avatar: '/avatars/2.jpg' },
+  { id: 3, name: '王五', email: 'wangwu@example.com', avatar: '/avatars/3.jpg' }
+])
+
+const currentUser = computed(() => 
+  users.value.find(u => u.id === selectedUser.value)
+)
+</script>
+```
+
+### 使用 valueDisplayFn 属性
+
+使用 `valueDisplayFn` 函数自定义显示值（更简洁的方式）：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedValue"
+    :options="options"
+    option-label="name"
+    option-value="id"
+    :value-display-fn="formatDisplay"
+    label="自定义格式"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedValue = ref(null)
+
+const options = ref([
+  { id: 1, name: 'Product A', price: 99 },
+  { id: 2, name: 'Product B', price: 199 },
+  { id: 3, name: 'Product C', price: 299 }
+])
+
+const formatDisplay = (value: number) => {
+  const item = options.value.find(opt => opt.id === value)
+  return item ? `${item.name} - ¥${item.price}` : ''
+}
+</script>
+```
+
+### 多选时自定义标签显示
+
+使用 `chip-value-display` 插槽自定义多选标签的显示：
+
+```vue
+<template>
+  <j-q-select
+    v-model="selectedTags"
+    :options="tags"
+    option-label="name"
+    option-value="id"
+    multiple
+    use-chips
+    label="选择标签"
+  >
+    <template #chip-value-display="{ index }">
+      <div class="flex items-center">
+        <q-icon 
+          :name="currentTags[index]?.icon" 
+          size="14px" 
+          class="q-mr-xs"
+        />
+        <span>{{ currentTags[index]?.name }}</span>
+      </div>
+    </template>
+  </j-q-select>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { JQSelect } from 'qcpt'
+
+const selectedTags = ref([])
+
+const tags = ref([
+  { id: 1, name: '前端', icon: 'code' },
+  { id: 2, name: '后端', icon: 'storage' },
+  { id: 3, name: '设计', icon: 'palette' },
+  { id: 4, name: '产品', icon: 'lightbulb' }
+])
+
+const currentTags = computed(() => 
+  selectedTags.value.map(id => tags.value.find(t => t.id === id))
+)
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| Array \| Object` | - | 选中值（v-model） |
+| `options` | `Array` | `[]` | 选项数组 |
+| `optionLabel` | `string` | `'label'` | 选项标签字段名 |
+| `optionValue` | `string` | `'value'` | 选项值字段名 |
+| `label` | `string` | - | 标签文本 |
+| `multiple` | `boolean` | - | 是否多选 |
+| `filterable` | `boolean` | - | 是否可搜索 |
+| `filterFn` | `(inputValue: string, callback: (options?: any[]) => void) => void` | - | 自定义过滤函数（用于远程搜索） |
+| `useChips` | `boolean` | - | 多选时是否使用标签显示 |
+| `clearable` | `boolean` | `true` | 是否显示清除按钮 |
+| `maxlength` | `string \| number` | - | 最大选择数量（多选时） |
+| `maxValues` | `string \| number` | - | 最大选择数量（Quasar 原生属性） |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | - | 禁用状态 |
+| `readonly` | `boolean` | - | 只读状态 |
+| `rules` | `Array` | - | 验证规则数组 |
+| `loading` | `boolean` | - | 加载状态 |
+| `valueDisplayFn` | `(value: any) => string` | - | 自定义值显示函数 |
+| `smInput` | `boolean` | `false` | 小尺寸输入框 |
+| `closeOnSelect` | `boolean` | `false` | 选择后是否自动关闭下拉框 |
+| `emptyOption` | `boolean` | `true` | 是否显示"无数据"选项 |
+| `noErrorIcon` | `boolean` | `true` | 是否隐藏错误图标 |
+| `title` | `string` | - | 输入框的 title 属性（默认显示选中值） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: any` | 值更新事件 |
+| `manual-change` | `value: any` | 手动变化事件（用户手动输入或选择时触发） |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `prepend` | - | 前置内容 |
+| `append` | - | 后置内容 |
+| `after` | - | 后置内容（在输入框外部） |
+| `value-display` | - | 自定义选中值显示 |
+| `chip-value-display` | `{ index, opt, selected }` | 自定义标签显示（多选时） |
+| `option` | `{ opt, index, selected, toggleOption }` | 自定义选项渲染 |
+| `no-option` | - | 无选项时的内容 |
+| `hint` | - | 提示文本 |
+
+</div>
+<JQSelectDemo slot="demo" client:only="vue" />
+</DemoPanel>

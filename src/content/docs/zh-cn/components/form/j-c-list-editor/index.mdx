@@ -1,0 +1,173 @@
+---
+title: JCListEditor 列表编辑器
+description: 动态列表项编辑器组件，用于编辑字符串数组
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCListEditorDemo from '@components/DemoPanel/JCListEditorDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-list-editor)
+
+<DemoPanel title="JCListEditor 组件演示">
+<div slot="content">
+
+# JCListEditor 列表编辑器
+
+动态列表项编辑器组件，用于编辑字符串数组，支持添加、删除和验证。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>(['标签1', '标签2'])
+</script>
+```
+
+## 限制最大数量
+
+使用 `maxItems` 属性限制最大项数：
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表（最多5个）"
+    :max-items="5"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>(['标签1'])
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表"
+    :rules="[
+      val => val.length > 0 || '请至少添加一个标签'
+    ]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>([])
+</script>
+```
+
+## 自定义占位符
+
+使用 `placeholder` 属性自定义输入框占位符：
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表"
+    placeholder="请输入标签名称"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>([])
+</script>
+```
+
+## 自定义新增项默认值
+
+使用 `defaultNewValue` 属性设置新增项的默认值：
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表"
+    default-new-value="新标签"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>([])
+</script>
+```
+
+## 只读模式
+
+使用 `readonly` 属性启用只读模式：
+
+```vue
+<template>
+  <j-c-list-editor
+    v-model="items"
+    label="标签列表"
+    readonly
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCListEditor } from 'qcpt'
+
+const items = ref<string[]>(['标签1', '标签2'])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string[]` | `['']` | 列表数据（v-model，字符串数组） |
+| `label` | `string` | - | 标签文本（必填） |
+| `required` | `boolean` | `false` | 是否必填 |
+| `rules` | `Array` | - | 验证规则（Quasar QInput rules） |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `placeholder` | `string` | `''` | 输入框占位符 |
+| `defaultNewValue` | `string` | `''` | 新增项的默认值 |
+| `maxItems` | `number` | `5` | 最大项数 |
+| `inputType` | `string` | `'text'` | 输入框类型 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string[]` | 列表更新事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `after` | 输入框后置内容 |
+
+</div>
+<JCListEditorDemo slot="demo" client:only="vue" />
+</DemoPanel>

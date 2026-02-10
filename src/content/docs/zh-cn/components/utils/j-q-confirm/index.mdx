@@ -1,0 +1,74 @@
+---
+title: JQConfirm 快速确认
+description: 快速确认操作组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-confirm)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQConfirmDemo from '@components/DemoPanel/JQConfirmDemo.vue';
+
+# JQConfirm 快速确认
+
+快速确认操作组件，通过弹出框进行确认。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-confirm
+    title="确认删除"
+    confirm-text="删除"
+    cancel-text="取消"
+    @confirm="handleConfirm"
+  >
+    <q-btn label="删除" color="negative" />
+  </j-q-confirm>
+</template>
+
+<script setup lang="ts">
+import { JQConfirm } from 'qcpt'
+
+const handleConfirm = () => {
+  console.log('确认删除')
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `title` | `string` | `''` | 确认标题 |
+| `confirmText` | `string` | `''` | 确认按钮文本 |
+| `cancelText` | `string` | `''` | 取消按钮文本 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `confirm` | - | 点击确认时触发 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 触发元素 |
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQConfirmDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 如果不传入 `confirmText` 和 `cancelText`，会使用 i18n 默认值
+- 点击确认后触发 `confirm` 事件
+- 适用于快速确认操作，不需要复杂内容的场景
+

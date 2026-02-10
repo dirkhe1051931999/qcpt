@@ -1,0 +1,87 @@
+---
+title: JQSearchForm 搜索表单
+description: 快速搜索表单组件，带查询和重置按钮
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQSearchFormDemo from '@components/DemoPanel/JQSearchFormDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-search-form)
+
+<DemoPanel title="JQSearchForm 组件演示">
+<div slot="content">
+
+# JQSearchForm 搜索表单
+
+快速搜索表单组件，内置查询和重置按钮。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-search-form v-model="formData" @query="handleQuery" @reset="handleReset">
+    <j-q-input v-model="formData.keyword" label="关键词" />
+    <j-q-select v-model="formData.status" :options="statusOptions" label="状态" />
+  </j-q-search-form>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQSearchForm, JQInput, JQSelect } from 'qcpt'
+
+const formData = ref({
+  keyword: '',
+  status: null
+})
+
+const statusOptions = [
+  { label: '启用', value: 'active' },
+  { label: '禁用', value: 'disabled' }
+]
+
+const handleQuery = () => {
+  console.log('查询', formData.value)
+}
+
+const handleReset = () => {
+  formData.value = { keyword: '', status: null }
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 必填 | 描述 |
+| --- | --- | --- | --- | --- |
+| `modelValue` / `v-model` | `Object` | - | 是 | 表单数据对象 |
+| `queryLoading` | `boolean` | `false` | 否 | 查询按钮加载状态 |
+| `resetLoading` | `boolean` | `false` | 否 | 重置按钮加载状态 |
+| `resetVisible` | `boolean` | `true` | 否 | 是否显示重置按钮 |
+| `operationVisible` | `boolean` | `true` | 否 | 是否显示操作按钮区域 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `query` | - | 点击查询按钮时触发 |
+| `reset` | - | 点击重置按钮时触发，会自动重置表单数据到初始值 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 表单内容 |
+| `extra-operation` | 额外操作区域，位于查询/重置按钮右侧 |
+
+## 注意事项
+
+1. **表单控件 label**：搜索表单内的输入框、选择器等控件直接使用 `label` 属性，不需要用 `j-q-form-label` 包裹
+2. **重置功能**：组件会自动保存初始值（首次渲染时的值），点击重置按钮会恢复到初始值
+3. **双向绑定**：使用 `v-model` 绑定表单数据对象，所有表单控件的值都绑定到这个对象的属性上
+4. **事件触发**：`query` 和 `reset` 事件会在用户点击对应按钮时触发，可以在事件处理函数中执行查询或重置逻辑
+
+</div>
+<JQSearchFormDemo slot="demo" client:only="vue" />
+</DemoPanel>

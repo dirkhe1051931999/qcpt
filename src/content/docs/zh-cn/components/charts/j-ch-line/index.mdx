@@ -1,0 +1,378 @@
+---
+title: JChLine 折线图
+description: 折线图组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChLineDemo from '@components/DemoPanel/JChLineDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-line)
+
+<DemoPanel title="JChLine 组件演示">
+  <div slot="content">
+
+# JChLine 折线图
+
+基于 Chart.js 的折线图组件，支持单条或多条折线展示，适用于趋势分析和数据对比场景。
+
+## 基础用法
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="['周一', '周二', '周三', '周四', '周五']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '访问量',
+    data: [120, 200, 150, 180, 220],
+    borderColor: '#3b82f6',
+    backgroundColor: '#3b82f6'
+  }
+])
+</script>
+```
+
+## 多条折线
+
+适用于多组数据对比分析。
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="['1月', '2月', '3月', '4月', '5月', '6月']"
+    :datasets="multiDatasets"
+    unit-name="件"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+
+const multiDatasets = ref([
+  {
+    label: '销售量',
+    data: [320, 280, 350, 400, 450, 520],
+    borderColor: '#3b82f6',
+    backgroundColor: '#3b82f6'
+  },
+  {
+    label: '库存量',
+    data: [200, 220, 180, 190, 210, 240],
+    borderColor: '#10b981',
+    backgroundColor: '#10b981'
+  },
+  {
+    label: '退货量',
+    data: [30, 25, 40, 35, 28, 32],
+    borderColor: '#ef4444',
+    backgroundColor: '#ef4444'
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="labels"
+    :datasets="datasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+
+const labels = ref(['Q1', 'Q2', 'Q3', 'Q4'])
+const datasets = ref([
+  {
+    label: '季度收入',
+    data: [2500, 3200, 2800, 4100],
+    borderColor: '#8b5cf6',
+    backgroundColor: '#8b5cf6'
+  }
+])
+</script>
+```
+
+## 自定义单位名称
+
+通过 `unitName` 属性设置数据单位，会显示在 tooltip 中。
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="labels"
+    :datasets="datasets"
+    unit-name="℃"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+
+const labels = ref(['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'])
+const datasets = ref([
+  {
+    label: '温度',
+    data: [18, 16, 20, 28, 25, 22],
+    borderColor: '#ef4444',
+    backgroundColor: '#ef4444'
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项，而不需要覆盖整个配置对象。组件内部使用 `mergeChartOptions` 函数进行深度合并。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['08:00', '09:00', '10:00', '11:00', '12:00'])
+const datasets = ref([
+  {
+    label: 'CPU 使用率',
+    data: [45, 52, 48, 65, 70],
+    borderColor: '#f59e0b',
+    backgroundColor: '#f59e0b'
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'line'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 自定义 Y 轴范围
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['1月', '2月', '3月', '4月'])
+const datasets = ref([
+  {
+    label: '完成率',
+    data: [85, 92, 88, 95],
+    borderColor: '#10b981',
+    backgroundColor: '#10b981'
+  }
+])
+
+const customOptions: Partial<ChartOptions<'line'>> = {
+  scales: {
+    y: {
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 20,
+        callback: (value) => value + '%'
+      }
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['1月', '2月', '3月', '4月', '5月', '6月'])
+const datasets = ref([
+  {
+    label: '营收',
+    data: [580, 620, 590, 680, 720, 750],
+    borderColor: '#3b82f6',
+    backgroundColor: '#3b82f6'
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'line'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff'
+    }
+  },
+  scales: {
+    y: {
+      ticks: {
+        stepSize: 100  // 只覆盖步长，其他 ticks 配置保持默认
+      }
+    },
+    x: {
+      grid: {
+        display: true  // 显示 X 轴网格线
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 动态更新数据
+
+组件内部监听了 `labels` 和 `datasets` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-line 
+      :labels="labels"
+      :datasets="datasets"
+      unit-name="℃"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine, JQButton } from 'qcpt'
+
+const labels = ref(['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'])
+const datasets = ref([
+  {
+    label: '温度',
+    data: [18, 16, 20, 28, 25, 22],
+    borderColor: '#ef4444',
+    backgroundColor: '#ef4444'
+  }
+])
+
+const refreshData = () => {
+  datasets.value = [
+    {
+      label: '温度',
+      data: labels.value.map(() => Math.floor(Math.random() * 20) + 15),
+      borderColor: '#ef4444',
+      backgroundColor: '#ef4444'
+    }
+  ]
+}
+</script>
+```
+
+## 默认样式特性
+
+组件内置了以下默认样式特性：
+
+- **平滑曲线**：`tension: 0.4`，使折线更平滑
+- **细点样式**：`pointRadius: 2`，数据点较小不遮挡视线
+- **线条宽度**：`borderWidth: 3`，清晰的线条
+- **无填充**：`fill: false`，不填充区域
+- **透明背景**：`backgroundColor: 'transparent'`
+- **交互模式**：`intersect: false, mode: 'index'`，鼠标悬停时显示所有数据点
+- **长标签截断**：超过 13 个字符的标签会自动截断并加上 `...`
+
+这些默认样式可以通过 `datasets` 或 `options` 属性覆盖。
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `labels` | `string[]` | - | X 轴标签数组（必填） |
+| `datasets` | `ChartDataset<'line'>[]` | - | 数据集数组（Chart.js 格式，必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `unitName` | `string` | `''` | 数据单位名称，显示在 tooltip 中 |
+| `options` | `Partial<ChartOptions<'line'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### ChartDataset 常用配置
+
+`datasets` 数组中每个对象的常用配置项：
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 数据集名称（显示在图例中） |
+| `data` | `number[]` | - | 数据点数组 |
+| `borderColor` | `string` | - | 线条颜色 |
+| `backgroundColor` | `string` | `'transparent'` | 填充颜色 |
+| `tension` | `number` | `0.4` | 曲线平滑度（0-1，0 为直线） |
+| `pointRadius` | `number` | `2` | 数据点半径 |
+| `borderWidth` | `number` | `3` | 线条宽度 |
+| `fill` | `boolean` | `false` | 是否填充区域 |
+
+更多配置项请参考 [Chart.js 官方文档](https://www.chartjs.org/docs/latest/charts/line.html)。
+
+</div>
+<JChLineDemo slot="demo" client:only="vue" />
+</DemoPanel>

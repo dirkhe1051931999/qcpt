@@ -1,0 +1,537 @@
+---
+title: 工具函数
+description: QCPT 提供的工具函数和辅助方法
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import UtilitiesDemo from '@components/DemoPanel/UtilitiesDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/utils)
+
+<DemoPanel title="工具函数交互式演示">
+  <div slot="content">
+
+# 工具函数
+
+QCPT 提供了丰富的工具函数，方便进行数据处理、文件下载等操作。
+
+## Helper 方法
+
+提供完整的工具函数集合，涵盖对象、数组、字符串、数字等各类处理：
+
+- [对象方法](./object-helpers/) - 对象拷贝、合并、属性操作、判断、转换、过滤等
+- [数组方法](./array-helpers/) - 数组去重、树形化、分组、排序、统计、操作等
+- [字符串方法](./string-helpers/) - 脱敏处理、格式化、字符串操作等
+- [数字方法](./number-helpers/) - 随机数、范围控制、精确计算、格式化等
+- [URL 方法](./url-helpers/) - URL 参数处理、URL 构建、编码解码等
+- [DOM 方法](./dom-helpers/) - 剪贴板、文件下载、滚动、元素操作、全屏等
+- [正则验证方法](./regex-helpers/) - 手机号、邮箱、身份证、银行卡等常用验证
+- [性能优化方法](./perf-helpers/) - 防抖、节流、函数缓存、异步控制、性能监控等
+
+## jqTool
+
+所有工具函数都通过 `jqTool` 命名空间导出：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用 helper 方法
+jqTool.helper.object.deepClone(obj)
+jqTool.helper.array.uniqueArray([1, 2, 2, 3])
+jqTool.helper.string.phoneDesensitize('13812345678')
+```
+
+## 树形数据转换
+
+### transformTreeUseLabelAndValue
+
+转换树形数据的字段名，统一使用 `label` 和 `value`：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+const treeData = [
+  {
+    id: 1,
+    name: '节点1',
+    children: [
+      { id: 2, name: '子节点1' }
+    ]
+  }
+]
+
+const transformed = jqTool.transformTreeUseLabelAndValue(
+  treeData,
+  { 
+    optionLabel: 'name',  // 注意：参数名是 optionLabel，不是 labelKey
+    optionValue: 'id',     // 注意：参数名是 optionValue，不是 valueKey
+    optionChildren: 'children'  // 可选，默认为 'children'
+  }
+)
+
+// 结果：
+// [
+//   {
+//     label: '节点1',
+//     value: 1,
+//     row: { id: 1, name: '节点1', children: [...] },  // 保留原始数据
+//     children: [
+//       { label: '子节点1', value: 2, row: {...} }
+//     ]
+//   }
+// ]
+```
+
+## 文件下载
+
+### JQDownloadFile
+
+根据文件内容（Blob/ArrayBuffer）在浏览器中触发下载：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 从 Blob 下载文件
+const blob = new Blob(['文件内容'], { type: 'text/plain' })
+jqTool.JQDownloadFile(blob, 'document.txt')
+
+// 从 ArrayBuffer 下载文件
+const arrayBuffer = await response.arrayBuffer()
+jqTool.JQDownloadFile(arrayBuffer, 'data.bin')
+
+// 结合 generateDownloadFileName 使用
+const filename = jqTool.generateDownloadFileName('report', 'xlsx')
+jqTool.JQDownloadFile(blob, filename)  // 'report_20251204143025.xlsx'
+```
+
+### generateDownloadFileName
+
+生成带时间戳的下载文件名：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+const filename = jqTool.generateDownloadFileName('report', 'xlsx')
+// 结果: 'report_20251204_143025.xlsx'
+```
+
+## 数据格式化
+
+### formatSize
+
+格式化文件大小：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 基础用法
+jqTool.formatSize({ size: 1024 })  // '1 KB'
+jqTool.formatSize({ size: 1048576 })  // '1 MB'
+
+// 指定单位
+jqTool.formatSize({ 
+  size: 1024, 
+  unit: 'KB' 
+})  // '1 KB'
+
+// 限制最大单位
+jqTool.formatSize({ 
+  size: 1048576, 
+  unit: 'B',
+  maxUnit: 'MB' 
+})  // '1 MB'
+
+// 自定义数字格式
+jqTool.formatSize({ 
+  size: 1024.567,
+  numberFormatOptions: { 
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  }
+})  // '1.00 KB'
+```
+
+### convertDataUnit
+
+流量单位转换函数，支持 B、KB、MB、GB、TB 之间的任意转换：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 转换单位并显示
+jqTool.convertDataUnit(1024, 'B', 'KB')  // '1.00 KB'
+jqTool.convertDataUnit(1, 'MB', 'KB')  // '1024.00 KB'
+
+// 只返回数字
+jqTool.convertDataUnit(1024, 'B', 'KB', { 
+  showUnit: false 
+})  // 1
+
+// 自定义小数位数
+jqTool.convertDataUnit(1024.567, 'B', 'KB', { 
+  digits: 3 
+})  // '1.001 KB'
+```
+
+### formatDate
+
+格式化日期：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+jqTool.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')
+// '2025-12-04 14:30:25'
+```
+
+### defaultFormat
+
+默认格式化函数，用于处理空值：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 创建格式化函数
+const formatter = jqTool.defaultFormat()
+
+formatter(null)  // '--'
+formatter(undefined)  // '--'
+formatter('')  // '--'
+formatter(0)  // 0 (保留 0)
+formatter('0')  // '0' (保留 '0')
+formatter('value')  // 'value'
+
+// 自定义格式化函数和回退值
+const customFormatter = jqTool.defaultFormat(
+  (val) => `值: ${val}`,  // 自定义格式化函数
+  '无数据'  // 自定义回退值
+)
+
+customFormatter(null)  // '无数据'
+customFormatter(123)  // '值: 123'
+```
+
+### defaultFill
+
+默认填充函数，处理 falsy 值：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+jqTool.defaultFill(null)  // '-'
+jqTool.defaultFill(undefined)  // '-'
+jqTool.defaultFill('')  // '-'
+jqTool.defaultFill(0)  // 0 (保留 0)
+jqTool.defaultFill('0')  // '0' (保留 '0')
+jqTool.defaultFill(false)  // false (保留 false)
+jqTool.defaultFill('value')  // 'value'
+```
+
+### defaultDateFormat
+
+默认日期格式化函数：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 创建日期格式化函数
+const dateFormatter = jqTool.defaultDateFormat('YYYY-MM-DD HH:mm:ss')
+
+dateFormatter(null)  // '--'
+dateFormatter(new Date())  // '2025-12-04 14:30:25'
+dateFormatter(1701683425000)  // '2025-12-04 14:30:25'
+
+// 自定义格式和回退值
+const customDateFormatter = jqTool.defaultDateFormat(
+  'YYYY年MM月DD日',
+  '无日期'
+)
+
+customDateFormatter(null)  // '无日期'
+customDateFormatter(new Date())  // '2025年12月04日'
+```
+
+### defaultDataFormat
+
+流量数据格式化函数：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 创建数据格式化函数
+const dataFormatter = jqTool.defaultDataFormat()
+
+dataFormatter(null)  // '--'
+dataFormatter(0)  // '0 B' (保留 0)
+dataFormatter(1024)  // '1 KB'
+dataFormatter(1048576)  // '1 MB'
+
+// 自定义单位和精度
+const customDataFormatter = jqTool.defaultDataFormat('--', {
+  unit: 'MB',
+  digits: 3
+})
+
+customDataFormatter(1024 * 1024)  // '1.000 MB'
+```
+
+### defaultAutoDataFormat
+
+智能流量数据格式化函数，自动转换单位：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 创建智能格式化函数
+const autoFormatter = jqTool.defaultAutoDataFormat()
+
+autoFormatter(1024)  // '1.00 KB' (自动转换)
+autoFormatter(1048576)  // '1.00 MB' (自动转换)
+autoFormatter(1073741824)  // '1.00 GB' (自动转换)
+
+// 如果值不能被 1024 整除，保持原单位
+autoFormatter(1500)  // '1500.00 B' (保持 B)
+
+// 自定义精度
+const customAutoFormatter = jqTool.defaultAutoDataFormat('--', {
+  digits: 1
+})
+
+customAutoFormatter(1024)  // '1.0 KB'
+```
+
+## 表单工具
+
+### formRules
+
+表单验证规则：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+const rules = jqTool.formRules(t)  // t 是 i18n 函数
+
+// 使用示例
+const emailRules = [
+  rules.required,
+  rules.email
+]
+```
+
+### formUtils
+
+表单工具函数：
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 值转字符串
+jqTool.formUtils.val2Str(123)  // '123'
+jqTool.formUtils.val2Str(null)  // ''
+jqTool.formUtils.val2Str(undefined)  // ''
+// 支持 BigNumber 对象
+jqTool.formUtils.val2Str(new BigNumber('123'))  // '123'
+
+// 值分割
+jqTool.formUtils.valSplit('1,2,3')  // ['1', '2', '3']
+jqTool.formUtils.valSplit('1, 2, 3')  // ['1', '2', '3'] (自动去除空格)
+jqTool.formUtils.valSplit(null)  // []
+jqTool.formUtils.valSplit(undefined)  // []
+
+// 数据转换大小
+jqTool.formUtils.dataCvSize(1048576, 'B', 'MB')  // { size: 1, unit: 'MB' }
+jqTool.formUtils.dataCvSize(1024, 'KB', 'MB')  // { size: 1, unit: 'MB' }
+
+// 对象转数组（提取指定键的值）
+jqTool.formUtils.obj2Arr([
+  { mcc: '460', name: '中国移动' },
+  { mcc: '461', name: '中国联通' }
+], 'mcc')  // ['460', '461']
+
+// 从 JSON 字符串提取
+jqTool.formUtils.obj2Arr(
+  '[{"mcc":"460"},{"mcc":"461"}]',
+  'mcc'
+)  // ['460', '461']
+```
+
+## 树形工具 (treeUtils)
+
+树形数据处理工具函数集合：
+
+```typescript
+import { treeUtils } from 'qcpt'
+
+// 根据 parentId 构建树形结构
+const result = treeUtils.buildTree({
+  data: [
+    { id: 1, name: '节点1', parentId: 0 },
+    { id: 2, name: '子节点1', parentId: 1 },
+    { id: 3, name: '子节点2', parentId: 1 }
+  ],
+  key: 'parentId',
+  idKey: 'id',
+  rootId: 0,
+  isMapOption: true,
+  labelValue: { label: 'name', value: 'id' }
+})
+// result.data: 树形数据
+// result.flatData: 扁平化数据
+
+// 将数组转换为树形结构
+const tree = treeUtils.arrayToTree({
+  data: [
+    { id: 1, name: '节点1', parentId: 0 },
+    { id: 2, name: '子节点1', parentId: 1 }
+  ],
+  parentKey: 'parentId',
+  idKey: 'id',
+  rootId: 0,
+  childrenKey: 'children'
+})
+
+// 查找父级节点 ID
+const parentIds = treeUtils.findParentIds({
+  targetIds: [2, 3],
+  allData: [
+    { id: 1, parentId: 0 },
+    { id: 2, parentId: 1 },
+    { id: 3, parentId: 1 }
+  ],
+  parentKey: 'parentId',
+  idKey: 'id',
+  excludeRootParent: true,
+  rootParentValue: 0
+})  // [1]
+
+// 过滤叶子节点 ID
+const leafIds = treeUtils.filterLeafIds({
+  treeData: [
+    { id: 1, children: [{ id: 2 }, { id: 3 }] }
+  ],
+  idList: [1, 2, 3],
+  idKey: 'id',
+  childrenKey: 'children'
+})  // [2, 3] (剔除了父节点 1)
+```
+
+## 权限同步工具
+
+### usePagePermissionSync
+
+创建与 localStorage 同步的页面权限 ID ref，支持跨标签页同步：
+
+```typescript
+import { usePagePermissionSync } from 'qcpt'
+import { ref } from 'vue'
+
+// 创建同步的权限 ref
+const pagePermissionIds = usePagePermissionSync('page_permission_ids')
+
+// 更新权限（会自动同步到 localStorage 和其他标签页）
+pagePermissionIds.value = ['user-view', 'user-edit', 'user-delete']
+
+// 在其他标签页中，权限会自动同步更新
+```
+
+### usePageActionPermissionSync
+
+创建与 localStorage 同步的页面操作权限 ID ref：
+
+```typescript
+import { usePageActionPermissionSync } from 'qcpt'
+
+// 创建同步的操作权限 ref
+const pageActionPermissionIds = usePageActionPermissionSync('page_action_permission_ids')
+
+// 更新操作权限
+pageActionPermissionIds.value = ['action-edit', 'action-delete']
+```
+
+**特性：**
+- 自动同步到 localStorage
+- 支持跨标签页/窗口同步（通过 storage 事件）
+- 响应式更新，权限变化时组件自动响应
+
+## 分页工具
+
+### usePagination
+
+分页 Composable 函数，用于在非表格场景下管理分页状态：
+
+```typescript
+import { usePagination } from 'qcpt'
+
+const { 
+  paginationInfo, 
+  getCurrentPage, 
+  getPageSize, 
+  getTotal,
+  getPaginationParams,
+  setCurrentPage,
+  setPageSize,
+  setTotal,
+  reset
+} = usePagination({
+  currentPage: 1,
+  pageSize: 20,
+  total: 0
+})
+
+// 获取分页参数用于 API 请求
+const params = getPaginationParams()  // { currentPage: 1, pageSize: 20 }
+
+// 设置总数
+setTotal(100)
+
+// 切换页码
+setCurrentPage(2)
+
+// 重置分页
+reset()
+```
+
+**详细文档：** 请参考 [JQPagination 组件文档](/zh-cn/components/form/j-q-pagination/) 中的"与 usePagination 组合使用"章节。
+
+## 完整 API 列表
+
+### jqTool 命名空间
+
+| 函数名 | 类型 | 描述 |
+| --- | --- | --- |
+| `transformTreeUseLabelAndValue` | `(tree, options) => Tree` | 转换树形数据字段名 |
+| `JQDownloadFile` | `(options) => void` | 下载文件 |
+| `generateDownloadFileName` | `(name, ext) => string` | 生成带时间戳的文件名 |
+| `formatSize` | `(options) => string` | 格式化文件大小 |
+| `formatDate` | `(date, format) => string` | 格式化日期 |
+| `defaultFormat` | `(formatter?, fallback?) => Function` | 创建默认格式化函数 |
+| `defaultFill` | `(value) => any` | 默认填充函数 |
+| `getUpperSize` | `(sizeUnit, options?) => { size, unit }` | 获取向上取整的大小 |
+| `defaultDateFormat` | `(format?, fallback?) => Function` | 创建默认日期格式化函数 |
+| `defaultDataFormat` | `(fallback?, options?) => Function` | 创建流量数据格式化函数 |
+| `defaultAutoDataFormat` | `(fallback?, options?) => Function` | 创建智能流量数据格式化函数 |
+| `convertDataUnit` | `(value, fromUnit, toUnit, options?) => string \| number` | 流量单位转换 |
+| `formRules` | `(t) => Rules` | 表单验证规则 |
+| `formUtils.val2Str` | `(value) => string` | 值转字符串 |
+| `formUtils.valSplit` | `(value) => string[]` | 值分割 |
+| `formUtils.dataCvSize` | `(size, unit, maxUnit?) => { size, unit }` | 数据转换大小 |
+| `formUtils.obj2Arr` | `(data, keyToExtract) => string[]` | 从对象数组提取指定键的值 |
+| `treeUtils.buildTree` | `(config) => { data, flatData }` | 根据 parentId 构建树形结构 |
+| `treeUtils.arrayToTree` | `(config) => Tree` | 将数组转换为树形结构 |
+| `treeUtils.findParentIds` | `(config) => Array` | 查找父级节点 ID |
+| `treeUtils.filterLeafIds` | `(config) => Array` | 过滤叶子节点 ID |
+
+### 独立导出的函数
+
+| 函数名 | 类型 | 描述 |
+| --- | --- | --- |
+| `usePagePermissionSync` | `(key) => Ref<string[]>` | 创建与 localStorage 同步的页面权限 ref |
+| `usePageActionPermissionSync` | `(key) => Ref<string[]>` | 创建与 localStorage 同步的操作权限 ref |
+| `usePagination` | `(options?) => UsePaginationReturn` | 分页状态管理 Composable（详见 [JQPagination 组件文档](/zh-cn/components/form/j-q-pagination/)） |
+| `formUtils` | `object` | 表单工具函数对象（可直接导入） |
+| `treeUtils` | `object` | 树形工具函数对象（可直接导入） |
+
+</div>
+<UtilitiesDemo slot="demo" client:only="vue" />
+</DemoPanel>
+

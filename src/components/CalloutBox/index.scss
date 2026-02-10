@@ -1,0 +1,31 @@
+.callout {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+
+  &-info {
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+  }
+
+  &-warning {
+    background-color: #fff3e0;
+    border: 1px solid #ffb74d;
+  }
+
+  &-success {
+    background-color: #e8f5e9;
+    border: 1px solid #81c784;
+  }
+
+  &-error {
+    background-color: #ffebee;
+    border: 1px solid #e57373;
+  }
+
+  &-title {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+}

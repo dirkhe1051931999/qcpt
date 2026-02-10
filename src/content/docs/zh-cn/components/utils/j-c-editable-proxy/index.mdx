@@ -1,0 +1,169 @@
+---
+title: JCEditableProxy 编辑Proxy
+description: 双击编辑组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-editable-proxy)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCEditableProxyDemo from '@components/DemoPanel/JCEditableProxyDemo.vue';
+
+# JCEditableProxy 编辑Proxy
+
+双击编辑组件，点击编辑图标后弹出编辑框。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-editable-proxy
+    v-model="value"
+    code="edit-permission"
+    @save="handleSave"
+  >
+    <template #editor="{ tempValue, updateTempValue }">
+      <j-q-input v-model="tempValue" @update:model-value="updateTempValue" />
+    </template>
+  </j-c-editable-proxy>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCEditableProxy, JQInput } from 'qcpt'
+
+const value = ref('可编辑的值')
+
+const handleSave = (newValue: string) => {
+  console.log('保存', newValue)
+  value.value = newValue
+}
+</script>
+```
+
+## 表单验证
+
+使用 `setEditorRef` 设置编辑器引用，支持表单验证：
+
+```vue
+<template>
+  <j-c-editable-proxy
+    v-model="value"
+    @saved="handleSaved"
+  >
+    <template #editor="{ tempValue, updateTempValue, setEditorRef }">
+      <j-q-input 
+        v-model="tempValue" 
+        @update:model-value="updateTempValue"
+        :ref="setEditorRef"
+        :rules="[val => !!val || '不能为空']"
+      />
+    </template>
+  </j-c-editable-proxy>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCEditableProxy, JQInput } from 'qcpt'
+
+const value = ref('可编辑的值')
+
+const handleSaved = (newValue: string) => {
+  console.log('保存成功', newValue)
+}
+</script>
+```
+
+## 权限控制
+
+通过 `code` 属性控制编辑功能的显示：
+
+```vue
+<template>
+  <j-c-editable-proxy
+    v-model="value"
+    code="edit-permission"
+  >
+    <template #editor="{ tempValue, updateTempValue }">
+      <j-q-input v-model="tempValue" @update:model-value="updateTempValue" />
+    </template>
+  </j-c-editable-proxy>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCEditableProxy, JQInput } from 'qcpt'
+
+const value = ref('可编辑的值')
+</script>
+```
+
+## 自定义显示内容
+
+使用 `display` 插槽自定义显示内容：
+
+```vue
+<template>
+  <j-c-editable-proxy v-model="value">
+    <template #display>
+      <span class="custom-display">{{ value }}</span>
+    </template>
+    
+    <template #editor="{ tempValue, updateTempValue }">
+      <j-q-input v-model="tempValue" @update:model-value="updateTempValue" />
+    </template>
+  </j-c-editable-proxy>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCEditableProxy, JQInput } from 'qcpt'
+
+const value = ref('可编辑的值')
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `any` | `null` | 值（v-model） |
+| `code` | `string` | `''` | 权限代码（用于权限控制） |
+| `popupWidth` | `string` | `'300px'` | 弹出框宽度 |
+| `iconSize` | `string` | `'18px'` | 编辑图标大小 |
+| `iconStyle` | `string` | `''` | 编辑图标自定义样式 |
+| `required` | `boolean` | `true` | 是否必填（影响保存按钮位置） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: any` | 值更新事件 |
+| `saved` | `value: any` | 保存成功时触发 |
+| `confirm` | `value: any` | 确认时触发（与 saved 同时触发） |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `display` | - | 显示内容（默认显示 modelValue） |
+| `editor` | `{ tempValue, updateTempValue, setEditorRef }` | 编辑器内容 |
+  - `tempValue`: 临时值（编辑时的值）
+  - `updateTempValue`: 更新临时值的函数
+  - `setEditorRef`: 设置编辑器引用的函数（用于表单验证）
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JCEditableProxyDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 组件支持表单验证，需要使用 `setEditorRef` 设置编辑器引用
+- 支持异步保存，通过 `confirm` 事件的 `done` 回调控制保存流程
+- 可以通过 `code` 属性控制编辑功能的显示（权限控制）

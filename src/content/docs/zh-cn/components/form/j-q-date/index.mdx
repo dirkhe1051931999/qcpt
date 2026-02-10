@@ -1,0 +1,218 @@
+---
+title: JQDate 日期选择器
+description: 日期选择器组件，支持单选或范围选择
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDateDemo from '@components/DemoPanel/JQDateDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-date)
+
+<DemoPanel title="JQDate 组件演示">
+<div slot="content">
+
+# JQDate 日期选择器
+
+基于 Quasar `QDate` 的日期选择器组件，支持单选日期或日期范围选择。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-date v-model="date" label="选择日期" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+
+const date = ref('')
+</script>
+```
+
+## 日期范围选择
+
+使用 `range` 属性启用日期范围选择：
+
+```vue
+<template>
+  <j-q-date v-model="dateRange" label="日期范围" range />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+
+const dateRange = ref({ from: '', to: '' })
+</script>
+```
+
+## 日期格式
+
+通过 `mask` 属性自定义日期格式：
+
+```vue
+<template>
+  <j-q-date 
+    v-model="date" 
+    label="选择日期"
+    mask="YYYY/MM/DD"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+
+const date = ref('')
+</script>
+```
+
+## 日期限制
+
+通过 `options` 属性限制可选日期：
+
+```vue
+<template>
+  <j-q-date 
+    v-model="date" 
+    label="选择日期"
+    :options="dateOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+import { date } from 'quasar'
+
+const dateValue = ref('')
+
+const dateOptions = (d: string) => {
+  // 只能选择今天之后的日期
+  return date.isSameOrAfter(d, date.formatDate(new Date(), 'YYYY-MM-DD'))
+}
+</script>
+```
+
+## 自定义显示格式
+
+通过 `valueDisplayFn` 属性自定义日期显示格式：
+
+```vue
+<template>
+  <j-q-date 
+    v-model="date" 
+    label="选择日期"
+    :value-display-fn="formatDate"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+import { date } from 'quasar'
+
+const dateValue = ref('')
+
+const formatDate = (value: string) => {
+  if (!value) return ''
+  return date.formatDate(value, 'YYYY年MM月DD日')
+}
+</script>
+```
+
+## 自定义弹窗内容
+
+使用 `popup-prepend` 插槽在日期选择器上方添加自定义内容：
+
+```vue
+<template>
+  <j-q-date v-model="date" label="选择日期">
+    <template #popup-prepend>
+      <div class="q-pa-md">
+        <p>请选择日期</p>
+      </div>
+    </template>
+  </j-q-date>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+
+const date = ref('')
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| Date \| Object` | - | 日期值（v-model），支持时间戳、Date对象、字符串或范围对象 |
+| `label` | `string` | - | 标签文本 |
+| `range` | `boolean` | `false` | 是否启用范围选择 |
+| `mask` | `string` | `'YYYY-MM-DD'` | 日期格式掩码 |
+| `options` | `Array \| Function` | - | 日期限制选项（Quasar QDate options） |
+| `clearable` | `boolean` | `true` | 是否可清空 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `rules` | `Array` | - | 验证规则（Quasar QField rules） |
+| `valueDisplayFn` | `Function` | - | 自定义显示格式函数 `(value: any) => string \| number \| null \| undefined` |
+| `popupInnerStyle` | `string \| Object \| Array` | - | 弹窗内部样式 |
+| `locales` | `string` | - | 语言区域设置 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: any` | 值更新事件 |
+| `rangeStart` | `from: string` | 范围选择开始事件 |
+| `rangeEnd` | `range: {from: string, to: string}` | 范围选择结束事件 |
+| `hide` | - | 弹窗关闭事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `popup-prepend` | 弹窗前置内容 |
+| `append` | 后置内容 |
+| `control` | 控制区域内容 |
+
+### Methods
+
+通过 ref 可以访问以下方法和属性：
+
+| 方法/属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `closePopup` | `() => void` | 关闭弹出框 |
+| `popupVisible` | `Ref<boolean>` | 弹出框是否可见（响应式） |
+
+#### 使用示例
+
+```vue
+<template>
+  <j-q-date ref="dateRef" v-model="date" label="选择日期" />
+  <q-btn @click="handleClose" label="关闭弹窗" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDate } from 'qcpt'
+
+const dateRef = ref()
+const date = ref('')
+
+const handleClose = () => {
+  dateRef.value?.closePopup()
+}
+</script>
+```
+
+</div>
+<JQDateDemo slot="demo" client:only="vue" />
+</DemoPanel>

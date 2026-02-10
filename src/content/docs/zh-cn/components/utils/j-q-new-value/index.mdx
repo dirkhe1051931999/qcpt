@@ -1,0 +1,211 @@
+---
+title: JQNewValue 新增值输入
+description: 支持输入新值的多选下拉框组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-new-value)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQNewValueDemo from '@components/DemoPanel/JQNewValueDemo.vue';
+
+# JQNewValue 新增值输入
+
+支持输入新值的多选下拉框组件，允许用户通过输入添加新的选项值。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="标签"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>([])
+const options = ref([
+  { label: '选项1', value: 'option1' },
+  { label: '选项2', value: 'option2' }
+])
+</script>
+```
+
+## 带标签显示
+
+使用 `useChips` 属性以标签形式显示选中的值：
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="标签"
+    use-chips
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>(['option1', 'option2'])
+const options = ref([
+  { label: '选项1', value: 'option1' }
+])
+</script>
+```
+
+## 值验证
+
+通过 `addRulesName` 属性设置新增值的验证规则：
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="邮箱"
+    add-rules-name="email"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>([])
+const options = ref([])
+</script>
+```
+
+## 限制最大数量
+
+通过 `maxlength` 属性限制最大可选数量：
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="标签"
+    :maxlength="5"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>([])
+const options = ref([])
+</script>
+```
+
+## 允许重复值
+
+使用 `allowDuplicates` 属性允许添加重复的值：
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="标签"
+    :allow-duplicates="true"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>([])
+const options = ref([])
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-q-new-value
+    v-model="selectedValues"
+    :options="options"
+    label="标签"
+    :rules="[
+      val => val.length > 0 || '请至少选择一个值'
+    ]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQNewValue } from 'qcpt'
+
+const selectedValues = ref<string[]>([])
+const options = ref([])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string[]` | `[]` | 选中值数组（v-model） |
+| `options` | `Array` | `[]` | 选项数组 |
+| `label` | `string` | - | 标签文本 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `rules` | `Array` | - | 验证规则（Quasar QInput rules） |
+| `addRulesName` | `string` | `''` | 新增值的验证规则名称 |
+| `useChips` | `boolean` | `false` | 是否使用标签显示选中值 |
+| `allowDuplicates` | `boolean` | `false` | 是否允许重复值 |
+| `maxlength` | `number` | `-1` | 最大可选数量（-1 表示无限制） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string[]` | 值更新事件 |
+| `change` | `value: string[]` | 值变化事件 |
+
+### Methods
+
+通过 ref 调用以下方法：
+
+| 方法名 | 参数 | 描述 |
+| --- | --- | --- |
+| `validate` | - | 验证表单，返回 `boolean` |
+| `resetValidation` | - | 重置验证状态 |
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQNewValueDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 按回车键添加新值
+- 使用 `useChips` 属性以标签形式显示选中的值
+- 通过 `addRulesName` 设置新增值的验证规则
+- 通过 `maxlength` 限制最大可选数量
+- 使用 `allowDuplicates` 控制是否允许重复值
+
+### Slots
+
+组件支持 Quasar `QSelect` 的所有插槽。
+

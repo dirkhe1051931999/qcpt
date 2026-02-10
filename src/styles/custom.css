@@ -1,0 +1,105 @@
+/* 强制 logo 链接到 /zh-cn/ */
+header .sl-link-logo {
+  cursor: pointer;
+}
+
+header .sl-link-logo:hover {
+  opacity: 1;
+}
+
+/* 通过 CSS 属性选择器确保链接指向 /zh-cn/ */
+header .sl-link-logo[href] {
+  pointer-events: auto;
+}
+
+/* 防止表格中的代码片段被强制换行 */
+table code {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+/* 确保表格第一列（属性名）有足够的最小宽度，防止换行 */
+table th:first-child,
+table td:first-child {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* 如果第一列包含代码，确保代码不换行 */
+table th:first-child code,
+table td:first-child code {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+/* 修复 qcpt 样式污染：强制保护侧边栏的 summary 元素 */
+/* qcpt 把 summary 改成了 display: block，导致折叠箭头显示异常 */
+aside.sidebar summary,
+nav.sidebar summary,
+.sidebar-content summary,
+.sidebar-pane summary,
+.right-sidebar summary {
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  list-style: none !important;
+}
+
+/* 保护 summary 伪元素 */
+aside.sidebar summary::marker,
+aside.sidebar summary::-webkit-details-marker,
+nav.sidebar summary::marker,
+nav.sidebar summary::-webkit-details-marker,
+.sidebar-content summary::marker,
+.sidebar-content summary::-webkit-details-marker {
+  display: none !important;
+}
+
+/* 修复 qcpt 对标题样式的污染 */
+/* 保护文档内容区域的标题，排除演示面板 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  color: var(--sl-color-white) !important;
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+}
+
+h1 {
+  font-size: 2.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+h2 {
+  font-size: 2rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--sl-color-gray-5) !important;
+  margin-top: 2rem !important;
+}
+
+h3 {
+  font-size: 1.5rem !important;
+  margin-top: 1.5rem !important;
+}
+
+h4 {
+  font-size: 1.25rem !important;
+  margin-top: 1.25rem !important;
+}
+
+h5 {
+  font-size: 1.125rem !important;
+  margin-top: 1rem !important;
+}
+
+h6 {
+  font-size: 1rem !important;
+  margin-top: 1rem !important;
+  color: var(--sl-color-gray-2) !important;
+}

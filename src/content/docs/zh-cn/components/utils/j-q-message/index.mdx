@@ -1,0 +1,115 @@
+---
+title: JQMessage 消息通知
+description: 全局消息通知组件
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-message)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQMessageDemo from '@components/DemoPanel/JQMessageDemo.vue';
+
+# JQMessage 消息通知
+
+全局消息通知组件，用于显示成功、错误、警告等消息。
+
+## 基础用法
+
+```typescript
+import { JQMessage } from 'qcpt'
+
+// 成功消息
+JQMessage.show({ type: 'success', content: '操作完成！' })
+
+// 错误消息
+JQMessage.show({ type: 'error', content: '操作失败' })
+
+// 警告消息
+JQMessage.show({ type: 'warn', content: '请检查您的输入' })
+```
+
+## 通知模式
+
+使用 `isNotify` 参数启用通知模式（带关闭按钮）：
+
+```typescript
+import { JQMessage } from 'qcpt'
+
+JQMessage.show({
+  type: 'success',
+  content: '操作完成！',
+  isNotify: true
+})
+```
+
+## API
+
+### show(params)
+
+显示消息通知。
+
+**参数：**
+
+```typescript
+interface showParams {
+  type: 'success' | 'error' | 'warn'
+  content: string
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top' | 'bottom' | 'left' | 'right' | 'center'
+  isNotify?: boolean  // 是否启用通知模式（带关闭按钮）
+}
+```
+
+**示例：**
+
+```typescript
+import { JQMessage } from 'qcpt'
+
+// 成功消息
+JQMessage.show({
+  type: 'success',
+  content: '保存成功',
+  position: 'top'
+})
+
+// 错误消息（通知模式）
+JQMessage.show({
+  type: 'error',
+  content: '操作失败，请重试',
+  position: 'top',
+  isNotify: true
+})
+
+// 警告消息
+JQMessage.show({
+  type: 'warn',
+  content: '请检查您的输入',
+  position: 'bottom'
+})
+```
+
+### setQuasarInstance(instance)
+
+设置 Quasar 实例（内部使用，通常在 `qcptInit` 中自动调用）。
+
+**参数：**
+- `instance: QVueGlobals` - Quasar 全局实例
+
+**说明：**
+- 此方法通常在组件库初始化时自动调用
+- 如果未设置 Quasar 实例，消息会降级为 `alert` 显示
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JQMessageDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 使用 `JQMessage.show()` 显示消息通知
+- 支持三种类型：`success`、`error`、`warn`
+- 使用 `isNotify: true` 启用通知模式（带关闭按钮）
+- 支持自定义位置，包括 `top`、`bottom`、`top-left`、`top-right` 等
+

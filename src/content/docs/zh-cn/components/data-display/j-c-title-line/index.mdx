@@ -1,0 +1,70 @@
+---
+title: JCTitleLine 标题分隔线
+description: 章节标题分隔线组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTitleLineDemo from '@components/DemoPanel/JCTitleLineDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-title-line)
+
+<DemoPanel title="JCTitleLine 组件演示">
+<div slot="content">
+
+# JCTitleLine 标题分隔线
+
+章节标题分隔线组件，用于分隔内容区块，带有一条横线。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-title-line label="章节标题" />
+</template>
+
+<script setup lang="ts">
+import { JCTitleLine } from 'qcpt'
+</script>
+```
+
+## 带额外内容
+
+使用默认插槽在标题右侧添加额外内容：
+
+```vue
+<template>
+  <j-c-title-line label="章节标题">
+    <q-btn label="操作" size="sm" />
+  </j-c-title-line>
+</template>
+
+<script setup lang="ts">
+import { JCTitleLine } from 'qcpt'
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 标题文本 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 标题右侧的额外内容 |
+
+## 注意事项
+
+1. **标题文本**：`label` 属性用于设置标题文本，必填
+2. **额外内容**：使用默认插槽可以在标题右侧添加按钮、链接等额外内容
+3. **样式特点**：标题左侧显示文本，右侧有一条横线自动延伸至容器边缘
+4. **背景色**：标题和额外内容区域使用白色背景，确保在灰色横线上方显示
+5. **实际应用**：常用于表单页面、详情页面等场景，用于分隔不同的内容区块
+
+</div>
+<JCTitleLineDemo slot="demo" client:only="vue" />
+</DemoPanel>

@@ -1,0 +1,112 @@
+---
+title: JQPopover 弹出内容
+description: 弹出内容组件，支持点击和悬停触发
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQPopoverDemo from '@components/DemoPanel/JQPopoverDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-popover)
+
+<DemoPanel title="JQPopover 组件演示">
+<div slot="content">
+
+# JQPopover 弹出内容
+
+弹出内容组件，用于显示弹出式内容，支持点击和悬停两种触发方式。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-popover title="提示信息">
+    <q-btn label="点击我" />
+  </j-q-popover>
+</template>
+
+<script setup lang="ts">
+import { JQPopover } from 'qcpt'
+</script>
+```
+
+## 自定义内容
+
+使用 `content` 插槽自定义弹出内容：
+
+```vue
+<template>
+  <j-q-popover>
+    <q-btn label="点击我" />
+    <template #content>
+      <div>
+        <strong>自定义标题</strong>
+        <p>这是自定义的弹出内容</p>
+      </div>
+    </template>
+  </j-q-popover>
+</template>
+
+<script setup lang="ts">
+import { JQPopover } from 'qcpt'
+</script>
+```
+
+## 悬停触发
+
+使用 `trigger="hover"` 启用悬停触发：
+
+```vue
+<template>
+  <j-q-popover title="悬停查看" trigger="hover">
+    <span class="text-primary cursor-pointer">悬停我</span>
+  </j-q-popover>
+</template>
+
+<script setup lang="ts">
+import { JQPopover } from 'qcpt'
+</script>
+```
+
+## 自定义宽度
+
+使用 `width` 属性自定义弹出框宽度：
+
+```vue
+<template>
+  <j-q-popover title="提示信息" :width="300">
+    <q-btn label="点击我" />
+  </j-q-popover>
+</template>
+
+<script setup lang="ts">
+import { JQPopover } from 'qcpt'
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `title` | `string` | `''` | 弹出内容标题（当没有 content 插槽时显示） |
+| `width` | `string \| number` | `200` | 弹出框宽度（数字单位为 px） |
+| `trigger` | `'click' \| 'hover'` | `'click'` | 触发方式 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 触发元素 |
+| `content` | 弹出内容（优先级高于 title） |
+
+## 注意事项
+
+1. **触发方式**：支持 click（点击）和 hover（悬停）两种触发方式，默认为 click
+2. **内容优先级**：content 插槽的优先级高于 title 属性，如果提供了 content 插槽，title 会被忽略
+3. **宽度设置**：width 可以是数字（单位为 px）或字符串（如 '300px'），默认 200px
+4. **实际应用**：常用于用户信息提示、帮助信息、操作菜单等场景
+
+</div>
+<JQPopoverDemo slot="demo" client:only="vue" />
+</DemoPanel>

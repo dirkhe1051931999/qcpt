@@ -1,0 +1,231 @@
+---
+title: 国际化 (i18n)
+description: QCPT 的国际化支持
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import I18nDemo from '@components/DemoPanel/I18nDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/i18n)
+
+<DemoPanel title="国际化交互演示">
+  <div slot="content">
+
+# 国际化 (i18n)
+
+QCPT 内置了国际化支持，目前支持中文（zh-CN）和英文（en-US）。
+
+## 设置语言
+
+### 初始化时设置
+
+在 `qcptInit` 中设置默认语言：
+
+```typescript
+import { qcptInit } from 'qcpt'
+
+qcptInit({
+  app,
+  router,
+  defaultLanguage: 'zh-CN'  // 或 'en-US'
+})
+```
+
+### 运行时切换
+
+使用 `setLocale` 函数切换语言：
+
+```typescript
+import { setLocale } from 'qcpt'
+
+// 切换到中文
+await setLocale('zh-CN')
+
+// 切换到英文
+await setLocale('en-US')
+```
+
+## 使用翻译函数
+
+### useI18n
+
+在组件中使用 `useI18n`：
+
+```vue
+<script setup lang="ts">
+import { useI18n } from 'qcpt'
+
+const { t, locale, setLocale, getLocale } = useI18n()
+
+// 使用翻译函数
+const message = t('messages.pleaseEnter')  // "请输入"
+
+// 带变量的翻译
+const totalMessage = t('messages.pagination.total', { total: 100 })  // "共 100 条"
+
+// 获取当前语言
+const currentLang = getLocale()  // 'zh-CN'
+
+// 切换语言
+await setLocale('en-US')
+</script>
+```
+
+### 直接导入 t
+
+也可以直接导入 `t` 函数：
+
+```typescript
+import { t } from 'qcpt'
+
+// 基础翻译
+const message = t('messages.pleaseEnter')  // "请输入"
+
+// 带变量的翻译
+const rangeMessage = t('messages.formRules.rangeNumber', { 
+  min: 0, 
+  max: 100 
+})  // "值必须在 0 到 100 之间"
+```
+
+### 变量插值
+
+翻译函数支持变量插值，使用 `\{key\}` 占位符：
+
+```typescript
+import { t } from 'qcpt'
+
+// 单个变量
+t('messages.pagination.total', { total: 100 })
+// 中文: "共 100 条"
+// 英文: "Total 100 items"
+
+// 多个变量
+t('messages.formRules.rangeNumber', { min: 0, max: 100 })
+// 中文: "值必须在 0 到 100 之间"
+// 英文: "Value must be between 0 and 100"
+
+// 文件类型和大小
+t('messages.jQFile.file_type_is', { type: 'PDF, DOC, DOCX' })
+// 中文: "支持的文件类型: PDF, DOC, DOCX"
+// 英文: "Supported file types: PDF, DOC, DOCX"
+```
+
+## 获取当前语言
+
+使用 `getLocale` 获取当前语言：
+
+```typescript
+import { getLocale } from 'qcpt'
+
+const currentLocale = getLocale()  // 'zh-CN' 或 'en-US'
+```
+
+## 内置翻译键
+
+QCPT 内置了丰富的翻译键，支持中文（zh-CN）和英文（en-US）。以下是部分常用翻译键：
+
+### 操作 (action)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `action.confirm` | 确认 | Confirm |
+| `action.cancel` | 取消 | Cancel |
+| `action.query` | 搜索 | Query |
+| `action.reset` | 重置 | Reset |
+| `action.add` | 新增 | Add |
+| `action.update` | 编辑 | Edit |
+| `action.delete` | 删除 | Delete |
+| `action.detail` | 详情 | Detail |
+| `action.loading` | 加载中... | Loading... |
+| `action.expandAll` | 展开 | Expand |
+| `action.collapseAll` | 收起 | Collapse |
+| `action.addNewItem` | 添加新项 | Add New Item |
+| ... | ... | ... |
+
+### 消息 (messages)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.success` | 操作成功 | Operation successful |
+| `messages.error` | 操作失败 | Operation failed |
+| `messages.pleaseEnter` | 请输入 | Please enter |
+| `messages.pleaseSelect` | 请选择 | Please select |
+| `messages.noData` | 无数据 | No data |
+| `messages.loading` | 加载中... | Loading... |
+| `messages.pleasePressEnterEnter` | 请按回车键确认 | Please press Enter to enter |
+| ... | ... | ... |
+
+### 表单验证规则 (messages.formRules)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.formRules.required` | 必填 | Required |
+| `messages.formRules.emailInvalid` | 邮箱格式不正确 | Invalid email address |
+| `messages.formRules.positiveInt` | 值必须是正整数 | Value must be a positive integer |
+| `messages.formRules.rangeNumber` | 值必须在 \{min\} 到 \{max\} 之间 | Value must be between \{min\} and \{max\} |
+| `messages.formRules.duplicateItemNotAllowed` | 不允许重复项，\{value\} 已存在 | Duplicate item not allowed, \{value\} already exists |
+| ... | ... | ... |
+
+### 日期时间 (messages.date)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.date.start` | 起始时间 | Start Date |
+| `messages.date.end` | 结束时间 | End Date |
+| `messages.date.confirm` | 确认 | Confirm |
+| `messages.date.hour` | 时 | Hour |
+| `messages.date.minute` | 分 | Minute |
+| `messages.date.second` | 秒 | Second |
+| `messages.date.scrollTooltip` | 可以滚动鼠标滚轮改变时间值 | You can scroll the mouse wheel to change the time value |
+
+### 文件上传 (messages.jQFile)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.jQFile.click_or_drag_file` | 点击或拖拽文件到此处上传 | Click to upload |
+| `messages.jQFile.file_type_is` | 支持的文件类型: \{type\} | Supported file types: \{type\} |
+| `messages.jQFile.max_file_size` | 最大文件大小: \{size\} | Maximum file size: \{size\} |
+| `messages.jQFile.unsupportFileFormat` | 不支持的文件格式 | Unsupported file format |
+| `messages.jQFile.maxFileSizeIs` | 最大文件大小为 \{max\} MB | Maximum file size: \{max\} MB |
+
+### 分页 (messages.pagination)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.pagination.pieces_page` | 条/页 | Pieces/page |
+| `messages.pagination.goto` | 跳转 | Goto |
+| `messages.pagination.total` | 共 \{total\} 条 | Total \{total\} items |
+
+### 输入识别 (messages.inputRecognize)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `messages.inputRecognize.maxItems` | 最多识别 \{max\} 项 | Maximum \{max\} items |
+| `messages.inputRecognize.noValidItems` | 未识别到有效项 | No valid items recognized |
+| `messages.inputRecognize.recognized` | 已识别 | Recognized |
+
+### 表格 (table)
+
+| 键名 | 中文 | 英文 |
+| --- | --- | --- |
+| `table.action` | 操作 | Action |
+
+**提示：** 以上仅展示了部分常用翻译键，完整的翻译键列表请查看 [源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/i18n)。
+
+## 语言类型
+
+```typescript
+type Locale = 'zh-CN' | 'en-US'
+```
+
+## 注意事项
+
+- 语言切换是异步的，会加载对应的语言包
+- 如果语言包加载失败，会回退到默认语言
+- 组件内部会自动使用当前设置的语言
+
+</div>
+<I18nDemo slot="demo" client:only="vue" />
+</DemoPanel>
+

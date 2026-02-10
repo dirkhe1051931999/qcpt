@@ -1,0 +1,283 @@
+---
+title: JQButton 按钮
+description: 增强的按钮组件，支持多种类型、尺寸、加载状态和提示功能
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQButtonDemo from '@components/DemoPanel/JQButtonDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-button)
+
+<DemoPanel title="JQButton 组件演示">
+<div slot="content">
+
+# JQButton 按钮
+
+基于 Quasar `QBtn` 的增强按钮组件，提供了统一的样式风格、多种类型和尺寸、加载状态以及提示功能。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-button 
+    label="提交" 
+    type="primary"
+    @click="handleSubmit"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+
+const handleSubmit = () => {
+  console.log('提交表单')
+}
+</script>
+```
+
+## 按钮类型
+
+支持三种类型：`primary`（主要）、`secondary`（次要）、`text`（文本）。
+
+```vue
+<template>
+  <div class="q-gutter-sm">
+    <j-q-button 
+      label="主要按钮" 
+      type="primary"
+    />
+    <j-q-button 
+      label="次要按钮" 
+      type="secondary"
+    />
+    <j-q-button 
+      label="文本按钮" 
+      type="text"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## 按钮尺寸
+
+支持三种尺寸：`large`（大）、`normal`（正常）、`small`（小）。
+
+```vue
+<template>
+  <div class="q-gutter-sm">
+    <j-q-button 
+      label="大按钮" 
+      type="primary"
+      size="large"
+    />
+    <j-q-button 
+      label="正常按钮" 
+      type="primary"
+      size="normal"
+    />
+    <j-q-button 
+      label="小按钮" 
+      type="primary"
+      size="small"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## 带图标的按钮
+
+使用 `icon` 属性添加图标：
+
+```vue
+<template>
+  <div class="q-gutter-sm">
+    <j-q-button 
+      label="保存" 
+      type="primary"
+      icon="save"
+    />
+    <j-q-button 
+      label="删除" 
+      type="secondary"
+      icon="delete"
+    />
+    <j-q-button 
+      label="编辑" 
+      type="text"
+      icon="edit"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## 加载状态
+
+使用 `loading` 属性显示加载状态：
+
+```vue
+<template>
+  <j-q-button 
+    label="提交中..." 
+    type="primary"
+    :loading="isSubmitting"
+    @click="handleSubmit"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQButton } from 'qcpt'
+
+const isSubmitting = ref(false)
+
+const handleSubmit = async () => {
+  isSubmitting.value = true
+  try {
+    // 模拟 API 调用
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    console.log('提交成功')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>
+```
+
+## 带提示的按钮
+
+使用 `tips` 属性添加提示信息，鼠标悬停时显示：
+
+```vue
+<template>
+  <j-q-button 
+    label="删除" 
+    type="secondary"
+    icon="delete"
+    tips="删除后将无法恢复"
+    @click="handleDelete"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+
+const handleDelete = () => {
+  console.log('删除操作')
+}
+</script>
+```
+
+## 禁用状态
+
+使用 `disable` 属性禁用按钮：
+
+```vue
+<template>
+  <j-q-button 
+    label="禁用按钮" 
+    type="primary"
+    disable
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## Tooltip 配置
+
+通过 `tooltipConfig` 属性自定义 tooltip 的配置：
+
+```vue
+<template>
+  <j-q-button 
+    label="自定义提示" 
+    tips="这是提示内容"
+    :tooltip-config="{
+      placement: 'bottom',
+      effect: 'light',
+      maxWidth: '200px'
+    }"
+  />
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## 自定义图标插槽
+
+使用 `icon` 插槽自定义前置图标：
+
+```vue
+<template>
+  <j-q-button label="自定义图标">
+    <template #icon>
+      <q-icon name="custom-icon" />
+    </template>
+  </j-q-button>
+</template>
+
+<script setup lang="ts">
+import { JQButton } from 'qcpt'
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `type` | `'primary' \| 'secondary' \| 'text'` | `'primary'` | 按钮类型 |
+| `size` | `'large' \| 'normal' \| 'small'` | `'large'` | 按钮尺寸 |
+| `label` | `string` | `''` | 按钮文本 |
+| `icon` | `string` | - | 图标名称（Quasar icon name） |
+| `loading` | `boolean` | `false` | 加载状态 |
+| `tips` | `string \| number` | `''` | 提示文本（鼠标悬停显示） |
+| `tooltipConfig` | `Omit<TooltipProps, 'content'>` | - | Tooltip 配置项 |
+| `disable` | `boolean` | - | 禁用状态（继承自 QBtn） |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `click` | `e: Event` | 点击事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 自定义按钮内容 |
+| `icon` | 自定义前置图标 |
+| `loading` | 自定义加载状态显示 |
+
+### Methods
+
+通过 ref 调用以下方法：
+
+| 方法名 | 参数 | 描述 |
+| --- | --- | --- |
+| `click` | - | 触发点击事件 |
+
+### 继承的 Props
+
+组件继承 Quasar `QBtn` 的所有 Props，如 `disable`、`round`、`flat`、`outline`、`color`、`textColor`、`href`、`target`、`to` 等。
+
+</div>
+<JQButtonDemo slot="demo" client:only="vue" />
+</DemoPanel>

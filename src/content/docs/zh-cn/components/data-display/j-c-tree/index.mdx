@@ -1,0 +1,184 @@
+---
+title: JCTree 树形组件
+description: 树形视图组件，支持单选和多选
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCTreeDemo from '@components/DemoPanel/JCTreeDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-tree)
+
+<DemoPanel title="JCTree 组件演示">
+<div slot="content">
+
+# JCTree 树形组件
+
+基于 Quasar `QTree` 的树形视图组件，支持单选和多选。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-tree
+    v-model="selectedValues"
+    :options="treeData"
+    option-label="label"
+    option-value="value"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTree } from 'qcpt'
+
+const selectedValues = ref([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## 单选模式
+
+```vue
+<template>
+  <j-c-tree
+    v-model="selectedValue"
+    :options="treeData"
+    :multiple="false"
+    tick-strategy="strict"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTree } from 'qcpt'
+
+const selectedValue = ref<number[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## 仅叶子节点可选
+
+使用 `leafOnly` 属性限制只能选择叶子节点（没有子节点的节点）：
+
+```vue
+<template>
+  <j-c-tree
+    v-model="selectedValues"
+    :options="treeData"
+    :multiple="true"
+    leaf-only
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTree } from 'qcpt'
+
+const selectedValues = ref<number[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },  // 只有这个可以被选中
+      { label: '子节点2', value: 3 }   // 只有这个可以被选中
+    ]
+  }
+])
+</script>
+```
+
+## 选择策略
+
+通过 `tickStrategy` 属性设置选择策略：
+
+- `strict`: 严格模式（默认），选择节点时不影响子节点或父节点
+- `leaf`: 叶子节点模式，选择节点时自动选择所有子节点
+- `leaf-filtered`: 过滤的叶子节点模式
+
+```vue
+<template>
+  <j-c-tree
+    v-model="selectedValues"
+    :options="treeData"
+    :multiple="true"
+    tick-strategy="leaf"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCTree } from 'qcpt'
+
+const selectedValues = ref<number[]>([])
+
+const treeData = ref([
+  {
+    label: '节点1',
+    value: 1,
+    children: [
+      { label: '子节点1', value: 2 },
+      { label: '子节点2', value: 3 }
+    ]
+  }
+])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `Array<string \| number>` | - | 选中的值（v-model） |
+| `options` | `Array` | `[]` | 树形数据 |
+| `optionLabel` | `string` | `'label'` | 选项标签字段名 |
+| `optionValue` | `string` | `'value'` | 选项值字段名 |
+| `multiple` | `boolean` | `false` | 是否多选 |
+| `tickStrategy` | `'strict' \| 'leaf' \| 'leaf-filtered'` | `'strict'` | 选择策略 |
+| `leafOnly` | `boolean` | `false` | 是否只能选择叶子节点 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `values: Array<string \| number>` | 值更新事件 |
+
+### Methods
+
+通过 ref 可以访问 Quasar `QTree` 的所有方法，如 `expandAll()`、`collapseAll()` 等。
+
+## 注意事项
+
+1. **默认展开**：组件默认展开所有节点（default-expand-all）
+2. **单选模式**：单选模式下配合 tick-strategy="strict" 确保只能选择一个节点
+3. **叶子节点**：leafOnly 模式下，父节点会被设置为 noTick，只能选择叶子节点
+4. **选择策略**：strict 模式选择节点不影响子节点或父节点；leaf 模式选择节点会自动选择所有子节点
+5. **文本省略**：节点标签过长时会自动显示省略号和 tooltip
+
+</div>
+<JCTreeDemo slot="demo" client:only="vue" />
+</DemoPanel>

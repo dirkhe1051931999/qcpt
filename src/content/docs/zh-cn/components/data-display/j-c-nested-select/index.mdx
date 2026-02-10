@@ -1,0 +1,400 @@
+---
+title: JCNestedSelect 嵌套选择器
+description: 支持多级嵌套选项的下拉选择器组件，使用级联菜单展示
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCNestedSelectDemo from '@components/DemoPanel/JCNestedSelectDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-nested-select)
+
+<DemoPanel title="JCNestedSelect 组件演示">
+<div slot="content">
+
+# JCNestedSelect 嵌套选择器
+
+支持多级嵌套选项的下拉选择器组件，使用级联菜单的方式展示嵌套选项，选中值会显示完整的路径信息。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>(null)
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '一级选项1',
+    value: 'level1-1',
+    children: [
+      {
+        label: '二级选项1',
+        value: 'level2-1',
+        children: [
+          { label: '三级选项1', value: 'level3-1' },
+          { label: '三级选项2', value: 'level3-2' }
+        ]
+      },
+      { label: '二级选项2', value: 'level2-2' }
+    ]
+  },
+  {
+    label: '一级选项2',
+    value: 'level1-2',
+    children: [
+      { label: '二级选项3', value: 'level2-3' }
+    ]
+  }
+])
+</script>
+```
+
+## 表格模式
+
+在表格中使用时，设置 `label` 属性会自动应用表格样式：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>('level3-1')
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '一级选项1',
+    value: 'level1-1',
+    children: [
+      {
+        label: '二级选项1',
+        value: 'level2-1',
+        children: [
+          { label: '三级选项1', value: 'level3-1' }
+        ]
+      }
+    ]
+  }
+])
+</script>
+```
+
+## 小尺寸输入框
+
+使用 `smInput` 属性启用小尺寸输入框：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    sm-input
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>(null)
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '选项1',
+    value: 1,
+    children: [
+      { label: '子选项1', value: 2 }
+    ]
+  }
+])
+</script>
+```
+
+## 省略号模式
+
+使用 `ellipsis` 属性启用文本省略号显示，配合 `maxWidth` 控制最大宽度：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+    ellipsis
+    :max-width="200"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>('level3-1')
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '一级选项1',
+    value: 'level1-1',
+    children: [
+      {
+        label: '二级选项1',
+        value: 'level2-1',
+        children: [
+          { label: '三级选项1', value: 'level3-1' }
+        ]
+      }
+    ]
+  }
+])
+</script>
+```
+
+## 自定义显示值
+
+使用 `displayValueFn` 属性自定义选中值的显示格式：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+    :display-value-fn="customDisplayFn"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption, NestedSelectModelValue } from 'qcpt'
+
+const selectedValue = ref<string | number | null>('level3-1')
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '一级选项1',
+    value: 'level1-1',
+    children: [
+      {
+        label: '二级选项1',
+        value: 'level2-1',
+        children: [
+          { label: '三级选项1', value: 'level3-1' }
+        ]
+      }
+    ]
+  }
+])
+
+const customDisplayFn = (value: NestedSelectModelValue, options: NestedSelectOption[]): string => {
+  if (!value) return ''
+  
+  // 查找选项并构建路径
+  const findOptionWithPath = (opts: NestedSelectOption[], path: string[] = []): { option: NestedSelectOption; path: string[] } | null => {
+    for (const opt of opts) {
+      const currentPath = [...path, opt.label]
+      if (opt.value === value) {
+        return { option: opt, path: currentPath }
+      }
+      if (opt.children) {
+        const found = findOptionWithPath(opt.children, currentPath)
+        if (found) return found
+      }
+    }
+    return null
+  }
+  
+  const result = findOptionWithPath(options)
+  if (!result) return ''
+  
+  // 使用 / 连接路径，例如：一级选项1 / 二级选项1 / 三级选项1
+  return result.path.join(' / ')
+}
+</script>
+```
+
+## 禁用和只读
+
+使用 `disable` 或 `readonly` 属性控制组件状态：
+
+```vue
+<template>
+  <div>
+    <j-c-nested-select
+      v-model="selectedValue"
+      :options="nestedOptions"
+      label="禁用状态"
+      disable
+    />
+    
+    <j-c-nested-select
+      v-model="selectedValue"
+      :options="nestedOptions"
+      label="只读状态"
+      readonly
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>('level3-1')
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '选项1',
+    value: 1,
+    children: [
+      { label: '子选项1', value: 2 }
+    ]
+  }
+])
+</script>
+```
+
+## 选择后不关闭菜单
+
+使用 `closeOnSelect` 属性控制选择后是否关闭菜单：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+    :close-on-select="false"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption } from 'qcpt'
+
+const selectedValue = ref<string | number | null>(null)
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '选项1',
+    value: 1,
+    children: [
+      { label: '子选项1', value: 2 }
+    ]
+  }
+])
+</script>
+```
+
+## 监听值变化
+
+监听 `change` 事件获取值变化：
+
+```vue
+<template>
+  <j-c-nested-select
+    v-model="selectedValue"
+    :options="nestedOptions"
+    label="选择选项"
+    @change="handleChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCNestedSelect } from 'qcpt'
+import type { NestedSelectOption, NestedSelectModelValue } from 'qcpt'
+
+const selectedValue = ref<string | number | null>(null)
+
+const nestedOptions = ref<NestedSelectOption[]>([
+  {
+    label: '选项1',
+    value: 1,
+    children: [
+      { label: '子选项1', value: 2 }
+    ]
+  }
+])
+
+const handleChange = (value: NestedSelectModelValue) => {
+  console.log('选中的值:', value)
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| null \| undefined` | - | 选中的值（v-model） |
+| `options` | `NestedSelectOption[]` | - | 嵌套选项数组（必填） |
+| `optionsOrigin` | `NestedSelectOption[]` | `[]` | 原始选项数组，用于显示值查找 |
+| `label` | `string` | `''` | 标签文本 |
+| `clearable` | `boolean` | `true` | 是否可清空 |
+| `closeOnSelect` | `boolean` | `true` | 选择后是否关闭菜单 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `ellipsis` | `boolean` | `false` | 是否启用文本省略号 |
+| `maxWidth` | `string \| number` | `'300px'` | 最大宽度（ellipsis 模式下生效） |
+| `smInput` | `boolean` | `false` | 是否使用小尺寸输入框 |
+| `customClass` | `string` | `''` | 自定义 CSS 类名 |
+| `popupContentClass` | `string` | `'select-popup-content height1'` | 弹出菜单内容的自定义类名 |
+| `displayValueFn` | `Function` | - | 自定义显示值函数 `(value: NestedSelectModelValue, options: NestedSelectOption[]) => string` |
+
+### NestedSelectOption 类型
+
+```typescript
+interface NestedSelectOption {
+  label: string                    // 选项标签
+  value: string | number          // 选项值
+  children?: NestedSelectOption[]  // 子选项数组
+  parent?: NestedSelectOption     // 父选项（通常由组件内部设置）
+}
+```
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| number \| null \| undefined` | 值更新事件 |
+| `change` | `value: string \| number \| null \| undefined` | 值改变事件 |
+
+### 显示值说明
+
+默认情况下，组件会根据选中的值自动查找对应的选项，并显示完整的路径信息。格式为：`选项标签 (父级 > 祖父级)`。
+
+例如，如果选中了三级选项，显示格式为：`三级选项1 (一级选项1 > 二级选项1)`
+
+如果选项没有父级，则只显示选项标签本身。
+
+可以通过 `displayValueFn` 属性自定义显示格式，例如使用 `/` 连接符：`一级选项1 / 二级选项1 / 三级选项1`，或者只显示当前选项标签等。
+
+</div>
+<JCNestedSelectDemo slot="demo" client:only="vue" />
+</DemoPanel>

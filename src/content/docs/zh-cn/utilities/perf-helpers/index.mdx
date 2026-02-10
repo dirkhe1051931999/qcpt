@@ -1,0 +1,267 @@
+---
+title: 性能优化方法
+description: 性能优化相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import PerfHelpersDemo from '@components/DemoPanel/PerfHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/perf.ts)
+
+<DemoPanel title="性能优化方法交互式演示">
+  <div slot="content">
+
+# 性能优化方法
+
+提供丰富的性能优化工具函数，包括防抖、节流、函数缓存、异步控制等功能。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用性能优化方法
+const debouncedFn = jqTool.helper.perf.debounce(fn, 300)
+```
+
+## 防抖与节流
+
+### debounce
+
+防抖函数（延迟执行，在规定时间内如果再次触发则重新计时）：
+
+```typescript
+// 搜索框输入
+const handleSearch = jqTool.helper.perf.debounce((keyword) => {
+  console.log('搜索:', keyword)
+}, 300)
+
+// 自动保存
+const autoSave = jqTool.helper.perf.debounce(() => {
+  console.log('保存数据')
+}, 1000)
+
+// 立即执行模式
+const immediateFn = jqTool.helper.perf.debounce(fn, 300, true)
+
+// 取消防抖
+handleSearch.cancel()
+```
+
+### throttle
+
+节流函数（在规定时间内只执行一次）：
+
+```typescript
+// 滚动事件
+const handleScroll = jqTool.helper.perf.throttle(() => {
+  console.log('滚动位置:', window.pageYOffset)
+}, 100)
+
+// 窗口resize
+const handleResize = jqTool.helper.perf.throttle(() => {
+  console.log('窗口大小:', window.innerWidth)
+}, 200)
+
+// 配置选项
+const throttledFn = jqTool.helper.perf.throttle(fn, 300, {
+  leading: true,   // 是否在开始时执行
+  trailing: true   // 是否在结束后执行
+})
+
+// 取消节流
+handleScroll.cancel()
+```
+
+### rafThrottle
+
+RAF 节流（使用 requestAnimationFrame 实现，与浏览器刷新率同步）：
+
+```typescript
+const handleScroll = jqTool.helper.perf.rafThrottle(() => {
+  // 滚动处理，与浏览器刷新率同步
+})
+
+// 取消
+handleScroll.cancel()
+```
+
+## 函数执行控制
+
+### once
+
+只执行一次的函数：
+
+```typescript
+const initialize = jqTool.helper.perf.once(() => {
+  console.log('初始化，只执行一次')
+})
+
+initialize() // 输出：初始化，只执行一次
+initialize() // 不会执行
+```
+
+### delay / sleep
+
+延迟执行：
+
+```typescript
+await jqTool.helper.perf.delay(1000) // 延迟1秒
+console.log('1秒后执行')
+
+await jqTool.helper.perf.sleep(1000) // 同 delay
+```
+
+### retry
+
+重试函数：
+
+```typescript
+const result = await jqTool.helper.perf.retry(
+  async () => await fetch('/api/data'),
+  {
+    times: 3,           // 重试次数
+    delay: 1000,        // 重试间隔
+    onRetry: (error, attempt) => {
+      console.log(`第 ${attempt} 次重试`)
+    }
+  }
+)
+```
+
+### withTimeout
+
+超时控制：
+
+```typescript
+try {
+  const result = await jqTool.helper.perf.withTimeout(
+    fetchData(),
+    5000  // 5秒超时
+  )
+} catch (error) {
+  console.log('请求超时')
+}
+```
+
+## 函数缓存
+
+### memoize
+
+函数结果缓存（记忆化）：
+
+```typescript
+const fibonacci = jqTool.helper.perf.memoize((n: number): number => {
+  if (n <= 1) return n
+  return fibonacci(n - 1) + fibonacci(n - 2)
+})
+
+fibonacci(40) // 第一次计算
+fibonacci(40) // 从缓存读取，速度快
+
+// 自定义缓存 key
+const memoizedFn = jqTool.helper.perf.memoize(
+  fn,
+  (...args) => JSON.stringify(args)  // 自定义 key 生成函数
+)
+```
+
+### clearCache
+
+清除缓存：
+
+```typescript
+const cachedFn = jqTool.helper.perf.memoize(expensiveFunction)
+jqTool.helper.perf.clearCache(cachedFn)
+```
+
+## 异步队列
+
+### batch
+
+批处理函数（将多次调用合并为一次）：
+
+```typescript
+const batchSave = jqTool.helper.perf.batch((items) => {
+  console.log('保存', items.length, '条数据')
+}, 100)
+
+batchSave('item1')
+batchSave('item2')
+batchSave('item3')
+// 100ms 后一次性保存 ['item1', 'item2', 'item3']
+```
+
+### promiseLimit
+
+并发控制（限制同时执行的 Promise 数量）：
+
+```typescript
+const urls = [...] // 100个URL
+const results = await jqTool.helper.perf.promiseLimit(
+  urls.map(url => () => fetch(url)),
+  5  // 同时最多5个请求
+)
+```
+
+### promiseSerial
+
+串行执行 Promise：
+
+```typescript
+await jqTool.helper.perf.promiseSerial([
+  () => fetch('/api/1'),
+  () => fetch('/api/2'),
+  () => fetch('/api/3')
+])
+// 依次执行，等待前一个完成后再执行下一个
+```
+
+### dedupe
+
+请求去重（相同参数的请求只发一次）：
+
+```typescript
+const fetchUser = jqTool.helper.perf.dedupe(async (id) => {
+  return await fetch(`/api/user/${id}`)
+})
+
+// 同时发起多个相同请求，实际只会发一次
+Promise.all([
+  fetchUser(1),
+  fetchUser(1),
+  fetchUser(1)
+])
+```
+
+## 性能监控
+
+### measureTime
+
+测量函数执行时间：
+
+```typescript
+const slowFunction = jqTool.helper.perf.measureTime(() => {
+  // 耗时操作
+}, 'slowFunction')
+
+slowFunction()
+// 控制台输出：slowFunction: 123.45ms
+```
+
+### measureTimeAsync
+
+测量异步函数执行时间：
+
+```typescript
+const asyncFn = jqTool.helper.perf.measureTimeAsync(async () => {
+  await fetchData()
+}, 'fetchData')
+
+await asyncFn()
+// 控制台输出：fetchData: 456.78ms
+```
+
+  </div>
+  <PerfHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

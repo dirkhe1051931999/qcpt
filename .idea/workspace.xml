@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="344055ab-aa0a-40e9-ba67-165a9c39eaef" name="更改" comment="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="5c046e20-e708-4147-8832-d0a0f39531a8" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="39StFdlBeW9PBQW3tDGcnQGF4mx" />
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "docs",
+    "javascript.preferred.runtime.type.id": "node",
+    "last_opened_file_path": "C:/Users/Administrator/Documents/code/qcpt",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\Administrator\\Documents\\code\\qcpt\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "http.proxy",
+    "ts.external.directory.path": "C:\\Users\\Administrator\\Documents\\code\\qcpt\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.30387.83" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="344055ab-aa0a-40e9-ba67-165a9c39eaef" name="更改" comment="" />
+      <created>1770701196604</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770701196604</updated>
+      <workItem from="1770701197728" duration="305000" />
+      <workItem from="1770701524995" duration="940000" />
+      <workItem from="1770702487752" duration="2043000" />
+    </task>
+    <task id="LOCAL-00001" summary="docs: expand README with guidelines and setup">
+      <option name="closed" value="true" />
+      <created>1770701873525</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1770701873525</updated>
+    </task>
+    <task id="LOCAL-00002" summary="docs(readme): 删除无效的在线文档链接&#10;&#10;- 移除了README.md中指向已失效的在线文档链接&#10;- 优化了文档内容的整体整洁度&#10;- 保持了其他说明内容不变">
+      <option name="closed" value="true" />
+      <created>1770701985045</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1770701985045</updated>
+    </task>
+    <task id="LOCAL-00003" summary="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules">
+      <option name="closed" value="true" />
+      <created>1770703418353</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1770703418353</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="docs: expand README with guidelines and setup" />
+    <MESSAGE value="docs(readme): 删除无效的在线文档链接&#10;&#10;- 移除了README.md中指向已失效的在线文档链接&#10;- 优化了文档内容的整体整洁度&#10;- 保持了其他说明内容不变" />
+    <MESSAGE value="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules" />
+    <option name="LAST_COMMIT_MESSAGE" value="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules" />
+  </component>
+</project>

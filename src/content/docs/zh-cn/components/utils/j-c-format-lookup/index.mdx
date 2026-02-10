@@ -1,0 +1,207 @@
+---
+title: JCFormatLookup 数据格式化显示
+description: 根据选项映射显示格式化后的值
+---
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-format-lookup)
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCFormatLookupDemo from '@components/DemoPanel/JCFormatLookupDemo.vue';
+
+# JCFormatLookup 数据格式化显示
+
+根据选项映射显示格式化后的值，用于将值（如状态码）转换为对应的显示文本。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFormatLookup } from 'qcpt'
+import type { OptionItem } from 'qcpt'
+
+const status = ref('active')
+
+const statusOptions: OptionItem[] = [
+  { value: 'active', label: '启用' },
+  { value: 'disabled', label: '禁用' }
+]
+</script>
+```
+
+## 自定义匹配键
+
+使用 `matchKeys` 属性指定匹配的键（默认同时匹配 `value` 和 `label`）：
+
+```vue
+<template>
+  <!-- 只匹配 value -->
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+    :match-keys="['value']"
+  />
+  
+  <!-- 只匹配 label -->
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+    :match-keys="['label']"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFormatLookup } from 'qcpt'
+import type { OptionItem } from 'qcpt'
+
+const status = ref('active')
+const statusOptions: OptionItem[] = [
+  { value: 'active', label: '启用' }
+]
+</script>
+```
+
+## 自定义默认内容
+
+使用 `defaultContent` 属性自定义未找到匹配项时显示的内容：
+
+```vue
+<template>
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+    default-content="未知状态"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFormatLookup } from 'qcpt'
+import type { OptionItem } from 'qcpt'
+
+const status = ref('unknown')
+const statusOptions: OptionItem[] = [
+  { value: 'active', label: '启用' }
+]
+</script>
+```
+
+## 完全隐藏
+
+使用 `rmDom` 属性在未找到匹配项时完全隐藏元素：
+
+```vue
+<template>
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+    :rm-dom="true"
+  >
+    <span class="status-badge">{{ displayLabel }}</span>
+  </j-c-format-lookup>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFormatLookup } from 'qcpt'
+import type { OptionItem } from 'qcpt'
+
+const status = ref('active')
+const statusOptions: OptionItem[] = [
+  { value: 'active', label: '启用' }
+]
+</script>
+```
+
+## 自定义显示内容
+
+使用插槽自定义显示内容：
+
+```vue
+<template>
+  <j-c-format-lookup
+    :value="status"
+    :options="statusOptions"
+  >
+    <template #default="{ label }">
+      <span :class="getStatusClass(status)">{{ label }}</span>
+    </template>
+  </j-c-format-lookup>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFormatLookup } from 'qcpt'
+import type { OptionItem } from 'qcpt'
+
+const status = ref('active')
+const statusOptions: OptionItem[] = [
+  { value: 'active', label: '启用' },
+  { value: 'disabled', label: '禁用' }
+]
+
+const getStatusClass = (status: string) => {
+  return status === 'active' ? 'text-positive' : 'text-grey'
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `value` | `any` | `null` | 要查找的值 |
+| `options` | `OptionItem[]` | - | 选项数组（必填） |
+| `matchKeys` | `('value' \| 'label')[]` | `['value', 'label']` | 匹配键数组（用于查找匹配项） |
+| `defaultContent` | `string` | `'-'` | 未找到匹配项时显示的默认内容 |
+| `rmDom` | `boolean` | `false` | 是否在未找到匹配项时彻底隐藏组件（不渲染 DOM） |
+
+### OptionItem 选项对象
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `label` | `string` | 显示文本（必填） |
+| `value` | `any` | 选项值（必填） |
+| `[key: string]` | `any` | 其他自定义属性 |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `default` | `{ label: string }` | 自定义显示内容 |
+
+## 查找逻辑
+
+组件会按以下逻辑查找匹配项：
+
+1. 遍历 `options` 数组
+2. 对于每个选项，检查 `matchKeys` 中指定的键
+3. 如果任何一个键的值与 `value` 相等，则匹配成功
+4. 返回匹配项的 `label` 作为显示内容
+5. 如果未找到匹配项，显示 `defaultContent` 或完全隐藏（取决于 `rmDom`）
+
+<DemoPanel>
+<div slot="content">
+
+## 示例
+
+</div>
+<JCFormatLookupDemo slot="demo" client:only="vue" />
+</DemoPanel>
+
+## 注意事项
+
+- 默认同时匹配 `value` 和 `label`，可通过 `matchKeys` 自定义
+- 使用 `rmDom` 属性可以在未找到匹配项时完全隐藏元素
+- 支持使用插槽自定义显示内容
+

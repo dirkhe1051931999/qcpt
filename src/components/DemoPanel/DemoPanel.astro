@@ -1,0 +1,23 @@
+---
+import './demo-panel.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = '示例演示' } = Astro.props;
+---
+
+<div class="demo-panel-container">
+  <div class="demo-content">
+    <slot name="content" />
+  </div>
+  <div class="demo-preview qcpt-scope">
+    <div class="demo-preview-header">
+      <h3>{title}</h3>
+    </div>
+    <div class="demo-preview-body not-content">
+      <slot name="demo" />
+    </div>
+  </div>
+</div>

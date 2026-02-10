@@ -1,0 +1,130 @@
+---
+title: JCFoldableList 可折叠列表
+description: 可折叠列表组件，支持自动折叠和对话框查看
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCFoldableListDemo from '@components/DemoPanel/JCFoldableListDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-foldable-list)
+
+<DemoPanel title="JCFoldableList 组件演示">
+<div slot="content">
+# JCFoldableList 可折叠列表
+
+可折叠列表组件，当内容超过指定高度时自动显示折叠/展开按钮，也支持在对话框中查看完整内容。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-foldable-list :max-height="100">
+    <div v-for="item in items" :key="item.id">
+      {{ item.name }}
+    </div>
+  </j-c-foldable-list>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFoldableList } from 'qcpt'
+
+const items = ref([
+  { id: 1, name: '项目1' },
+  { id: 2, name: '项目2' },
+  { id: 3, name: '项目3' },
+  { id: 4, name: '项目4' },
+  { id: 5, name: '项目5' },
+])
+</script>
+```
+
+## 默认展开
+
+使用 `defaultCollapsed` 属性控制默认状态：
+
+```vue
+<template>
+  <j-c-foldable-list :max-height="100" :default-collapsed="false">
+    <div v-for="item in items" :key="item.id">
+      {{ item.name }}
+    </div>
+  </j-c-foldable-list>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFoldableList } from 'qcpt'
+
+const items = ref([
+  { id: 1, name: '项目1' },
+  { id: 2, name: '项目2' },
+  { id: 3, name: '项目3' },
+  { id: 4, name: '项目4' },
+  { id: 5, name: '项目5' },
+])
+</script>
+```
+
+## 在对话框中查看
+
+使用 `viewInDialog` 属性启用对话框查看模式：
+
+```vue
+<template>
+  <j-c-foldable-list 
+    :max-height="100" 
+    view-in-dialog
+    dialog-title="查看全部内容"
+    dialog-max-width="60vw"
+  >
+    <div v-for="item in items" :key="item.id">
+      {{ item.name }}
+    </div>
+  </j-c-foldable-list>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCFoldableList } from 'qcpt'
+
+const items = ref([
+  { id: 1, name: '项目1' },
+  { id: 2, name: '项目2' },
+  { id: 3, name: '项目3' },
+  { id: 4, name: '项目4' },
+  { id: 5, name: '项目5' },
+])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `maxHeight` | `number` | `100` | 最大高度（像素），超过此高度时显示折叠按钮 |
+| `defaultCollapsed` | `boolean` | `true` | 默认是否折叠 |
+| `viewInDialog` | `boolean` | `false` | 是否在对话框中查看完整内容 |
+| `dialogTitle` | `string` | `''` | 对话框标题 |
+| `dialogMaxWidth` | `string` | `'50vw'` | 对话框最大宽度 |
+
+### Methods
+
+通过 ref 可以访问以下方法：
+
+| 方法名 | 参数 | 返回值 | 描述 |
+| --- | --- | --- | --- |
+| `remeasure` | - | `void` | 重新测量内容高度（当内容动态变化时调用） |
+
+## 注意事项
+
+1. **自动检测**：组件会自动检测内容高度，当内容超过 `maxHeight` 时才会显示折叠按钮
+2. **内容监听**：组件使用 `MutationObserver` 监听内容变化，自动重新测量高度
+3. **手动重新测量**：某些情况下（如异步加载内容），可能需要手动调用 `remeasure` 方法
+4. **对话框模式**：当 `viewInDialog=true` 时，点击按钮会在对话框中显示完整内容，而不是展开/折叠
+5. **过渡动画**：展开/折叠时有平滑的过渡动画效果
+</div>
+<JCFoldableListDemo slot="demo" client:only="vue" />
+</DemoPanel>

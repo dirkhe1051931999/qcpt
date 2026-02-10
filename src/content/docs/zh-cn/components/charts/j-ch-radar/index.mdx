@@ -1,0 +1,549 @@
+---
+title: JChRadar 雷达图
+description: 雷达图组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChRadarDemo from '@components/DemoPanel/JChRadarDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-radar)
+
+<DemoPanel title="JChRadar 组件演示">
+  <div slot="content">
+
+# JChRadar 雷达图
+
+基于 Chart.js 的雷达图组件，用于多维度数据对比分析，适合展示多个指标的综合评估。
+
+## 基础用法
+
+雷达图适合展示 3-8 个维度的数据对比。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="['速度', '力量', '技巧', '防御', '体力']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '角色A',
+    data: [80, 90, 70, 60, 85],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+## 多组数据对比
+
+雷达图最常用于多组数据的对比分析。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="['语文', '数学', '英语', '物理', '化学', '生物']"
+    :datasets="multiDatasets"
+    :height="350"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const multiDatasets = ref([
+  {
+    label: '张三',
+    data: [85, 92, 88, 78, 90, 82],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  },
+  {
+    label: '李四',
+    data: [78, 88, 85, 92, 85, 88],
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    borderColor: 'rgba(16, 185, 129, 1)',
+    borderWidth: 2
+  },
+  {
+    label: '王五',
+    data: [90, 75, 92, 80, 88, 85],
+    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    borderColor: 'rgba(245, 158, 11, 1)',
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+## 实际应用场景
+
+### 能力评估
+
+用于人才评估、绩效考核等场景。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="['沟通能力', '领导能力', '技术能力', '创新能力', '执行能力', '团队协作']"
+    :datasets="abilityDatasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const abilityDatasets = ref([
+  {
+    label: '候选人A',
+    data: [90, 85, 95, 88, 92, 87],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  },
+  {
+    label: '候选人B',
+    data: [88, 92, 85, 90, 88, 95],
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    borderColor: 'rgba(16, 185, 129, 1)',
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+### 产品功能对比
+
+用于不同产品或方案的多维度对比。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="['性能', '稳定性', '易用性', '扩展性', '安全性', '成本']"
+    :datasets="productDatasets"
+    :height="350"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const productDatasets = ref([
+  {
+    label: '方案A',
+    data: [90, 85, 75, 80, 95, 70],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  },
+  {
+    label: '方案B',
+    data: [75, 90, 90, 70, 85, 85],
+    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    borderColor: 'rgba(139, 92, 246, 1)',
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const labels = ref(['指标1', '指标2', '指标3', '指标4', '指标5'])
+const datasets = ref([
+  {
+    label: '数据集',
+    data: [65, 78, 82, 70, 88],
+    backgroundColor: 'rgba(236, 72, 153, 0.2)',
+    borderColor: 'rgba(236, 72, 153, 1)',
+    borderWidth: 2
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['维度A', '维度B', '维度C', '维度D', '维度E'])
+const datasets = ref([
+  {
+    label: '评分',
+    data: [75, 85, 90, 70, 80],
+    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+    borderColor: 'rgba(6, 182, 212, 1)',
+    borderWidth: 2
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'radar'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 显示刻度值
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['指标1', '指标2', '指标3', '指标4'])
+const datasets = ref([
+  {
+    label: '数据',
+    data: [60, 75, 85, 70],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  }
+])
+
+const customOptions: Partial<ChartOptions<'radar'>> = {
+  scales: {
+    r: {
+      ticks: {
+        display: true,  // 显示刻度值
+        stepSize: 20
+      }
+    }
+  }
+}
+</script>
+```
+
+### 自定义刻度范围
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['A', 'B', 'C', 'D', 'E'])
+const datasets = ref([
+  {
+    label: '得分',
+    data: [75, 85, 90, 80, 88],
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    borderColor: 'rgba(16, 185, 129, 1)',
+    borderWidth: 2
+  }
+])
+
+const customOptions: Partial<ChartOptions<'radar'>> = {
+  scales: {
+    r: {
+      min: 0,
+      max: 100,
+      ticks: {
+        stepSize: 25
+      }
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['创新性', '实用性', '美观度', '性价比', '用户体验'])
+const datasets = ref([
+  {
+    label: '产品评估',
+    data: [85, 90, 88, 75, 92],
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(59, 130, 246, 1)',
+    borderWidth: 2
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'radar'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff'
+    }
+  },
+  scales: {
+    r: {
+      pointLabels: {
+        font: {
+          size: 13
+        }
+      },
+      ticks: {
+        display: true,
+        stepSize: 20
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 自定义填充和边框
+
+通过 `fill`、`backgroundColor`、`borderColor` 和 `borderWidth` 自定义样式。
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="['创新性', '实用性', '美观度', '性价比', '用户体验']"
+    :datasets="styleDatasets"
+    :height="350"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const styleDatasets = ref([
+  {
+    label: '设计方案A',
+    data: [95, 80, 90, 70, 88],
+    backgroundColor: 'rgba(239, 68, 68, 0.3)',
+    borderColor: 'rgba(239, 68, 68, 1)',
+    borderWidth: 3,
+    fill: true  // 填充区域
+  },
+  {
+    label: '设计方案B',
+    data: [75, 95, 85, 90, 92],
+    backgroundColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: 'rgba(16, 185, 129, 1)',
+    borderWidth: 3,
+    fill: true
+  },
+  {
+    label: '设计方案C（不填充）',
+    data: [85, 88, 92, 85, 90],
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(245, 158, 11, 1)',
+    borderWidth: 2,
+    fill: false  // 不填充区域，只显示边框
+  }
+])
+</script>
+```
+
+## 动态更新数据
+
+组件内部监听了 `labels`、`datasets` 和 `height` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-radar 
+      :labels="labels"
+      :datasets="datasets"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar, JQButton } from 'qcpt'
+
+const labels = ref(['A', 'B', 'C', 'D', 'E'])
+const datasets = ref([
+  {
+    label: '动态数据',
+    data: [70, 80, 75, 85, 78],
+    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    borderColor: 'rgba(139, 92, 246, 1)',
+    borderWidth: 2
+  }
+])
+
+const refreshData = () => {
+  datasets.value = [
+    {
+      label: '动态数据',
+      data: labels.value.map(() => Math.floor(Math.random() * 40) + 60),
+      backgroundColor: 'rgba(139, 92, 246, 0.2)',
+      borderColor: 'rgba(139, 92, 246, 1)',
+      borderWidth: 2
+    }
+  ]
+}
+</script>
+```
+
+## 默认样式特性
+
+组件内置了以下默认样式特性：
+
+- **填充效果**：`fill: true`，默认填充雷达区域
+- **背景色**：默认 `rgba(58, 65, 111, 0.2)`（半透明）
+- **边框色**：默认 `rgba(58, 65, 111, 1)`
+- **边框宽度**：`borderWidth: 2`
+- **白色 Tooltip**：背景为白色，文字为黑色
+- **图例位置**：`position: 'bottom'`，图例显示在底部
+- **隐藏刻度**：`ticks.display: false`，默认隐藏刻度值
+- **从零开始**：`beginAtZero: true`
+- **网格线颜色**：蜘蛛网线和圆圈线均为 `#f5f6fa`
+- **轴标签颜色**：`#969799`
+
+这些默认样式可以通过 `datasets` 或 `options` 属性覆盖。
+
+## 使用建议
+
+1. **维度数量**：建议 3-8 个维度，过少或过多都会影响可读性
+2. **数据归一化**：确保各维度数据在相同范围内（如 0-100），便于对比
+3. **颜色选择**：使用半透明背景色（如 `rgba(59, 130, 246, 0.2)`），避免多组数据重叠时相互遮挡
+4. **数据对比**：雷达图最适合 2-4 组数据对比，过多会导致图表混乱
+5. **标签长度**：轴标签建议简短，过长会导致布局问题
+6. **应用场景**：
+   - 能力/技能评估
+   - 产品/方案对比
+   - 绩效考核
+   - 用户画像
+   - 竞品分析
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `labels` | `string[]` | - | 轴标签数组（必填） |
+| `datasets` | `ChartDataset<'radar'>[]` | - | 数据集数组（必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `options` | `Partial<ChartOptions<'radar'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### ChartDataset 常用配置
+
+`datasets` 数组中每个对象的常用配置项：
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 数据集名称（显示在图例中） |
+| `data` | `number[]` | - | 数据数组 |
+| `backgroundColor` | `string` | `'rgba(58, 65, 111, 0.2)'` | 填充区域颜色（建议使用半透明） |
+| `borderColor` | `string` | `'rgba(58, 65, 111, 1)'` | 边框颜色 |
+| `borderWidth` | `number` | `2` | 边框宽度 |
+| `fill` | `boolean` | `true` | 是否填充区域 |
+
+### 雷达图特有配置 (scales.r)
+
+雷达图使用 `r` 轴（radial，径向轴）进行配置：
+
+| 配置项 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `scales.r.beginAtZero` | `boolean` | `true` | 是否从 0 开始 |
+| `scales.r.min` | `number` | - | 最小值 |
+| `scales.r.max` | `number` | - | 最大值 |
+| `scales.r.ticks.display` | `boolean` | `false` | 是否显示刻度值 |
+| `scales.r.ticks.stepSize` | `number` | - | 刻度步长 |
+| `scales.r.angleLines.color` | `string` | `'#f5f6fa'` | 蜘蛛网线颜色 |
+| `scales.r.grid.color` | `string` | `'#f5f6fa'` | 圆圈网格线颜色 |
+| `scales.r.pointLabels.color` | `string` | `'#969799'` | 轴标签颜色 |
+
+更多配置项请参考 [Chart.js 官方文档](https://www.chartjs.org/docs/latest/charts/radar.html)。
+
+</div>
+<JChRadarDemo slot="demo" client:only="vue" />
+</DemoPanel>

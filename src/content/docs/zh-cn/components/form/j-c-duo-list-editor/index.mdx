@@ -1,0 +1,202 @@
+---
+title: JCDuoListEditor 键值对列表编辑器
+description: 键值对列表编辑器组件，支持内联和紧凑两种模式
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JCDuoListEditorDemo from '@components/DemoPanel/JCDuoListEditorDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-c-duo-list-editor)
+
+<DemoPanel title="JCDuoListEditor 组件演示">
+<div slot="content">
+
+# JCDuoListEditor 键值对列表编辑器
+
+键值对列表编辑器组件，用于编辑对象数组，支持内联和紧凑两种操作模式。
+
+## 基础用法
+
+```vue
+<template>
+  <j-c-duo-list-editor v-model="items">
+    <template #item-content="{ item, index, updateItem, addItem, removeItem, canAdd, canRemove }">
+      <div class="row q-col-gutter-sm">
+        <div class="col">
+          <j-q-input 
+            v-model="item.key" 
+            label="键"
+            @update:model-value="updateItem(index, { ...item, key: $event })"
+          />
+        </div>
+        <div class="col">
+          <j-q-input 
+            v-model="item.value" 
+            label="值"
+            @update:model-value="updateItem(index, { ...item, value: $event })"
+          />
+        </div>
+        <div class="col-auto" v-if="canRemove">
+          <q-btn icon="close" flat round dense @click="removeItem(index)" />
+        </div>
+        <div class="col-auto" v-if="canAdd && index === items.length - 1">
+          <q-btn icon="add" flat round dense @click="addItem(items.length)" />
+        </div>
+      </div>
+    </template>
+  </j-c-duo-list-editor>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCDuoListEditor, JQInput } from 'qcpt'
+
+const items = ref([
+  { key: 'name', value: '姓名' },
+  { key: 'age', value: '年龄' }
+])
+</script>
+```
+
+## 紧凑模式
+
+使用 `actionMode="compact"` 启用紧凑模式（操作按钮在底部）：
+
+```vue
+<template>
+  <j-c-duo-list-editor 
+    v-model="items"
+    action-mode="compact"
+  >
+    <template #item-content="{ item, index, updateItem }">
+      <div class="row q-col-gutter-sm">
+        <div class="col">
+          <j-q-input 
+            v-model="item.key" 
+            label="键"
+            @update:model-value="updateItem(index, { ...item, key: $event })"
+          />
+        </div>
+        <div class="col">
+          <j-q-input 
+            v-model="item.value" 
+            label="值"
+            @update:model-value="updateItem(index, { ...item, value: $event })"
+          />
+        </div>
+      </div>
+    </template>
+  </j-c-duo-list-editor>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCDuoListEditor, JQInput } from 'qcpt'
+
+const items = ref([
+  { key: 'name', value: '姓名' }
+])
+</script>
+```
+
+## 限制数量
+
+使用 `minItems` 和 `maxItems` 限制项数：
+
+```vue
+<template>
+  <j-c-duo-list-editor 
+    v-model="items"
+    :min-items="1"
+    :max-items="10"
+  >
+    <template #item-content="{ item, index, updateItem, addItem, removeItem, canAdd, canRemove }">
+      <!-- 自定义内容 -->
+    </template>
+  </j-c-duo-list-editor>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCDuoListEditor } from 'qcpt'
+
+const items = ref([{ key: '', value: '' }])
+</script>
+```
+
+## 自定义底部操作
+
+使用 `list-footer-actions` 插槽自定义底部操作按钮：
+
+```vue
+<template>
+  <j-c-duo-list-editor 
+    v-model="items"
+    action-mode="compact"
+  >
+    <template #item-content="{ item, index, updateItem }">
+      <!-- 项内容 -->
+    </template>
+    
+    <template #list-footer-actions="{ addItem, canAdd, nextIndex }">
+      <j-q-button 
+        v-if="canAdd"
+        label="添加新项" 
+        type="primary"
+        @click="addItem(nextIndex)"
+      />
+    </template>
+  </j-c-duo-list-editor>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JCDuoListEditor, JQButton } from 'qcpt'
+
+const items = ref([{ key: '', value: '' }])
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `any[]` | `[{}]` | 列表数据（v-model，对象数组） |
+| `defaultNewItem` | `Object` | `{}` | 新增项的默认对象 |
+| `minItems` | `number` | `1` | 最小项数 |
+| `maxItems` | `number` | `5` | 最大项数 |
+| `actionMode` | `'inline' \| 'compact'` | `'inline'` | 操作模式（内联或紧凑） |
+| `showAddButton` | `boolean` | `true` | 是否显示添加按钮 |
+| `showRemoveButton` | `boolean` | `true` | 是否显示删除按钮 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: any[]` | 列表更新事件 |
+
+### Slots
+
+| 插槽名 | 作用域 | 描述 |
+| --- | --- | --- |
+| `item-content` | `{ item, index, updateItem, addItem, removeItem, isLast, canAdd, canRemove, mode }` | 列表项内容 |
+| `list-footer-actions` | `{ addItem, canAdd, nextIndex }` | 底部操作区域（仅在 compact 模式下显示） |
+
+### 作用域插槽说明
+
+**item-content 插槽：**
+- `item`: 当前项对象
+- `index`: 当前项索引
+- `updateItem(index, newItem)`: 更新指定索引的项
+- `addItem(index)`: 在指定索引后添加新项
+- `removeItem(index)`: 删除指定索引的项
+- `isLast`: 是否为最后一项
+- `canAdd`: 是否可以添加
+- `canRemove`: 是否可以删除
+- `mode`: 当前操作模式
+
+</div>
+<JCDuoListEditorDemo slot="demo" client:only="vue" />
+</DemoPanel>

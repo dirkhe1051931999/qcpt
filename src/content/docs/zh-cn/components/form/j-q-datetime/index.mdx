@@ -1,0 +1,265 @@
+---
+title: JQDatetime 日期时间选择器
+description: 日期和时间组合选择器，支持单选和范围选择
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQDatetimeDemo from '@components/DemoPanel/JQDatetimeDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-datetime)
+
+<DemoPanel title="JQDatetime 组件演示">
+<div slot="content">
+
+# JQDatetime 日期时间选择器
+
+日期和时间组合选择器组件，支持单选日期时间和日期时间范围选择。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间">
+    <j-q-datetime v-model="datetime" />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetime = ref<string | null>(null)
+</script>
+```
+
+## 日期时间范围选择
+
+使用 `range` 属性启用范围选择：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间范围">
+    <j-q-datetime 
+      v-model="datetimeRange" 
+      range
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetimeRange = ref<{ from: string | null; to: string | null }>({
+  from: null,
+  to: null
+})
+</script>
+```
+
+## 自定义默认结束时间
+
+使用 `endhhmmss` 属性设置范围选择时默认的结束时间：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间范围">
+    <j-q-datetime 
+      v-model="datetimeRange" 
+      range
+      :endhhmmss="['23', '59', '59']"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetimeRange = ref<{ from: string | null; to: string | null }>({
+  from: null,
+  to: null
+})
+</script>
+```
+
+## 日期限制
+
+使用 `options` 属性限制可选择的日期：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间">
+    <j-q-datetime 
+      v-model="datetime" 
+      :options="dateOptions"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+import { date } from 'quasar'
+
+const datetime = ref<string | null>(null)
+
+const dateOptions = (d: string) => {
+  // 只能选择今天及以后的日期
+  return date.isSameDate(d, new Date(), 'day') || date.isAfterDate(d, new Date(), 'day')
+}
+</script>
+```
+
+## 自定义显示格式
+
+使用 `valueDisplayFn` 属性自定义显示格式：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间">
+    <j-q-datetime 
+      v-model="datetime" 
+      :value-display-fn="formatDateTime"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+import { date } from 'quasar'
+
+const datetime = ref<string | null>(null)
+
+const formatDateTime = (value: any) => {
+  if (!value) return ''
+  const d = new Date(value)
+  return date.formatDate(d, 'YYYY年MM月DD日 HH:mm:ss')
+}
+</script>
+```
+
+## 滚动提示
+
+使用 `showTooltip` 属性显示滚动提示（提示用户可以使用鼠标滚轮调整时间）：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间">
+    <j-q-datetime 
+      v-model="datetime" 
+      :show-tooltip="true"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetime = ref<string | null>(null)
+</script>
+```
+
+## 表单验证
+
+支持 Quasar 的 `rules` 验证：
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间" required>
+    <j-q-datetime 
+      v-model="datetime" 
+      :rules="[
+        val => !!val || '请选择日期时间'
+      ]"
+    />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetime = ref<string | null>(null)
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string \| number \| Date \| Object \| null` | `null` | 日期时间值（v-model，范围选择时为 `{ from: string \| null, to: string \| null }`） |
+| `label` | `string` | - | 标签文本 |
+| `dense` | `boolean` | `true` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `range` | `boolean` | `false` | 是否启用范围选择 |
+| `clearable` | `boolean` | `true` | 是否可清空 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `rules` | `Array` | - | 验证规则（Quasar QField rules） |
+| `options` | `Array \| Function` | - | 日期选项限制（Quasar QDate options） |
+| `valueDisplayFn` | `Function` | - | 自定义显示格式函数 `(value: any) => string \| number \| null \| undefined` |
+| `endhhmmss` | `[string, string, string]` | `['00', '00', '00']` | 范围选择时默认的结束时间（时、分、秒） |
+| `showTooltip` | `boolean` | `false` | 是否显示滚动提示 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string \| Object \| null` | 值更新事件 |
+| `hide` | `evt: any` | 弹出框关闭事件 |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `popup-prepend` | 弹出框前置内容 |
+| `append` | 输入框后置内容 |
+| `control` | 自定义控制内容 |
+
+### Methods
+
+通过 ref 可以访问以下方法和属性：
+
+| 方法/属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `closePopup` | `() => void` | 关闭弹出框 |
+| `popupVisible` | `Ref<boolean>` | 弹出框是否可见（响应式） |
+
+#### 使用示例
+
+```vue
+<template>
+  <j-q-form-label label="选择日期时间">
+    <j-q-datetime ref="datetimeRef" v-model="datetime" />
+  </j-q-form-label>
+  <q-btn @click="handleClose" label="关闭弹窗" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQDatetime, JQFormLabel } from 'qcpt'
+
+const datetimeRef = ref()
+const datetime = ref<string | null>(null)
+
+const handleClose = () => {
+  datetimeRef.value?.closePopup()
+}
+</script>
+```
+
+## 时间调整
+
+组件支持使用鼠标滚轮调整时间：
+- 鼠标悬停在时间输入框上
+- 滚动鼠标滚轮即可调整时间值
+- 如果启用了 `showTooltip`，首次打开时会显示提示
+
+</div>
+<JQDatetimeDemo slot="demo" client:only="vue" />
+</DemoPanel>

@@ -1,0 +1,191 @@
+---
+title: 图表组件
+description: 基于 Chart.js 的数据可视化图表组件
+---
+
+# 图表组件
+
+QCPT 提供了基于 Chart.js 的图表组件，支持折线图、柱状图、饼图等多种图表类型。
+
+## 折线图 (JChLine)
+
+```vue
+<template>
+  <j-ch-line 
+    :labels="['1月', '2月', '3月', '4月', '5月']"
+    :datasets="datasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChLine } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '销售额',
+    data: [120, 190, 300, 500, 200],
+    borderColor: 'rgb(75, 192, 192)',
+    backgroundColor: 'rgba(75, 192, 192, 0.2)'
+  }
+])
+</script>
+```
+
+## 柱状图 (JChBar)
+
+```vue
+<template>
+  <j-ch-bar 
+    :labels="['A', 'B', 'C', 'D']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBar } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '数据',
+    data: [12, 19, 3, 5],
+    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+  }
+])
+</script>
+```
+
+## 混合柱状折线图 (JChBarLine)
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="labels"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+
+const labels = ref(['1月', '2月', '3月'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '柱状图',
+    data: [10, 20, 30],
+    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+  },
+  {
+    type: 'line',
+    label: '折线图',
+    data: [15, 25, 35],
+    borderColor: 'rgb(75, 192, 192)'
+  }
+])
+</script>
+```
+
+## 饼图/环形图 (JChPieDoughnut)
+
+```vue
+<template>
+  <j-ch-pie-doughnut 
+    :labels="labels"
+    :datasets="datasets"
+    chart-type="pie"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChPieDoughnut } from 'qcpt'
+
+const labels = ref(['红色', '蓝色', '黄色'])
+const datasets = ref([
+  {
+    data: [300, 50, 100],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ]
+  }
+])
+</script>
+```
+
+## 雷达图 (JChRadar)
+
+```vue
+<template>
+  <j-ch-radar 
+    :labels="labels"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChRadar } from 'qcpt'
+
+const labels = ref(['攻击', '防御', '速度', '特攻', '特防', '体力'])
+const datasets = ref([
+  {
+    label: '属性值',
+    data: [65, 59, 90, 81, 56, 55],
+    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+    borderColor: 'rgb(54, 162, 235)'
+  }
+])
+</script>
+```
+
+## 气泡图 (JChBubble)
+
+```vue
+<template>
+  <j-ch-bubble 
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBubble } from 'qcpt'
+
+const datasets = ref([
+  {
+    label: '数据',
+    data: [
+      { x: 20, y: 30, r: 15 },
+      { x: 40, y: 10, r: 10 },
+      { x: 30, y: 20, r: 20 }
+    ],
+    backgroundColor: 'rgba(255, 99, 132, 0.5)'
+  }
+])
+</script>
+```
+
+## 通用 Props
+
+所有图表组件都支持以下通用属性：
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `labels` | `string[]` | 标签数组 |
+| `datasets` | `ChartDataset[]` | 数据集数组（Chart.js 格式） |
+| `height` | `number` | 图表高度（像素） |
+| `options` | `ChartOptions` | Chart.js 配置选项 |
+
+## 注意事项
+
+- 所有图表组件基于 Chart.js 4.x
+- `datasets` 和 `options` 遵循 Chart.js 的标准格式
+- 可以通过 `options` 属性自定义图表的详细配置
+- 图表会自动响应数据变化
+

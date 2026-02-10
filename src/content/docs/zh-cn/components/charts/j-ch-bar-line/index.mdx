@@ -1,0 +1,454 @@
+---
+title: JChBarLine 混合图
+description: 柱状图与折线图混合组件
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JChBarLineDemo from '@components/DemoPanel/JChBarLineDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-ch-bar-line)
+
+<DemoPanel title="JChBarLine 组件演示">
+  <div slot="content">
+
+# JChBarLine 混合图
+
+基于 Chart.js 的混合图表组件，支持柱状图和折线图的组合展示，适用于多维度数据对比和趋势分析。
+
+## 基础用法
+
+在 `datasets` 中为每个数据集指定 `type: 'bar'` 或 `type: 'line'`。
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="['周一', '周二', '周三', '周四', '周五']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '访问量',
+    data: [120, 200, 150, 180, 220],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'line',
+    label: '平均值',
+    data: [180, 180, 180, 180, 180],
+    borderColor: '#ef4444',
+    backgroundColor: '#ef4444'
+  }
+])
+</script>
+```
+
+## 多组数据混合
+
+可以组合多个柱状图和折线图。
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="['1月', '2月', '3月', '4月', '5月', '6月']"
+    :datasets="multiDatasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+
+const multiDatasets = ref([
+  {
+    type: 'bar',
+    label: '线上销售',
+    data: [320, 280, 350, 400, 450, 520],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'bar',
+    label: '线下销售',
+    data: [220, 240, 210, 280, 320, 360],
+    backgroundColor: '#10b981'
+  },
+  {
+    type: 'line',
+    label: '总销售趋势',
+    data: [540, 520, 560, 680, 770, 880],
+    borderColor: '#f59e0b',
+    backgroundColor: '#f59e0b'
+  }
+])
+</script>
+```
+
+## 销售与目标对比
+
+典型的实际值与目标值对比场景。
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="['Q1', 'Q2', 'Q3', 'Q4']"
+    :datasets="datasets"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '实际销售',
+    data: [2500, 3200, 2800, 4100],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'line',
+    label: '销售目标',
+    data: [3000, 3000, 3500, 4000],
+    borderColor: '#ef4444',
+    backgroundColor: '#ef4444'
+  }
+])
+</script>
+```
+
+## 自定义高度
+
+通过 `height` 属性设置图表高度。
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="labels"
+    :datasets="datasets"
+    :height="400"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+
+const labels = ref(['产品A', '产品B', '产品C', '产品D', '产品E'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '销量',
+    data: [150, 220, 180, 240, 200],
+    backgroundColor: '#8b5cf6'
+  },
+  {
+    type: 'line',
+    label: '目标',
+    data: [200, 200, 200, 200, 200],
+    borderColor: '#ec4899',
+    backgroundColor: '#ec4899'
+  }
+])
+</script>
+```
+
+## 自定义配置
+
+`options` 属性支持深度合并，你可以只覆盖部分配置项。
+
+### 隐藏图例
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['08:00', '10:00', '12:00', '14:00', '16:00'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '请求数',
+    data: [450, 520, 680, 590, 620],
+    backgroundColor: '#06b6d4'
+  },
+  {
+    type: 'line',
+    label: '成功率',
+    data: [95, 98, 92, 96, 94],
+    borderColor: '#10b981',
+    backgroundColor: '#10b981'
+  }
+])
+
+// 只覆盖图例配置，其他配置保持默认值
+const customOptions: Partial<ChartOptions<'bar' | 'line'>> = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
+</script>
+```
+
+### 自定义 Y 轴配置
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="customOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['1月', '2月', '3月', '4月'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '销售额',
+    data: [120, 190, 300, 500],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'line',
+    label: '增长率',
+    data: [10, 25, 35, 50],
+    borderColor: '#10b981',
+    backgroundColor: '#10b981'
+  }
+])
+
+const customOptions: Partial<ChartOptions<'bar' | 'line'>> = {
+  scales: {
+    y: {
+      max: 600,
+      ticks: {
+        stepSize: 100
+      }
+    }
+  }
+}
+</script>
+```
+
+### 深度合并示例
+
+```vue
+<template>
+  <j-ch-bar-line 
+    :labels="labels"
+    :datasets="datasets"
+    :options="advancedOptions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine } from 'qcpt'
+import type { ChartOptions } from 'chart.js'
+
+const labels = ref(['1月', '2月', '3月', '4月', '5月', '6月'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '营收',
+    data: [580, 620, 590, 680, 720, 750],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'line',
+    label: '利润率',
+    data: [25, 28, 26, 30, 32, 35],
+    borderColor: '#10b981',
+    backgroundColor: '#10b981'
+  }
+])
+
+// 深度合并示例：只覆盖需要的配置项
+const advancedOptions: Partial<ChartOptions<'bar' | 'line'>> = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',  // 覆盖位置
+      labels: {
+        font: {
+          size: 14  // 只覆盖字体大小，其他字体配置保持默认
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff'
+    }
+  },
+  scales: {
+    x: {
+      grid: {
+        display: true  // 显示 X 轴网格线
+      }
+    }
+  }
+}
+</script>
+```
+
+**合并规则：**
+- 使用深度合并，只覆盖你指定的配置项
+- 未指定的配置项会保持默认值
+- 支持嵌套对象的深度合并（如 `plugins.legend.position`）
+- 如果传入 `null`，会显式覆盖为 `null`
+- 如果传入 `undefined`，会跳过该配置项（保留默认值）
+
+## 动态更新数据
+
+组件内部监听了 `labels`、`datasets` 和 `height` 的变化，数据更新时会自动重新渲染图表。
+
+```vue
+<template>
+  <div>
+    <j-q-button label="刷新数据" @click="refreshData" />
+    <j-ch-bar-line 
+      :labels="labels"
+      :datasets="datasets"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JChBarLine, JQButton } from 'qcpt'
+
+const labels = ref(['周一', '周二', '周三', '周四', '周五'])
+const datasets = ref([
+  {
+    type: 'bar',
+    label: '订单量',
+    data: [85, 120, 95, 140, 110],
+    backgroundColor: '#3b82f6'
+  },
+  {
+    type: 'line',
+    label: '转化率',
+    data: [65, 70, 68, 75, 72],
+    borderColor: '#ec4899',
+    backgroundColor: '#ec4899'
+  }
+])
+
+const refreshData = () => {
+  datasets.value = [
+    {
+      type: 'bar',
+      label: '订单量',
+      data: labels.value.map(() => Math.floor(Math.random() * 100) + 80),
+      backgroundColor: '#3b82f6'
+    },
+    {
+      type: 'line',
+      label: '转化率',
+      data: labels.value.map(() => Math.floor(Math.random() * 20) + 60),
+      borderColor: '#ec4899',
+      backgroundColor: '#ec4899'
+    }
+  ]
+}
+</script>
+```
+
+## 默认样式特性
+
+组件会根据数据集的 `type` 自动应用不同的默认样式：
+
+### 柱状图 (type: 'bar') 默认样式
+- **圆角柱子**：`borderRadius: 4`
+- **无边框**：`borderWidth: 0`
+- **最大宽度**：`maxBarThickness: 34`
+- **跳过边框**：`borderSkipped: false`
+
+### 折线图 (type: 'line') 默认样式
+- **平滑曲线**：`tension: 0.4`
+- **无数据点**：`pointRadius: 0`
+- **线条宽度**：`borderWidth: 3`
+- **无填充**：`fill: false`
+- **透明背景**：`backgroundColor: 'transparent'`
+
+### 通用特性
+- **白色 Tooltip**：背景为白色，文字为黑色
+- **交互模式**：`intersect: false, mode: 'index'`
+- **图例位置**：`position: 'bottom'`
+- **长标签截断**：超过 13 个字符的标签会自动截断并加上 `...`
+
+这些默认样式可以通过在 `datasets` 中设置相应属性或通过 `options` 属性覆盖。
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `labels` | `string[]` | - | X 轴标签数组（必填） |
+| `datasets` | `(ChartDataset<'bar'> \| ChartDataset<'line'>)[]` | - | 数据集数组，每个数据集必须指定 `type: 'bar'` 或 `type: 'line'`（必填） |
+| `height` | `number` | `300` | 图表高度（像素） |
+| `options` | `Partial<ChartOptions<'bar' \| 'line'>>` | `{}` | Chart.js 配置选项（深度合并，只覆盖指定项） |
+
+### ChartDataset 配置
+
+每个数据集对象的配置项：
+
+#### 必填属性
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `type` | `'bar' \| 'line'` | 图表类型（必填） |
+| `label` | `string` | 数据集名称（显示在图例中） |
+| `data` | `number[]` | 数据点数组 |
+
+#### 柱状图常用属性
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `backgroundColor` | `string \| string[]` | - | 柱子填充颜色 |
+| `borderColor` | `string \| string[]` | - | 柱子边框颜色 |
+| `borderWidth` | `number` | `0` | 柱子边框宽度 |
+| `borderRadius` | `number` | `4` | 柱子圆角半径 |
+| `maxBarThickness` | `number` | `34` | 柱子最大宽度 |
+
+#### 折线图常用属性
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `borderColor` | `string` | - | 线条颜色 |
+| `backgroundColor` | `string` | `'transparent'` | 填充颜色 |
+| `tension` | `number` | `0.4` | 曲线平滑度（0-1，0 为直线） |
+| `pointRadius` | `number` | `0` | 数据点半径 |
+| `borderWidth` | `number` | `3` | 线条宽度 |
+| `fill` | `boolean` | `false` | 是否填充区域 |
+
+更多配置项请参考 [Chart.js 官方文档](https://www.chartjs.org/docs/latest/charts/mixed.html)。
+
+</div>
+<JChBarLineDemo slot="demo" client:only="vue" />
+</DemoPanel>

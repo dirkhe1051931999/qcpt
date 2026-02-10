@@ -1,0 +1,54 @@
+---
+// 强制 logo 链接到 /zh-cn/ 的客户端脚本
+---
+
+<script is:inline>
+  (function() {
+    // 监听路径，修复路径问题
+    function checkPath() {
+      const path = window.location.pathname;
+      
+      // 如果路径是 /zh-cn（没有尾部斜杠），重定向到 /zh-cn/
+      if (path === '/zh-cn') {
+        window.location.replace('/zh-cn/');
+        return;
+      }
+      // 如果路径包含 /zh-cn/zh-cn/，删除重复的 /zh-cn
+      if (path.includes('/zh-cn/zh-cn/')) {
+        const fixedPath = path.replace('/zh-cn/zh-cn/', '/zh-cn/');
+        window.location.replace(fixedPath);
+        return;
+      }
+    }
+    
+    // 设置 logo 链接
+    function setLogoLink() {
+      const logoLink = document.querySelector('header .title-wrapper a, header .sl-link-logo');
+      if (logoLink) {
+        logoLink.setAttribute('href', '/zh-cn/');
+        logoLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = '/zh-cn/';
+        });
+      }
+    }
+    
+    // 检查路径
+    checkPath();
+    
+    // 设置 logo 链接
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setLogoLink();
+      });
+    } else {
+      setLogoLink();
+    }
+    
+    // 监听路由变化
+    document.addEventListener('astro:page-load', function() {
+      checkPath();
+      setLogoLink();
+    });
+  })();
+</script>

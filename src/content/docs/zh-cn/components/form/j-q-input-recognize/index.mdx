@@ -1,0 +1,227 @@
+---
+title: JQInputRecognize 输入识别
+description: 输入识别组件，支持自动识别和验证输入内容
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQInputRecognizeDemo from '@components/DemoPanel/JQInputRecognizeDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-input-recognize)
+
+<DemoPanel title="JQInputRecognize 组件演示">
+<div slot="content">
+
+# JQInputRecognize 输入识别
+
+输入识别组件，支持自动识别输入内容（通过逗号、空格、换行等分隔符），并对识别出的项目进行验证。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-input-recognize v-model="inputValue" label="输入内容" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+</script>
+```
+
+## 使用正则表达式验证
+
+使用 `recognizeRules` 属性设置识别规则：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    v-model="inputValue" 
+    label="输入邮箱"
+    :recognize-rules="[/^[^\s@]+@[^\s@]+\.[^\s@]+$/]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+</script>
+```
+
+## 使用验证函数
+
+使用函数进行更复杂的验证：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    v-model="inputValue" 
+    label="输入用户名"
+    :recognize-rules="[validateUsername]"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+
+const validateUsername = (value: string) => {
+  if (value.length < 3) {
+    return '用户名长度不能少于3个字符'
+  }
+  if (value.length > 20) {
+    return '用户名长度不能超过20个字符'
+  }
+  if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+    return '用户名只能包含字母、数字和下划线'
+  }
+  return true
+}
+</script>
+```
+
+## 限制最大识别数量
+
+使用 `max` 属性限制最大识别数量：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    v-model="inputValue" 
+    label="输入标签（最多5个）"
+    :max="5"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+</script>
+```
+
+## 允许重复项
+
+使用 `allowDuplicate` 属性允许重复项：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    v-model="inputValue" 
+    label="输入内容"
+    :allow-duplicate="true"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+</script>
+```
+
+## 获取识别结果
+
+通过 `change` 事件获取识别结果：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    v-model="inputValue" 
+    label="输入内容"
+    @change="handleChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+
+const handleChange = (value: string, recognizedItems: string[]) => {
+  console.log('输入值:', value)
+  console.log('识别结果:', recognizedItems)
+}
+</script>
+```
+
+## 使用 ref 获取识别结果
+
+通过 ref 访问组件的 `recognizedItems` 属性：
+
+```vue
+<template>
+  <j-q-input-recognize 
+    ref="recognizeRef"
+    v-model="inputValue" 
+    label="输入内容"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQInputRecognize } from 'qcpt'
+
+const inputValue = ref('')
+const recognizeRef = ref<InstanceType<typeof JQInputRecognize>>()
+
+// 获取识别结果
+const getRecognizedItems = () => {
+  return recognizeRef.value?.recognizedItems || []
+}
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `modelValue` | `string` | `''` | 输入值（v-model） |
+| `label` | `string` | `''` | 标签文本 |
+| `max` | `number` | `undefined` | 最大识别数量 |
+| `recognizeRules` | `Array<RegExp \| Function>` | `[]` | 识别规则数组，支持正则表达式或验证函数 |
+| `rules` | `Array<RegExp \| Function>` | `[]` | 验证规则（已废弃，请使用 recognizeRules） |
+| `inputRules` | `Array<Function>` | `[]` | 输入框验证规则 |
+| `allowDuplicate` | `boolean` | `false` | 是否允许重复项 |
+| `dense` | `boolean` | `false` | 紧凑模式 |
+| `outlined` | `boolean` | `true` | 外边框样式 |
+| `disable` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `maxlength` | `string \| number` | `undefined` | 最大长度 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+| --- | --- | --- |
+| `update:modelValue` | `value: string` | 值更新事件 |
+| `change` | `value: string, recognizedItems: string[]` | 输入变化事件，返回输入值和识别结果 |
+| `update:recognizedItems` | `items: string[]` | 识别结果更新事件（防抖，300ms） |
+
+### Methods
+
+通过 ref 可以访问以下方法：
+
+| 方法名 | 参数 | 返回值 | 描述 |
+| --- | --- | --- | --- |
+| `validate` | - | `boolean` | 验证输入框 |
+| `resetValidation` | - | `void` | 重置验证状态 |
+
+### Exposed Properties
+
+| 属性名 | 类型 | 描述 |
+| --- | --- | --- |
+| `recognizedItems` | `ComputedRef<string[]>` | 识别出的项目数组 |
+
+</div>
+<JQInputRecognizeDemo slot="demo" client:only="vue" />
+</DemoPanel>

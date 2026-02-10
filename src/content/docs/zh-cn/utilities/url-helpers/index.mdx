@@ -1,0 +1,263 @@
+---
+title: URL 方法
+description: URL 处理相关的工具函数
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import UrlHelpersDemo from '@components/DemoPanel/UrlHelpersDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/blob/dev/src/utils/helper/url.ts)
+
+<DemoPanel title="URL 方法交互式演示">
+  <div slot="content">
+
+# URL 方法
+
+提供丰富的 URL 处理工具函数，包括参数解析、URL 构建、编码解码等功能。
+
+## 导入方式
+
+```typescript
+import { jqTool } from 'qcpt'
+
+// 使用 URL 方法
+jqTool.helper.url.parseQuery('?name=Tom&age=20')
+```
+
+## URL 参数处理
+
+### parseQuery
+
+解析 URL 参数为对象：
+
+```typescript
+jqTool.helper.url.parseQuery('?name=Tom&age=20')
+// { name: 'Tom', age: '20' }
+
+jqTool.helper.url.parseQuery('http://example.com?name=Tom&age=20')
+// { name: 'Tom', age: '20' }
+```
+
+### stringifyQuery
+
+对象转 URL 参数字符串：
+
+```typescript
+jqTool.helper.url.stringifyQuery({ name: 'Tom', age: 20 })
+// 'name=Tom&age=20'
+
+jqTool.helper.url.stringifyQuery({ tags: ['a', 'b', 'c'] })
+// 'tags=a&tags=b&tags=c'
+```
+
+### getQueryParam
+
+获取指定 URL 参数：
+
+```typescript
+jqTool.helper.url.getQueryParam('name', '?name=Tom&age=20')
+// 'Tom'
+```
+
+### getQueryParams
+
+获取所有同名参数（数组）：
+
+```typescript
+jqTool.helper.url.getQueryParams('tags', '?tags=a&tags=b&tags=c')
+// ['a', 'b', 'c']
+```
+
+### updateQueryParams
+
+更新 URL 参数（不刷新页面）：
+
+```typescript
+jqTool.helper.url.updateQueryParams({ name: 'Tom', age: 20 }, 'push')
+// URL 变为：/current-page?name=Tom&age=20
+```
+
+### removeQueryParams
+
+删除 URL 参数（不刷新页面）：
+
+```typescript
+jqTool.helper.url.removeQueryParams(['name', 'age'], 'replace')
+```
+
+### clearQueryParams
+
+清空所有 URL 参数：
+
+```typescript
+jqTool.helper.url.clearQueryParams('replace')
+```
+
+## URL 拼接和解析
+
+### joinUrl
+
+拼接 URL（自动处理斜杠）：
+
+```typescript
+jqTool.helper.url.joinUrl('http://example.com/', '/api/', 'users/', '123')
+// 'http://example.com/api/users/123'
+```
+
+### parseUrl
+
+解析 URL 为各个组成部分：
+
+```typescript
+const parsed = jqTool.helper.url.parseUrl('https://user:pass@example.com:8080/path?query=1#hash')
+// {
+//   protocol: 'https:',
+//   username: 'user',
+//   password: 'pass',
+//   hostname: 'example.com',
+//   port: '8080',
+//   pathname: '/path',
+//   search: '?query=1',
+//   hash: '#hash',
+//   host: 'example.com:8080',
+//   origin: 'https://example.com:8080',
+//   href: '...',
+//   params: { query: '1' }
+// }
+```
+
+### buildUrl
+
+构建 URL：
+
+```typescript
+jqTool.helper.url.buildUrl({
+  protocol: 'https',
+  hostname: 'example.com',
+  pathname: '/api/users',
+  params: { page: 1, size: 10 }
+})
+// 'https://example.com/api/users?page=1&size=10'
+```
+
+## URL 判断
+
+### isExternalLink
+
+判断是否为外部链接：
+
+```typescript
+jqTool.helper.url.isExternalLink('https://example.com') // true
+jqTool.helper.url.isExternalLink('/path/to/page') // false
+```
+
+### isAbsolutePath
+
+判断是否为绝对路径：
+
+```typescript
+jqTool.helper.url.isAbsolutePath('/path/to/page') // true
+jqTool.helper.url.isAbsolutePath('path/to/page') // false
+```
+
+### isSameOrigin
+
+判断两个 URL 是否同源：
+
+```typescript
+jqTool.helper.url.isSameOrigin(
+  'https://example.com/a',
+  'https://example.com/b'
+) // true
+```
+
+## URL 编码/解码
+
+### encodeParam / decodeParam
+
+编码/解码 URL 参数：
+
+```typescript
+jqTool.helper.url.encodeParam('hello world')
+// 'hello%20world'
+
+jqTool.helper.url.decodeParam('hello%20world')
+// 'hello world'
+```
+
+### safeEncodeUrl / safeDecodeUrl
+
+安全编码/解码 URL：
+
+```typescript
+jqTool.helper.url.safeEncodeUrl('http://example.com/中文')
+// 'http://example.com/%E4%B8%AD%E6%96%87'
+```
+
+## URL 操作
+
+### addQueryParams
+
+添加 URL 参数：
+
+```typescript
+jqTool.helper.url.addQueryParams(
+  'http://example.com/api',
+  { page: 1, size: 10 }
+)
+// 'http://example.com/api?page=1&size=10'
+```
+
+### removeQueryParamsFromUrl
+
+移除 URL 中的指定参数：
+
+```typescript
+jqTool.helper.url.removeQueryParamsFromUrl(
+  'http://example.com?a=1&b=2&c=3',
+  ['b', 'c']
+)
+// 'http://example.com?a=1'
+```
+
+### getDomain / getRootDomain
+
+获取域名：
+
+```typescript
+jqTool.helper.url.getDomain('https://www.example.com/path')
+// 'www.example.com'
+
+jqTool.helper.url.getRootDomain('https://www.example.com/path')
+// 'example.com'
+```
+
+## 当前页面 URL
+
+### getCurrentUrl / getCurrentPath
+
+获取当前页面 URL 和路径：
+
+```typescript
+jqTool.helper.url.getCurrentUrl()
+// 'http://example.com/path?query=1'
+
+jqTool.helper.url.getCurrentPath()
+// '/path'
+```
+
+### getCurrentQuery / getCurrentHash
+
+获取当前页面参数和 Hash：
+
+```typescript
+jqTool.helper.url.getCurrentQuery()
+// { query: '1' }
+
+jqTool.helper.url.getCurrentHash()
+// 'section'
+```
+
+  </div>
+  <UrlHelpersDemo slot="demo" client:only="vue" />
+</DemoPanel>

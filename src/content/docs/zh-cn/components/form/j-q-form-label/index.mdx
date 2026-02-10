@@ -1,0 +1,158 @@
+---
+title: JQFormLabel 表单标签
+description: 表单标签组件，支持必填标记、提示和多种布局
+---
+
+import DemoPanel from '@components/DemoPanel/DemoPanel.astro';
+import JQFormLabelDemo from '@components/DemoPanel/JQFormLabelDemo.vue';
+
+[查看源码](https://gitlab.redtea.io/redteamobile/ngiot-frontend-cpt/-/tree/dev/src/components/j-q-form-label)
+
+<DemoPanel title="JQFormLabel 组件演示">
+<div slot="content">
+
+# JQFormLabel 表单标签
+
+表单标签组件，支持必填标记、提示功能和多种布局方式。
+
+## 基础用法
+
+```vue
+<template>
+  <j-q-form-label label="用户名" required>
+    <j-q-input v-model="username" />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFormLabel, JQInput } from 'qcpt'
+
+const username = ref('')
+</script>
+```
+
+## 带提示的标签
+
+使用 `tip` 属性添加提示信息：
+
+```vue
+<template>
+  <j-q-form-label label="邮箱" tip="请输入有效的邮箱地址">
+    <j-q-input v-model="email" />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFormLabel, JQInput } from 'qcpt'
+
+const email = ref('')
+</script>
+```
+
+## 布局方向
+
+支持垂直和水平两种布局：
+
+```vue
+<template>
+  <!-- 垂直布局（默认） -->
+  <j-q-form-label label="用户名" vertical>
+    <j-q-input v-model="username" />
+  </j-q-form-label>
+
+  <!-- 水平布局 -->
+  <j-q-form-label label="用户名" horizontal>
+    <j-q-input v-model="username" />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFormLabel, JQInput } from 'qcpt'
+
+const username = ref('')
+</script>
+```
+
+## 自定义样式
+
+通过 `labelClass` 和 `valueClass` 自定义标签和内容的样式：
+
+```vue
+<template>
+  <j-q-form-label 
+    label="用户名" 
+    label-class="custom-label"
+    value-class="custom-value"
+  >
+    <j-q-input v-model="username" />
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFormLabel, JQInput } from 'qcpt'
+
+const username = ref('')
+</script>
+```
+
+## 自定义插槽
+
+使用插槽自定义标签和内容：
+
+```vue
+<template>
+  <j-q-form-label>
+    <template #label>
+      <span class="custom-label">自定义标签</span>
+    </template>
+    
+    <template #label-hint>
+      <span class="hint-text">提示信息</span>
+    </template>
+    
+    <j-q-input v-model="username" />
+    
+    <template #form-item-detail>
+      <div class="detail-text">详细信息</div>
+    </template>
+  </j-q-form-label>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { JQFormLabel, JQInput } from 'qcpt'
+
+const username = ref('')
+</script>
+```
+
+## API
+
+### Props
+
+| 属性名 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| `label` | `string` | - | 标签文本 |
+| `required` | `boolean` | `false` | 是否必填（显示红色星号） |
+| `tip` | `string` | `''` | 提示文本（鼠标悬停显示） |
+| `vertical` | `boolean` | `false` | 垂直布局 |
+| `horizontal` | `boolean` | `false` | 水平布局 |
+| `labelClass` | `string \| Object \| Array` | - | 标签自定义 class |
+| `valueClass` | `string \| Object \| Array` | - | 内容区域自定义 class |
+
+### Slots
+
+| 插槽名 | 描述 |
+| --- | --- |
+| `default` | 表单控件内容 |
+| `label` | 自定义标签内容 |
+| `label-hint` | 标签下方的提示内容 |
+| `form-item-detail` | 表单项下方的详细信息 |
+
+</div>
+<JQFormLabelDemo slot="demo" client:only="vue" />
+</DemoPanel>
