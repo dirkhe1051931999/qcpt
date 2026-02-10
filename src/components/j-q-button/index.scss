@@ -1,0 +1,105 @@
+// J-Q-Btn 统一样式变量
+$j-q-btn-border-radius: 8px;
+$j-q-btn-text-border-radius: 4px;
+$j-q-btn-font-size: 14px;
+$j-q-btn-font-weight: 500;
+$j-q-btn-shadow: none;
+$j-q-btn-hover-shadow: none;
+$j-q-btn-active-shadow: none;
+$j-q-btn-border-color: #d7dbec;
+$j-color-text-color-disabled: #969799;
+
+.j-q-button {
+  border-radius: $j-q-btn-border-radius;
+  font-size: $j-q-btn-font-size;
+  font-weight: $j-q-btn-font-weight;
+  box-shadow: $j-q-btn-shadow;
+  box-sizing: border-box;
+  line-height: 1;
+
+  .j-q-button-prefix-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px !important;
+  }
+
+  .j-q-button-label {
+    margin-left: 8px;
+  }
+
+  &.j-q-button--lg {
+    height: 36px;
+    min-height: 36px;
+    padding: 0 12px;
+  }
+
+  &.j-q-button--md {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px;
+  }
+
+  &.j-q-button--sm {
+    height: 28px;
+    min-height: 28px;
+    padding: 0 8px;
+  }
+
+  &.j-q-button--primary {
+    color: #fff;
+    background-color: var(--q-primary);
+  }
+
+  &.j-q-button--secondary {
+    background: #fff;
+    border: 1px solid $j-q-btn-border-color;
+    color: var(--j-color-dark-strong);
+
+    &:hover {
+      background: #f5f6fa;
+    }
+
+    &:active,
+    &.q-btn--active {
+      background: #e6e9f4;
+    }
+
+    &.q-btn--disabled {
+      color: $j-color-text-color-disabled;
+    }
+  }
+}
+.j-q-button--text {
+  color: var(--j-color-dark-strong);
+  background: transparent;
+  border: none;
+  line-height: 22px;
+  min-height: 22px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: $j-q-btn-text-border-radius;
+
+  .j-q-button-prefix-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .j-q-button-label {
+    margin-left: 6px;
+  }
+
+  &:hover {
+    background: #f5f6fa;
+  }
+
+  &:active,
+  &.q-btn--active {
+    background: #e6e9f4;
+  }
+
+  &.q-btn--disabled {
+    color: $j-color-text-color-disabled;
+  }
+}

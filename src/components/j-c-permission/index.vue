@@ -1,0 +1,121 @@
+<template>
+  <template v-if="hasPermission">
+    <slot />
+  </template>
+  <template v-else>
+    <span v-if="!rmDom">
+      {{ defaultContent }}
+    </span>
+  </template>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, inject, type PropType, ref, type Ref, type SlotsType } from 'vue';
+
+// 定义权限码的类型，通常是个字符串
+type PermissionCode = string;
+
+// 导出注入的 key，方便外部使用
+export const PAGE_ACTION_PERMISSION_KEY = Symbol('pageActionPermissionId');
+export const PAGE_PERMISSION_KEY = Symbol('pagePermissionId');
+
+export default defineComponent({
+  name: 'JCPermission',
+  props: {
+    /**
+     * 权限码。如果传递 falsy 值（如 null, undefined, 或空字符串），则默认认为有权限（用来测试或特殊逻辑）
+     */
+    code: {
+      type: [String, null] as PropType<PermissionCode | null>,
+      default: null,
+    },
+    /**
+     * 无权限时显示的默认内容
+     */
+    defaultContent: {
+      type: String,
+      default: '-', // 默认显示为 '-'
+    },
+    /**
+     * 是否在无权限时彻底隐藏组件，而不是显示 defaultContent
+     */
+    rmDom: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * 权限码列表（优先用 props 传入的，如果没有则用全局注入的）
+     */
+    pagePermissionId: {
+      type: Array as PropType<PermissionCode[]>,
+      default: undefined,
+    },
+
+    /**
+     * 操作权限码列表（优先用 props 传入的，如果没有则用全局注入的）
+     */
+    pageActionPermissionId: {
+      type: Array as PropType<PermissionCode[]>,
+      default: undefined,
+    },
+  },
+  slots: Object as SlotsType<{
+    default: void;
+  }>,
+  setup(props) {
+    // 尝试注入全局权限码列表
+    const globalActionPermissionIds = inject<Ref<PermissionCode[]>>(PAGE_ACTION_PERMISSION_KEY, ref([]));
+    const globalPermissionIds = inject<Ref<PermissionCode[]>>(PAGE_PERMISSION_KEY, ref([]));
+
+    // 优先用 props 传入的权限码列表，如果没有则用全局注入的
+    const effectivePermissionIds = computed(() => {
+      if (props.pagePermissionId && props.pagePermissionId.length > 0) {
+        return props.pagePermissionId;
+      }
+      return globalPermissionIds.value || [];
+    });
+
+    const effectiveActionPermissionIds = computed(() => {
+      if (props.pageActionPermissionId && props.pageActionPermissionId.length > 0) {
+        return props.pageActionPermissionId;
+      }
+      return globalActionPermissionIds.value || [];
+    });
+
+    /**
+     * 判断用户是否拥有指定权限
+     */
+    const hasPermission = computed(() => {
+      const code = props.code;
+
+      // 1. 如果没有传递权限码 (null/undefined)，则认为用户有权限（或不进行权限控制）
+      if (!code) {
+        return true;
+      }
+      // 2. 调用实际的权限判断方法
+      return effectivePermissionIds.value.includes(code) || effectiveActionPermissionIds.value.includes(code);
+    });
+
+    /**
+     * 最终是否需要渲染组件内容
+     */
+    const canRender = computed(() => {
+      // 如果有权限，则渲染
+      if (hasPermission.value) {
+        return true;
+      }
+      // 如果无权限，且不需要隐藏，则渲染默认内容
+      if (!props.rmDom) {
+        return true;
+      }
+      // 无权限，且需要隐藏，则不渲染
+      return false;
+    });
+
+    return {
+      hasPermission,
+      canRender,
+    };
+  },
+});
+</script>

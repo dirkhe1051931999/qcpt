@@ -1,0 +1,496 @@
+# 项目开发规则
+
+## Vue 组件开发规范
+
+### 1. 组件定义风格
+所有 Vue 组件必须使用 Options API 风格，使用 `export default defineComponent({` 定义组件。
+
+**✅ 正确的写法：**
+```vue
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'MyComponent',
+  props: {
+    // ...
+  },
+  setup(props, { emit }) {
+    // ...
+    return {
+      // ...
+    };
+  },
+});
+</script>
+```
+
+**❌ 错误的写法：**
+```vue
+<!-- 不要使用 <script setup> -->
+<script setup lang="ts">
+const props = defineProps({...});
+</script>
+```
+
+### 2. 文档生成规则
+**不要自动生成 README.md 或其他文档文件。**
+
+除非用户明确要求，否则：
+- ❌ 不要生成 README.md 文件
+- ❌ 不要生成 CHANGELOG.md 文件
+- ❌ 不要生成任何说明文档
+- ✅ 只生成代码文件（.vue, .ts, .js, .scss 等）
+
+### 3. 新建组件规则
+
+#### 3.1 不要自动生成演示文件
+**新建组件时，不要自动创建 `demo.vue` 和 `example.ts` 文件。**
+
+除非用户明确要求，否则：
+- ❌ 不要生成 demo.vue 文件
+- ❌ 不要生成 example.ts 文件
+- ✅ 只生成核心组件文件（index.vue、index.ts、types.ts 等）
+
+#### 3.2 组件导出规则
+**新建组件时，必须在 `src/index.ts` 中导出组件。**
+
+步骤：
+1. 在文件顶部的导入区域添加 import 语句
+2. 在文件底部的 export 语句中添加组件名称
+
+**✅ 正确的做法：**
+
+在 `src/index.ts` 文件顶部添加导入：
+```typescript
+// j-q series (Quasar)
+import JQAutocomplete from './components/j-q-autocomplete/index.vue';
+import JQNewComponent from './components/j-q-new-component/index.vue'; // 新增
+```
+
+在 `src/index.ts` 文件底部的 export 块中添加导出：
+```typescript
+export {
+  // j-q series
+  JQAutocomplete,
+  JQNewComponent, // 新增
+  // ... 其他组件
+};
+```
+
+**注意事项：**
+- 保持组件按系列分组（j-c、j-q、j-ch 等）
+- 组件名称按字母顺序排列
+- 确保 import 路径指向组件的 `index.vue` 或 `index.ts` 文件
+
+### 4. CSS 样式开发规则
+
+#### 🚨 强制规则：禁止使用 @import 和 SCSS 变量
+
+**所有组件的 SCSS 文件必须使用 CSS 变量（var(--xxx)），严禁使用 @import 或 SCSS 变量！**
+
+**这是强制性规则，没有任何例外！**
+
+步骤：
+1. 在编写或修改样式之前，先查看 `src/css/lib` 目录下的现有样式文件
+2. **必须使用 CSS 变量 `var(--j-color-xxx)` 格式**
+3. **严禁使用 `@import` 或 `@use` 导入 SCSS 变量文件**
+4. **严禁使用 SCSS 变量如 `$primary`、`$white` 等**
+5. 保持样式风格与现有代码一致
+
+**可用的样式文件（仅供查阅变量名称，不要导入）：**
+- `_vars-color.scss` - 颜色变量
+- `_vars-box.scss` - 盒模型变量
+- `_vars-decoration.scss` - 装饰变量
+- `_color.scss` - 颜色相关样式
+- `_box.scss` - 盒模型相关样式
+- `_font.scss` - 字体相关样式
+- `_decoration.scss` - 装饰相关样式
+- `_utils.scss` - 工具类样式
+- `_q-*.scss` - Quasar 组件样式覆盖
+
+**CSS 变量命名规则：**
+- SCSS 变量 `$white` 对应 CSS 变量 `var(--j-color-white)`
+- SCSS 变量 `$black` 对应 CSS 变量 `var(--j-color-black)`
+- SCSS 变量 `$primary` 对应 CSS 变量 `var(--j-color-primary)`
+- SCSS 变量 `$blue` 对应 CSS 变量 `var(--j-color-blue)`
+- SCSS 变量 `$dark` 对应 CSS 变量 `var(--j-color-dark)`
+- SCSS 变量 `$green` 对应 CSS 变量 `var(--j-color-green)`
+- SCSS 变量 `$red` 对应 CSS 变量 `var(--j-color-red)`
+- SCSS 变量 `$yellow` 对应 CSS 变量 `var(--j-color-yellow)`
+- SCSS 变量 `$grey` 对应 CSS 变量 `var(--j-color-grey)`
+- SCSS 变量 `$grey-light` 对应 CSS 变量 `var(--j-color-grey-light)`
+- SCSS 变量 `$grey-lighter` 对应 CSS 变量 `var(--j-color-grey-lighter)`
+- SCSS 变量 `$dark-strong` 对应 CSS 变量 `var(--j-color-dark-strong)`
+- 其他颜色变量以此类推
+
+**✅ 正确的做法：**
+```vue
+<style lang="scss" scoped>
+// ✅ 正确：直接使用 CSS 变量，文件开头不需要任何 @import
+.my-component {
+  color: var(--j-color-primary);
+  background-color: var(--j-color-white);
+  border: 1px solid var(--j-color-grey-light);
+}
+</style>
+```
+
+**❌ 错误的写法：**
+```vue
+<style lang="scss" scoped>
+// ❌ 错误：不要使用 @import
+@import '@/css/lib/vars-color';
+@import '@/css/lib/vars-box';
+@import '@/css/lib/vars-decoration';
+
+// ❌ 错误：不要使用 @use
+@use '@/css/lib/vars-color';
+
+// ❌ 错误：不要使用 SCSS 变量
+.my-component {
+  color: $primary-color;
+  background-color: $white;
+}
+</style>
+```
+
+**🔍 检查现有组件示例：**
+参考 `src/components/j-c-table/index.scss` 的正确写法：
+```scss
+// 文件开头没有任何 @import
+.j-c-table {
+  background: var(--j-color-white);  // ✅ 使用 CSS 变量
+  
+  &__header {
+    background: var(--j-color-grey-lighter);  // ✅ 使用 CSS 变量
+  }
+}
+```
+
+### 5. 代码注释规则
+**编写代码注释时，必须优先遵循当前文件现有的注释风格。**
+
+步骤：
+1. 在添加或修改注释之前，先查看当前文件中已有的注释风格
+2. 保持注释格式、语言（中文/英文）、缩进等与现有注释一致
+3. 如果文件中没有现有注释，则参考同类型文件的注释风格
+
+**注释风格包括但不限于：**
+- 注释符号样式（`//` 或 `/* */`）
+- 注释语言（中文或英文）
+- 单行注释 vs 多行注释的使用习惯
+- JSDoc 或 TSDoc 格式
+- 缩进和空格规范
+
+**✅ 正确的做法：**
+
+如果文件中已有中文注释风格：
+```typescript
+// 现有注释：获取用户信息
+function getUserInfo() { }
+
+// 新增注释：更新用户状态（保持中文风格）
+function updateUserStatus() { }
+```
+
+如果文件中已有英文注释风格：
+```typescript
+// Existing comment: Get user information
+function getUserInfo() { }
+
+// New comment: Update user status (keep English style)
+function updateUserStatus() { }
+```
+
+如果文件中已有 JSDoc 风格：
+```typescript
+/**
+ * 现有注释：获取用户信息
+ * @param {string} userId - 用户ID
+ */
+function getUserInfo(userId: string) { }
+
+/**
+ * 新增注释：更新用户状态（保持相同的 JSDoc 格式）
+ * @param {string} userId - 用户ID
+ * @param {string} status - 状态
+ */
+function updateUserStatus(userId: string, status: string) { }
+```
+
+**注意事项：**
+- 不要在同一文件中混用不同的注释风格
+- 不要在中文注释风格的文件中添加英文注释（反之亦然）
+- 保持注释的详细程度与现有注释一致
+- 在修复问题或添加注释时，不要使用任何图标符号（如勾选、叉号等表情符号），保持注释内容纯文本化
+
+### 6. 代码组织规范
+**在已有代码中添加新功能时，必须按照代码类型归类，保持代码结构清晰有序。**
+
+#### 6.1 对象属性排序规则
+**在已有对象中添加新属性时，必须按照字母顺序（a-z）插入到合适位置。**
+
+**适用范围：所有使用 `{}` 包裹的对象结构，包括但不限于：**
+- TypeScript interface 定义
+- TypeScript type 定义
+- setup 函数的 return {} 对象
+- expose({}) 暴露的对象
+- props 定义对象
+- 普通的对象字面量
+
+**✅ 正确的做法 - Interface：**
+
+为 `column` interface 添加新属性 `copy`（c 开头），应该插入到 `clickable` 和 `ellipsisTooltip` 之间：
+
+```typescript
+interface Column {
+  align?: string;
+  class?: string;
+  clickable?: boolean;    // c 开头
+  copy?: boolean;         // 新增：c 开头，放在 clickable 和 ellipsisTooltip 之间
+  ellipsisTooltip?: boolean;  // e 开头
+  field?: string;
+  format?: Function;
+  label?: string;
+  maxWidth?: number;
+  name: string;
+  onClick?: Function;
+  pinLeft?: boolean;
+  pinRight?: boolean;
+  style?: string;
+  width?: number;
+  wrapCount?: number;
+}
+```
+
+**✅ 正确的做法 - return {}：**
+
+在 return 对象中添加新属性 `copyToClipboard`（c 开头），应该插入到 `columns` 和 `formatValue` 之间：
+
+```typescript
+return {
+  // a 开头
+  activeRow,
+  // c 开头
+  columns,
+  copyToClipboard,  // 新增：c 开头，按字母顺序放在这里
+  // f 开头
+  formatValue,
+  // h 开头
+  handleClick,
+  handleDelete,
+  // l 开头
+  loading,
+  // t 开头
+  tableRef,
+};
+```
+
+**✅ 正确的做法 - expose()：**
+
+在 expose 对象中添加新方法 `clearSelection`（c 开头），应该插入到 `blur` 和 `focus` 之间：
+
+```typescript
+expose({
+  blur,
+  clearSelection,  // 新增：c 开头，按字母顺序放在这里
+  focus,
+  refresh,
+  validate,
+});
+```
+
+**❌ 错误的写法：**
+
+```typescript
+// ❌ 错误：粗暴地放在最后，没有按字母顺序
+interface Column {
+  name: string;
+  label?: string;
+  field?: string;
+  // ... 其他属性
+  wrapCount?: number;
+  copy?: boolean;  // ❌ 错误位置
+}
+
+// ❌ 错误：没有按字母顺序插入
+return {
+  tableRef,
+  loading,
+  columns,
+  handleClick,
+  handleDelete,
+  formatValue,
+  activeRow,
+  copyToClipboard,  // ❌ 错误位置，应该在 columns 和 formatValue 之间
+};
+
+// ❌ 错误：没有按字母顺序插入
+expose({
+  focus,
+  blur,
+  validate,
+  refresh,
+  clearSelection,  // ❌ 错误位置，应该在 blur 和 focus 之间
+});
+```
+
+**注意事项：**
+- 必须严格按照属性/方法名的首字母顺序（a-z）排列
+- 添加新属性时，找到正确的字母顺序位置插入，而不是粗暴地放在最后
+- 这个规则适用于所有使用 `{}` 包裹的对象结构
+
+#### 6.2 Vue setup 函数内部代码组织规则
+**在 `setup` 函数内部添加新代码时，必须按照代码类型归类，放在相应的区域。**
+
+**代码组织顺序：**
+1. **响应式数据声明** - `ref`, `reactive`
+2. **计算属性** - `computed`
+3. **普通函数/方法** - 工具函数、事件处理函数等
+4. **侦听器** - `watch`, `watchEffect`
+5. **生命周期钩子** - `onMounted`, `onUnmounted` 等
+6. **return 语句** - 返回给模板使用的变量和方法
+
+**✅ 正确的做法：**
+
+```typescript
+setup(props) {
+  // 1. 响应式数据声明
+  const tableRef = ref(null);
+  const loading = ref(false);
+  const selectedRows = ref([]);
+
+  // 2. 计算属性（所有 computed 放在一起）
+  const filteredRows = computed(() => {
+    return props.rows.filter(row => row.visible);
+  });
+  
+  const totalCount = computed(() => {
+    return filteredRows.value.length;
+  });
+  
+  // 新增 computed，应该放在这里，而不是放到 const 函数后面
+  const hasData = computed(() => {
+    return totalCount.value > 0;
+  });
+
+  // 3. 普通函数/方法
+  const formatValue = (value: any) => {
+    return value || '--';
+  };
+  
+  const handleClick = (row: any) => {
+    console.log('clicked', row);
+  };
+  
+  // 新增函数，放在其他函数附近
+  const handleDelete = (row: any) => {
+    console.log('delete', row);
+  };
+
+  // 4. 侦听器
+  watch(() => props.rows, () => {
+    console.log('rows changed');
+  });
+
+  // 5. 生命周期钩子
+  onMounted(() => {
+    console.log('mounted');
+  });
+
+  // 6. return 语句
+  return {
+    tableRef,
+    loading,
+    selectedRows,
+    filteredRows,
+    totalCount,
+    hasData,
+    formatValue,
+    handleClick,
+    handleDelete,
+  };
+}
+```
+
+**❌ 错误的写法：**
+
+```typescript
+setup(props) {
+  // ❌ 混乱的组织结构
+  const tableRef = ref(null);
+  
+  const formatValue = (value: any) => {
+    return value || '--';
+  };
+  
+  const filteredRows = computed(() => {
+    return props.rows.filter(row => row.visible);
+  });
+  
+  const loading = ref(false);
+  
+  // ❌ 新增的 computed 放在了 const 函数后面，应该放在其他 computed 附近
+  const handleClick = (row: any) => {
+    console.log('clicked', row);
+  };
+  
+  const hasData = computed(() => {  // ❌ 错误位置
+    return filteredRows.value.length > 0;
+  });
+  
+  onMounted(() => {
+    console.log('mounted');
+  });
+  
+  return {
+    // ...
+  };
+}
+```
+
+**注意事项：**
+- 同类型的代码必须放在一起，不能混杂
+- 添加新的 `computed` 时，必须放在所有 `computed` 声明区域，不能放在普通函数后面
+- 添加新的函数时，必须放在函数声明区域，不能放在 `watch` 或生命周期钩子后面
+- 保持每个区域内部也有合理的顺序（按功能或字母顺序）
+
+#### 6.3 注释分区标记（可选）
+**对于复杂的 setup 函数，建议使用注释标记来明确划分区域。**
+
+```typescript
+setup(props) {
+  /* ========== 响应式数据 ========== */
+  const tableRef = ref(null);
+  const loading = ref(false);
+
+  /* ========== 计算属性 ========== */
+  const filteredRows = computed(() => {
+    return props.rows.filter(row => row.visible);
+  });
+
+  /* ========== 方法 ========== */
+  const handleClick = (row: any) => {
+    console.log('clicked', row);
+  };
+
+  /* ========== 侦听器 ========== */
+  watch(() => props.rows, () => {
+    console.log('rows changed');
+  });
+
+  /* ========== 生命周期 ========== */
+  onMounted(() => {
+    console.log('mounted');
+  });
+
+  /* ========== 返回 ========== */
+  return {
+    tableRef,
+    loading,
+    filteredRows,
+    handleClick,
+  };
+}
+```

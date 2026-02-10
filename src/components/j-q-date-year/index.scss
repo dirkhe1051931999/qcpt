@@ -1,0 +1,177 @@
+// ------------------------------------------------------------------
+// 基础样式
+// ------------------------------------------------------------------
+.j-q-date-year {
+  cursor: pointer;
+
+  .year-picker-value-display {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .float-placeholder {
+    font-size: 14px;
+    color: var(--j-color-grey);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+  }
+}
+
+// ------------------------------------------------------------------
+// QField 控件基础重置
+// ------------------------------------------------------------------
+@mixin field-control-reset($height) {
+  &.q-field--dense {
+    // 1. 统一 QField 控件和边距的高度
+    .q-field__control,
+    .q-field__marginal {
+      height: $height !important;
+      min-height: $height !important;
+    }
+
+    // 2. 强制重置默认的垂直 padding (关键修正)
+    .q-field__native {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+}
+
+// ------------------------------------------------------------------
+// 修正 j-q-date-year--table 模式 (36px)
+// ------------------------------------------------------------------
+.j-q-date-year--table {
+  @include field-control-reset(36px);
+
+  &.q-field--dense {
+    // 调整带标签状态下的内容偏移
+    &.q-field--labeled {
+      .q-field__native {
+        padding-bottom: 0 !important;
+        min-height: 20px !important;
+      }
+    }
+  }
+
+  // 处理值显示区域的样式
+  .year-picker-value-display {
+    line-height: 36px; // 无标签时垂直居中
+  }
+
+  // 最终修正：针对 labeled 状态调整 line-height (24px = 36px - 12px)
+  &.q-field--dense.q-field--labeled {
+    .year-picker-value-display {
+      line-height: 24px;
+    }
+  }
+}
+
+// ------------------------------------------------------------------
+// 修正 j-q-date-year--form 模式 (40px)
+// ------------------------------------------------------------------
+.j-q-date-year--form {
+  @include field-control-reset(40px);
+
+  &.q-field--dense {
+    // 调整带标签状态下的内容偏移
+    &.q-field--labeled {
+      .q-field__native {
+        padding-top: 12px !important; // 留出 12px 给标签
+      }
+    }
+  }
+
+  // 处理值显示区域的样式
+  .year-picker-value-display {
+    line-height: 40px; // 无标签时垂直居中
+  }
+
+  // 最终修正：针对 labeled 状态调整 line-height (28px = 40px - 12px)
+  &.q-field--dense.q-field--labeled {
+    .year-picker-value-display {
+      line-height: 28px;
+    }
+  }
+}
+
+.j-q-year-selector {
+  .year-selector__inner {
+    min-width: 360px;
+    padding: 16px;
+  }
+
+  .year-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .year-year-container {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .year-container-l-enter-from {
+    transform: translateX(100%);
+  }
+
+  .year-container-r-enter-from {
+    transform: translateX(-100%);
+  }
+
+  .year-container-l-enter-active,
+  .year-container-r-enter-active {
+    transition: transform 0.25s linear;
+  }
+
+  .year-container-l-enter-to,
+  .year-container-r-enter-to {
+    transform: translateX(0);
+  }
+
+  .year-container-l-leave-from,
+  .year-container-r-leave-from {
+    position: absolute;
+    transform: translateX(0);
+  }
+
+  .year-container-l-leave-active,
+  .year-container-r-leave-active {
+    position: absolute;
+    transition: transform 0.25s linear;
+  }
+
+  .year-container-l-leave-to {
+    position: absolute;
+    transform: translateX(-100%);
+  }
+
+  .year-container-r-leave-to {
+    position: absolute;
+    transform: translateX(100%);
+  }
+}
+
+.j-q-year-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  list-style-type: none;
+
+  .year-item {
+    position: relative;
+    width: 100%;
+
+    .year-handler {
+      width: 100%;
+    }
+  }
+}

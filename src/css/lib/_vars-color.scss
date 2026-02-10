@@ -1,0 +1,48 @@
+// ============================================
+// 此文件由 generate-colors.js 自动生成
+// 请勿手动修改，修改 src/config/colors.json 后运行 npm run build:colors
+// ============================================
+
+/* 颜色变量 */
+$primary: #0B5CFF;
+$blue: #0B5CFF;
+$dark: #323232;
+$green: #2da641;
+$red: #E93030;
+$negative: #E93030;
+$yellow: #f2c037;
+$grey: #969799;
+$white: #ffffff;
+$blue-light: #f0f4ff;
+$dark-lighter: #f7f7f7;
+$green-light: #c0e4c6;
+$red-light: #fff0f0;
+$yellow-light: #fff9e9;
+$grey-strong: #969799;
+$grey-medium: #aaaaaa;
+$grey-light: #eeeeee;
+$grey-lighter: #f5f6fa;
+$dark-strong: #131523;
+
+/* 颜色映射 */
+$custom-colors: (
+  'primary': $primary,
+  'blue': $blue,
+  'dark': $dark,
+  'green': $green,
+  'red': $red,
+  'negative': $negative,
+  'yellow': $yellow,
+  'grey': $grey,
+  'white': $white,
+  'blue-light': $blue-light,
+  'dark-lighter': $dark-lighter,
+  'green-light': $green-light,
+  'red-light': $red-light,
+  'yellow-light': $yellow-light,
+  'grey-strong': $grey-strong,
+  'grey-medium': $grey-medium,
+  'grey-light': $grey-light,
+  'grey-lighter': $grey-lighter,
+  'dark-strong': $dark-strong,
+);

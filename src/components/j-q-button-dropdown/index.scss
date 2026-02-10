@@ -1,0 +1,89 @@
+// J-Q-Button-Dropdown 统一样式
+// 复用 j-q-button 的样式变量
+$j-q-btn-border-radius: 8px;
+$j-q-btn-font-size: 14px;
+$j-q-btn-font-weight: 500;
+$j-q-btn-border-color: #d7dbec;
+$j-color-text-color-disabled: #969799;
+
+.j-q-button-dropdown {
+  border-radius: $j-q-btn-border-radius !important;
+  font-size: $j-q-btn-font-size;
+  font-weight: $j-q-btn-font-weight;
+  box-sizing: border-box;
+  line-height: 1;
+  box-shadow: none !important;
+
+  // 移除 Quasar 默认的 ::before 伪元素阴影
+  &::before {
+    box-shadow: none !important;
+  }
+
+  // 尺寸变体
+  &.j-q-button-dropdown--lg {
+    height: 36px;
+    min-height: 36px;
+    padding: 0 12px;
+  }
+
+  &.j-q-button-dropdown--md {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px;
+  }
+
+  &.j-q-button-dropdown--sm {
+    height: 28px;
+    min-height: 28px;
+    padding: 0 8px;
+  }
+
+  // 类型变体 - Primary
+  &.j-q-button-dropdown--primary {
+    color: #fff !important;
+    background-color: var(--q-primary) !important;
+
+    :deep(.q-btn-dropdown__arrow) {
+      color: #fff !important;
+    }
+
+    :deep(.q-btn__content) {
+      color: #fff;
+    }
+  }
+
+  // 类型变体 - Secondary
+  &.j-q-button-dropdown--secondary {
+    background: #fff !important;
+    border: 1px solid $j-q-btn-border-color !important;
+    color: var(--j-color-dark-strong) !important;
+
+    :deep(.q-btn-dropdown__arrow) {
+      color: var(--j-color-dark-strong) !important;
+    }
+
+    :deep(.q-btn__content) {
+      color: var(--j-color-dark-strong);
+    }
+
+    &:hover {
+      background: #f5f6fa !important;
+    }
+
+    &:active,
+    &.q-btn--active {
+      background: #e6e9f4 !important;
+    }
+
+    &.q-btn--disabled {
+      color: $j-color-text-color-disabled !important;
+    }
+  }
+
+  // 下拉箭头样式
+  :deep(.q-btn-dropdown__arrow) {
+    font-size: 16px !important;
+    margin-left: 4px;
+  }
+}
+

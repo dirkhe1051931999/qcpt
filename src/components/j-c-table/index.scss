@@ -1,0 +1,226 @@
+.j-c-table-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.j-c-table-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 12px;
+  border: 1px solid #e6e9f4;
+
+  &.j-c-table-container--empty {
+    border-radius: 12px 12px 0 0;
+  }
+
+  // 固定表头模式：表体可滚动，表头固定
+  &.j-c-table-container--fixed-header {
+    overflow-y: auto;
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+
+  // 自定义滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f5f6fa;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d3e0;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a1a7c4;
+    }
+  }
+}
+
+.j-c-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--j-color-white);
+
+  // 表头
+  thead {
+    background: var(--j-color-grey-lighter);
+  }
+
+  th {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a1a7c4;
+    text-align: left;
+    background: var(--j-color-grey-lighter);
+    border-bottom: 1px solid #e6e9f4;
+    border-right: 1px solid #e6e9f4;
+    white-space: nowrap;
+    position: relative;
+
+    &:first-child {
+      border-top-left-radius: 12px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 12px;
+      border-right: none;
+    }
+  }
+
+  // 表体
+  tbody {
+    tr {
+      transition: background-color 0.2s;
+
+      &:last-child {
+        td:first-child {
+          border-bottom-left-radius: 12px;
+        }
+
+        td:last-child {
+          border-bottom-right-radius: 12px;
+        }
+      }
+    }
+  }
+
+  td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--j-color-dark);
+    text-align: left;
+    border-bottom: 1px solid #e6e9f4;
+    border-right: 1px solid #e6e9f4;
+    position: relative;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  // 去除最后一行的下边框
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  // 固定列样式
+  .j-c-table__header-cell--pinned-left,
+  .j-c-table__body-cell--pinned-left {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background: inherit;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--j-color-grey-lighter);
+    }
+  }
+
+  .j-c-table__header-cell--pinned-right,
+  .j-c-table__body-cell--pinned-right {
+    position: sticky;
+    right: 0;
+    z-index: 5;
+    background: inherit;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--j-color-grey-lighter);
+    }
+  }
+
+  .j-c-table__header-cell--pinned-left,
+  .j-c-table__header-cell--pinned-right {
+    z-index: 15;
+    background: var(--j-color-grey-lighter);
+  }
+
+  .j-c-table__body-cell--pinned-left,
+  .j-c-table__body-cell--pinned-right {
+    background: var(--j-color-white);
+  }
+}
+
+// 单元格包装器
+.j-c-table__cell-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+// 单元格内容样式
+.j-c-table__cell-content {
+  flex: 1;
+  min-width: 0; // 允许内容收缩
+
+  // 单行省略
+  &--ellipsis-1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // 多行省略
+  &--ellipsis-multi {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+
+  // 可点击样式
+  &--clickable {
+    display: inline-block;
+    cursor: pointer;
+    color: var(--j-color-primary);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// 单元格后缀（复制按钮等）
+.j-c-table__cell-suffix {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+// 空数据提示
+.j-c-table__empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--j-color-grey);
+  font-size: 14px;
+  background: var(--j-color-white);
+  border: 1px solid #e6e9f4;
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}

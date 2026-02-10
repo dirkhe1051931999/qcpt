@@ -1,0 +1,83 @@
+{
+  "name": "qcpt",
+  "version": "0.1.0",
+  "description": "A Vue 3 component library built with Vite and TypeScript, featuring components integrated with Quasar.",
+  "main": "dist/qcpt.umd.js",
+  "module": "dist/qcpt.es.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "p": "npm publish",
+    "build:colors": "node scripts/generate-colors.js",
+    "build:svg": "node scripts/generate-custom-svg.js",
+    "build:types": "node scripts/generate-global-types.js",
+    "build": "vite build",
+    "build-all": "npm run build:colors && npm run build:svg && npm run build:types && vite build",
+    "dev": "npm run build:colors && npm run build:svg && vite build --watch",
+    "yalc:publish": "npm run build-all && npx yalc push",
+    "yalc:push": "npm run build-all && npx yalc push",
+    "yalc:dev": "node scripts/yalc-dev.js",
+    "patch": "npm version patch && npm run p",
+    "minor": "npm version minor && npm run p",
+    "major": "npm version major && npm run p"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/qcpt.es.js",
+      "require": "./dist/qcpt.cjs.js"
+    },
+    "./resolver": {
+      "types": "./dist/resolver.d.ts",
+      "import": "./dist/resolver.mjs",
+      "require": "./dist/resolver.cjs"
+    },
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.es.js",
+      "require": "./dist/charts.cjs.js"
+    },
+    "./qcpt.css": "./dist/index.css",
+    "./qcpt-styles.css": "./dist/qcpt-styles.css",
+    "./dist/index.css": "./dist/index.css",
+    "./dist/qcpt-styles.css": "./dist/qcpt-styles.css"
+  },
+  "peerDependencies": {
+    "chart.js": "^4.0.0",
+    "quasar": "^2.0.0",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "chart.js": "^4.4.7",
+    "debug": "^4.4.3",
+    "prettier": "^2.5.1",
+    "quasar": "^2.18.6",
+    "resolve": "^1.22.11",
+    "sass": "^1.94.2",
+    "typescript": "^5.9.3",
+    "unplugin-vue-components": "^30.0.0",
+    "vite": "^6.0.7",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.25"
+  },
+  "keywords": [
+    "vue",
+    "quasar",
+    "component-library",
+    "typescript"
+  ],
+  "author": "h96412j@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dirkhe1051931999/qcpt/tree/dev",
+    "directory": "."
+  },
+  "dependencies": {}
+}

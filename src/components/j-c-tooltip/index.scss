@@ -1,0 +1,179 @@
+.j-c-tooltip {
+  display: inline-block;
+  position: relative;
+  
+  // 当内部有块级元素或 full-width 类时，tooltip 也变成块级，不影响内部元素宽度
+  &:has(> .full-width),
+  &:has(> button.full-width),
+  &:has(> .q-btn.full-width) {
+    display: block;
+    width: 100%;
+  }
+}
+
+.j-c-tooltip__popper {
+  position: absolute;
+  z-index: 999999;
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  border-radius: 8px;
+  word-break: break-all;
+  white-space: normal;
+
+  &--dark {
+    background-color: #1a1a1a;
+    color: var(--j-color-white);
+    border: 1px solid #1a1a1a;
+
+    .j-c-tooltip__arrow {
+      &::before {
+        background-color: #1a1a1a;
+        border-color: #1a1a1a;
+      }
+    }
+  }
+
+  &--light {
+    background-color: var(--j-color-white);
+    color: var(--j-color-dark);
+    border: 1px solid var(--j-color-grey-light);
+    box-shadow: 0px 1px 8px 0px #D7DBEC;
+
+    .j-c-tooltip__arrow {
+      &::before {
+        background-color: var(--j-color-white);
+        border-color: var(--j-color-grey-light);
+      }
+    }
+  }
+}
+
+.j-c-tooltip__content {
+  position: relative;
+  z-index: 1;
+}
+
+.j-c-tooltip__arrow {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  // top placement
+  .j-c-tooltip__popper.is-top &,
+  .j-c-tooltip__popper.is-top-start &,
+  .j-c-tooltip__popper.is-top-end & {
+    bottom: -5px;
+    &::before {
+      border-top-color: transparent;
+      border-left-color: transparent;
+    }
+  }
+
+  .j-c-tooltip__popper.is-top & {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .j-c-tooltip__popper.is-top-start & {
+    left: 16px;
+  }
+
+  .j-c-tooltip__popper.is-top-end & {
+    right: 16px;
+  }
+
+  // bottom placement
+  .j-c-tooltip__popper.is-bottom &,
+  .j-c-tooltip__popper.is-bottom-start &,
+  .j-c-tooltip__popper.is-bottom-end & {
+    top: -5px;
+    &::before {
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+    }
+  }
+
+  .j-c-tooltip__popper.is-bottom & {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .j-c-tooltip__popper.is-bottom-start & {
+    left: 16px;
+  }
+
+  .j-c-tooltip__popper.is-bottom-end & {
+    right: 16px;
+  }
+
+  // left placement
+  .j-c-tooltip__popper.is-left &,
+  .j-c-tooltip__popper.is-left-start &,
+  .j-c-tooltip__popper.is-left-end & {
+    right: -5px;
+    &::before {
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+    }
+  }
+
+  .j-c-tooltip__popper.is-left & {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .j-c-tooltip__popper.is-left-start & {
+    top: 16px;
+  }
+
+  .j-c-tooltip__popper.is-left-end & {
+    bottom: 16px;
+  }
+
+  // right placement
+  .j-c-tooltip__popper.is-right &,
+  .j-c-tooltip__popper.is-right-start &,
+  .j-c-tooltip__popper.is-right-end & {
+    left: -5px;
+    &::before {
+      border-right-color: transparent;
+      border-top-color: transparent;
+    }
+  }
+
+  .j-c-tooltip__popper.is-right & {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .j-c-tooltip__popper.is-right-start & {
+    top: 16px;
+  }
+
+  .j-c-tooltip__popper.is-right-end & {
+    bottom: 16px;
+  }
+}
+
+// 过渡动画
+.j-c-tooltip-fade-enter-active,
+.j-c-tooltip-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.j-c-tooltip-fade-enter-from,
+.j-c-tooltip-fade-leave-to {
+  opacity: 0;
+}

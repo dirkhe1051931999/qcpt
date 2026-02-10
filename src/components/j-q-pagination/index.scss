@@ -1,0 +1,185 @@
+// ------------------------------------------------------------------
+// 1. SCSS 变量定义 (集中在文件顶部)
+// ------------------------------------------------------------------
+
+// 颜色变量
+$color-border: var(--j-color-grey-light);
+$color-white: var(--j-color-white);
+$color-primary-text: var(--j-color-primary);
+$color-input-background: $color-white;
+$color-pagination-bg: $color-white;
+$color-input-placeholder-text: var(--j-color-grey-medium);
+$color-pagination-before-border: rgba(0, 0, 0, 0);
+
+// 尺寸变量
+$pagination-btn-size: 32px;
+$pagination-btn-padding: 0 4px;
+$pagination-btn-margin: 2px;
+$pagination-input-width: 70px;
+$pagination-margin-top: 3px;
+$pagination-input-padding-bottom: 6px;
+$pagination-icon-size: 16px;
+$pagination-select-dropdown-icon-size: 18px;
+$pagination-input-font-size: 14px;
+$pagination-input-max-width: 68px;
+
+// 间距变量
+$pagination-total-margin-top: 4px;
+$pagination-select-margin: 4px 12px 0 12px;
+$pagination-suffix-margin: 4px 24px 0 8px;
+$pagination-goto-margin-left: 24px;
+$pagination-jump-input-margin-left: 0.5rem;
+
+// ------------------------------------------------------------------
+// 2. 样式主体
+// ------------------------------------------------------------------
+
+// =================================================================
+// 主容器样式 (.j-q-pagination)
+// =================================================================
+.j-q-pagination {
+  display: inline-flex;
+  align-items: center;
+
+  .row {
+    flex-wrap: nowrap;
+  }
+
+  // 总条数显示
+  .pagination-total {
+    margin-top: $pagination-total-margin-top;
+  }
+
+  // 每页显示数量选择框
+  .pagination-size-select {
+    width: $pagination-input-width;
+    margin: $pagination-select-margin;
+
+    &.q-field--dense .q-field__control {
+      height: $pagination-btn-size !important;
+      min-height: $pagination-btn-size !important;
+
+      &:before {
+        border-radius: 4px !important;
+        border: 1px solid $color-border;
+        background: $color-input-background;
+      }
+
+      .q-field__native {
+        height: $pagination-btn-size !important;
+        min-height: $pagination-btn-size !important;
+      }
+
+      .q-field__marginal {
+        height: $pagination-btn-size !important;
+        min-height: $pagination-btn-size !important;
+
+        .q-icon.q-select__dropdown-icon {
+          font-size: $pagination-select-dropdown-icon-size !important;
+        }
+      }
+    }
+  }
+
+  // "条/页" 文本
+  .pagination-suffix {
+    margin: $pagination-suffix-margin;
+  }
+
+  // "跳转至" 文本
+  .pagination-goto-text {
+    margin-left: $pagination-goto-margin-left;
+  }
+
+  // 页码跳转输入框
+  .pagination-jump-input {
+    max-width: $pagination-input-max-width !important;
+    width: $pagination-input-width;
+    margin-top: $pagination-margin-top;
+    margin-left: $pagination-jump-input-margin-left;
+
+    .q-field__inner {
+      .q-field__control {
+        height: $pagination-btn-size !important;
+
+        &:before {
+          border-radius: 4px !important;
+          border: 1px solid $color-border;
+          background: $color-input-background;
+        }
+      }
+
+      .q-field__native {
+        padding-bottom: $pagination-input-padding-bottom !important;
+
+        &::placeholder {
+          font-size: $pagination-input-font-size !important;
+          color: $color-input-placeholder-text;
+        }
+      }
+    }
+  }
+
+  // QPagination 样式
+  .q-pagination {
+    margin-top: $pagination-margin-top;
+
+    .q-pagination__middle {
+      background: $color-pagination-bg !important;
+    }
+
+    .q-btn {
+      min-height: $pagination-btn-size;
+      height: $pagination-btn-size;
+      width: $pagination-btn-size !important;
+      padding: $pagination-btn-padding;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: $pagination-btn-margin !important;
+      margin-right: $pagination-btn-margin !important;
+      border: solid 1px $color-border;
+
+      &::before {
+        box-shadow: none;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      &:has(img) {
+        min-width: $pagination-btn-size !important;
+        min-height: $pagination-btn-size !important;
+        height: $pagination-btn-size !important;
+        margin-right: 4px !important;
+        margin-left: 4px !important;
+
+        &::before {
+          border-radius: 4px;
+        }
+      }
+
+      span {
+        height: $pagination-btn-size !important;
+        line-height: $pagination-btn-size !important;
+      }
+
+      &.text-primary {
+        font-weight: 600;
+        color: $color-primary-text !important;
+      }
+
+      .q-btn__content {
+        display: block !important;
+
+        .q-icon {
+          margin-top: -2px !important;
+          font-size: $pagination-icon-size !important;
+        }
+      }
+    }
+
+    &::before {
+      border: 1px solid $color-pagination-before-border;
+    }
+  }
+}

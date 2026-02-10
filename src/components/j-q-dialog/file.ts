@@ -1,0 +1,31 @@
+import globalMessage from 'components/j-q-message';
+import { useI18n } from 'src/composables/useI18n.ts';
+
+export type IEnterFileType = {
+  size: number;
+  accept: string[];
+};
+
+export function beforeFileEnter(files: File[], config: IEnterFileType = { size: 5, accept: ['xls', 'xlsx'] }) {
+  const file = files[0];
+  const { size, accept } = config;
+  const { t } = useI18n();
+  const maxSizeInBytes = size * Math.pow(1024, 2); 
+  if (file.size > maxSizeInBytes) {
+    globalMessage.show({
+      content: t('messages.jQFile.maxFileSizeIs', { max: size }),
+      type: 'error',
+    });
+    return;
+  }
+  let format = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+  format = format.replace('.', '');
+  if (accept.indexOf(format) === -1) {
+    globalMessage.show({
+      content: t('messages.jQFile.unsupportFileFormat'),
+      type: 'error',
+    });
+    return;
+  }
+  return files;
+}
