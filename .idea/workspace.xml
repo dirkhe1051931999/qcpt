@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="344055ab-aa0a-40e9-ba67-165a9c39eaef" name="更改" comment="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="344055ab-aa0a-40e9-ba67-165a9c39eaef" name="更改" comment="docs(readme): add detailed project rules and branch management guidelines&#10;&#10;- Rewrite README with comprehensive project introduction in Chinese&#10;- Add branch naming conventions and workflow suggestions&#10;- Include clear rules for Vue component development&#10;- Specify documentation, style, and code organization standards&#10;- Provide CSS atomic class naming and usage guidelines&#10;- Document requirements for comments, code structure, and CSS variables&#10;- Add uniform style configurations for Q-Btn and Q-Card components&#10;- Create .gitignore and .npmignore for common development files&#10;- Include Prettier configuration with extended print width and styling rules" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,7 +70,7 @@
       <updated>1770701196604</updated>
       <workItem from="1770701197728" duration="305000" />
       <workItem from="1770701524995" duration="940000" />
-      <workItem from="1770702487752" duration="2043000" />
+      <workItem from="1770702487752" duration="2356000" />
     </task>
     <task id="LOCAL-00001" summary="docs: expand README with guidelines and setup">
       <option name="closed" value="true" />
