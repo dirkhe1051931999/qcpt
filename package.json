@@ -1,6 +1,6 @@
 {
   "name": "qcpt",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "A Vue 3 component library built with Vite and TypeScript, featuring components integrated with Quasar.",
   "main": "dist/qcpt.umd.js",
   "module": "dist/qcpt.es.js",
@@ -76,7 +76,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dirkhe1051931999/qcpt/tree/dev",
+    "url": "https://github.com/dirkhe1051931999/qcpt.git",
     "directory": "."
   },
   "dependencies": {}
