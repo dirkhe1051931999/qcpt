@@ -2,8 +2,6 @@
 
 QCPT 是一个基于 Vue 3、TypeScript 和 Quasar 构建的现代企业级组件库。
 
-[在线文档](https://ngiot-frontend-cpt.redteatest.com/zh-cn/)
-
 ### 分支管理
 
 1. **创建开发分支**: 开发新功能或修复问题时，应基于 `dev` 分支创建对应的功能分支。分支命名格式为 `feat/`、`fix/`、
